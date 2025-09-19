@@ -114,6 +114,9 @@ const NotificationContainer = styled.div`
   padding: 0.5rem;
   border-radius: 50%;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
     background: rgba(52, 152, 219, 0.1);
@@ -121,7 +124,7 @@ const NotificationContainer = styled.div`
 `;
 
 const NotificationIcon = styled.span`
-  font-size: 1.2rem;
+  font-size: 1.8rem;
   display: block;
 `;
 

@@ -721,72 +721,44 @@ const Signup = () => {
         return;
       }
 
-      // 백엔드 API로 회원가입 요청
-      const formDataToSend = new FormData();
-      formDataToSend.append("email", formData.userId);
-      formDataToSend.append("password", formData.password);
-      formDataToSend.append("password_confirm", formData.confirmPassword);
-      formDataToSend.append("nickname", formData.nickname);
-      formDataToSend.append("phone", formData.phone);
-      formDataToSend.append("gender", formData.gender);
-      formDataToSend.append("birth_date", formData.birthDate);
-      formDataToSend.append("student_name", formData.student_name);
-      formDataToSend.append("school", formData.school);
-      formDataToSend.append("department", formData.department);
-      formDataToSend.append("student_id", formData.studentId);
-      formDataToSend.append("university", formData.university);
-      formDataToSend.append("student_card", formData.studentCard);
-
-      // 언어 설정 데이터 추가
-      formDataToSend.append(
-        "learning_languages",
-        JSON.stringify(formData.learning_languages)
-      );
-      formDataToSend.append(
-        "teaching_languages",
-        JSON.stringify(formData.teaching_languages)
-      );
-      formDataToSend.append("interests", JSON.stringify(formData.interests));
-
-      console.log("회원가입 요청 데이터:", {
+      // 테스트 계정 생성 (프론트엔드 배포용)
+      const testUser = {
+        id: Date.now(),
         email: formData.userId,
         nickname: formData.nickname,
+        phone: formData.phone,
+        gender: formData.gender,
+        birth_date: formData.birthDate,
+        student_name: formData.student_name,
+        school: formData.school,
+        department: formData.department,
+        student_id: formData.studentId,
         university: formData.university,
         learning_languages: formData.learning_languages,
         teaching_languages: formData.teaching_languages,
         interests: formData.interests,
-      });
+        avatar: "👤",
+        is_verified: true,
+        created_at: new Date().toISOString(),
+      };
 
-      const response = await fetch(API_ENDPOINTS.SIGNUP, {
-        method: "POST",
-        body: formDataToSend,
-      });
+      // 테스트 계정을 localStorage에 저장
+      localStorage.setItem("user", JSON.stringify(testUser));
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("token", "test_token_" + Date.now());
 
-      const data = await response.json();
-      console.log("회원가입 응답:", data);
+      // 회원가입 성공 시 임시 데이터 정리
+      localStorage.removeItem("selectedUniversity");
+      localStorage.removeItem("signupFormData");
 
-      if (response.ok && data.success) {
-        // 백엔드에서 받은 사용자 정보를 localStorage에 저장
-        localStorage.setItem("user", JSON.stringify(data.user));
-        localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("token", data.token);
+      setSuccess("테스트 계정이 생성되었습니다! 로그인 중...");
 
-        // 회원가입 성공 시 임시 데이터 정리
-        localStorage.removeItem("selectedUniversity");
+      console.log("테스트 계정 생성 완료:", testUser);
 
-        setSuccess("회원가입이 완료되었습니다! 로그인 중...");
-
-        // Navigate to home page after a short delay
-        setTimeout(() => {
-          navigate("/");
-        }, 1500);
-      } else {
-        const errorMessage =
-          typeof data.message === "string"
-            ? data.message
-            : data.message?.detail || "회원가입 중 오류가 발생했습니다.";
-        setError(errorMessage);
-      }
+      // Navigate to home page after a short delay
+      setTimeout(() => {
+        navigate("/");
+      }, 1500);
     } catch (err) {
       setError("회원가입 중 오류가 발생했습니다. 다시 시도해주세요.");
     } finally {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
+import { FiBell } from "react-icons/fi";
 
 const slideDown = keyframes`
   from {
@@ -81,7 +82,7 @@ const NotificationItem = styled.div`
 `;
 
 const NotificationIcon = styled.div`
-  font-size: 1.2rem;
+  font-size: 1.8rem;
   min-width: 24px;
   text-align: center;
 `;
@@ -156,7 +157,9 @@ const NotificationDropdown = ({ isOpen, onClose, notifications = [] }) => {
     <NotificationDropdownContainer>
       <DropdownContent>
         <NotificationHeader>
-          <h3>🔔 알림</h3>
+          <h3>
+            <FiBell /> 알림
+          </h3>
         </NotificationHeader>
         <NotificationList>
           {localNotifications.length > 0 ? (

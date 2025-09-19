@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { useLanguage } from "../contexts/LanguageContext";
+import { FiHome, FiMessageCircle, FiUser, FiSettings } from "react-icons/fi";
 
 const UnderBarContainer = styled.div`
   position: fixed !important;
@@ -156,25 +157,25 @@ const UnderBar = () => {
     {
       id: "home",
       label: t("common.home"),
-      icon: "🏠",
+      icon: <FiHome />,
       path: "/", // 홈 = 루트 경로
     },
     {
       id: "chatting",
       label: t("common.chat"),
-      icon: "💬",
+      icon: <FiMessageCircle />,
       path: "/chatting",
     },
     {
       id: "profile",
       label: t("common.profile"),
-      icon: "👤",
+      icon: <FiUser />,
       path: "/profile",
     },
     {
       id: "settings",
       label: t("common.settings"),
-      icon: "⚙️",
+      icon: <FiSettings />,
       path: "/settings",
     },
   ];

@@ -5,6 +5,7 @@ import UnderBar from "../components/UnderBar";
 import Sidebar from "../components/Sidebar";
 import { useLanguage } from "../contexts/LanguageContext";
 import { API_ENDPOINTS } from "../config/api";
+import { FiBell } from "react-icons/fi";
 
 // Keyframes
 const slideInLeft = keyframes`
@@ -277,6 +278,9 @@ const NotificationContainer = styled.div`
   padding: 0.5rem;
   border-radius: 50%;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
     background: rgba(52, 152, 219, 0.1);
@@ -284,7 +288,7 @@ const NotificationContainer = styled.div`
 `;
 
 const NotificationIcon = styled.span`
-  font-size: 1.2rem;
+  font-size: 1.8rem;
   display: block;
 `;
 
@@ -843,7 +847,9 @@ const Chatting = () => {
       <ChattingHeader>
         <Logo>🎓 UniLingo</Logo>
         <NotificationContainer onClick={handleNotificationClick}>
-          <NotificationIcon>🔔</NotificationIcon>
+          <NotificationIcon>
+            <FiBell />
+          </NotificationIcon>
           {hasNewNotification && <NotificationBadge>!</NotificationBadge>}
         </NotificationContainer>
       </ChattingHeader>

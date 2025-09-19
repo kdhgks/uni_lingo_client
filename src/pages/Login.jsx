@@ -215,28 +215,59 @@ const Login = () => {
         return;
       }
 
-      // 백엔드 API로 로그인
-      const response = await fetch(API_ENDPOINTS.LOGIN, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
+      // 테스트 계정 로그인 (프론트엔드 배포용)
+      // 테스트 계정 정보: test@example.com / test123456
+      if (formData.email === "test@example.com" && formData.password === "test123456") {
+        const testUser = {
+          id: 1,
+          email: "test@example.com",
+          nickname: "테스트유저",
+          phone: "01012345678",
+          gender: "male",
+          birth_date: "1995-01-01",
+          student_name: "홍길동",
+          school: "서강대학교",
+          department: "컴퓨터공학과",
+          student_id: "20240001",
+          university: "seoul_area",
+          learning_languages: ["영어", "일본어"],
+          teaching_languages: ["한국어"],
+          interests: ["K-pop", "드라마", "여행"],
+          avatar: "👤",
+          is_verified: true,
+          created_at: "2024-01-01T00:00:00.000Z",
+        };
 
-      const data = await response.json();
+        const testToken = "test_token_" + Date.now();
 
-      if (response.ok && data.success) {
+        // localStorage에 테스트 계정 저장
+        localStorage.setItem("user", JSON.stringify(testUser));
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("token", testToken);
+
         // AuthContext를 통해 로그인 처리
-        login(data.user, data.token);
+        login(testUser, testToken);
+
+        console.log("테스트 계정으로 로그인 성공:", testUser);
 
         // Navigate to home page
         navigate("/");
       } else {
-        setError(data.message || t("auth.loginError"));
+        // 기존 저장된 사용자 계정 확인
+        const savedUser = localStorage.getItem("user");
+        const savedToken = localStorage.getItem("token");
+        
+        if (savedUser && savedToken) {
+          const user = JSON.parse(savedUser);
+          if (user.email === formData.email) {
+            // AuthContext를 통해 로그인 처리
+            login(user, savedToken);
+            navigate("/");
+            return;
+          }
+        }
+        
+        setError("잘못된 이메일 또는 비밀번호입니다.\n테스트 계정: test@example.com / test123456");
       }
     } catch (err) {
       setError(t("auth.loginError"));
@@ -252,11 +283,11 @@ const Login = () => {
           <Title>{t("auth.login")}</Title>
           <Form onSubmit={handleSubmit}>
             <InfoMessage>
-              <strong>{t("auth.testAccount")}:</strong>
+              <strong>테스트 계정:</strong>
               <br />
-              {t("auth.email")}: sarah@unilingo.com
+              이메일: test@example.com
               <br />
-              {t("auth.password")}: 123456
+              비밀번호: test123456
             </InfoMessage>
             {error && <ErrorMessage>{error}</ErrorMessage>}
             <FormGroup>

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import UnderBar from "../components/UnderBar";
 import Sidebar from "../components/Sidebar";
 import { useLanguage } from "../contexts/LanguageContext";
+import { FiBell, FiMessageCircle, FiGift } from "react-icons/fi";
 
 const NotificationsContainer = styled.div`
   min-height: 100vh;
@@ -268,11 +269,13 @@ const Notifications = () => {
                   }}
                 >
                   <NotificationIcon>
-                    {notification.type === "message"
-                      ? "💬"
-                      : notification.type === "matching"
-                      ? "🎉"
-                      : "🔔"}
+                    {notification.type === "message" ? (
+                      <FiMessageCircle />
+                    ) : notification.type === "matching" ? (
+                      <FiGift />
+                    ) : (
+                      <FiBell />
+                    )}
                   </NotificationIcon>
                   <NotificationContent>
                     <NotificationTitle>
@@ -294,7 +297,16 @@ const Notifications = () => {
             ))
           ) : (
             <EmptyState>
-              <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🔔</div>
+              <div
+                style={{
+                  fontSize: "3rem",
+                  marginBottom: "1rem",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <FiBell />
+              </div>
               {t("notifications.noNotifications")}
             </EmptyState>
           )}
