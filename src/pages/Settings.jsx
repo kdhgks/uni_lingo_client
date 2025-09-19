@@ -44,7 +44,7 @@ const Main = styled.main`
   padding: 2rem;
 
   @media (max-width: 768px) {
-    padding: 1rem;
+    padding: 1rem 1rem 40px 1rem; /* 모바일에서만 언더바 공간 확보 */
   }
 `;
 

@@ -12,6 +12,11 @@ const NotificationsContainer = styled.div`
   padding-left: 0;
   transition: background-color 0.3s ease;
 
+  /* 모바일에서 언더바 공간 확보 */
+  @media (max-width: 768px) {
+    padding-bottom: 80px;
+  }
+
   @media (min-width: 769px) {
     padding-left: 250px;
   }
@@ -73,7 +78,7 @@ const BackBtn = styled.button`
 `;
 
 const NotificationsMain = styled.div`
-  padding: 5rem 1rem 6rem 1rem;
+  padding: 5rem 1rem 1rem 1rem;
   max-width: 800px;
   margin: 0 auto;
 `;

@@ -61,6 +61,11 @@ const ProfileContainer = styled.div`
   padding-left: 0;
   transition: background-color 0.3s ease;
 
+  /* 모바일에서 언더바 공간 확보 */
+  @media (max-width: 768px) {
+    padding-bottom: 80px;
+  }
+
   @media (min-width: 769px) {
     padding-left: 250px;
   }
@@ -151,12 +156,10 @@ const ProfileMain = styled.main`
   align-items: center;
   padding: 1rem 2rem;
   padding-top: 5rem; /* 헤더 높이만큼 상단 패딩 추가 */
-  padding-bottom: 8rem; /* 언더바 높이만큼 하단 패딩 추가 */
 
   @media (max-width: 768px) {
     padding: 0.5rem 1.5rem;
     padding-top: 1rem;
-    padding-bottom: 8rem; /* 모바일에서도 언더바 높이만큼 하단 패딩 추가 */
   }
 `;
 

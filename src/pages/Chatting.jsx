@@ -89,6 +89,11 @@ const ChattingContainer = styled.div`
   padding-left: 0;
   transition: background-color 0.3s ease, color 0.3s ease;
 
+  /* 모바일에서 언더바 공간 확보 */
+  @media (max-width: 768px) {
+    padding-bottom: 80px;
+  }
+
   @media (min-width: 769px) {
     padding-left: 250px;
   }
