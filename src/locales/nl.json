@@ -243,5 +243,65 @@
     "noNotifications": "Geen nieuwe meldingen",
     "newMessage": "Nieuw bericht",
     "matchComplete": "Matching voltooid"
+  },
+  "modal": {
+    "success": "Succes!",
+    "warning": "Waarschuwing",
+    "error": "Fout",
+    "info": "Informatie",
+    "confirm": "Bevestigen",
+    "selectAllRequired": "Selecteer geslacht, leertaal en universiteit.",
+    "enterUniversityName": "Voer de universiteitsnaam in.",
+    "alreadyRequested": "Een koppelingsverzoek is al in behandeling. Wacht op beheerder goedkeuring.",
+    "requestComplete": "Vriendschapsverzoek succesvol ingediend! 🎉\n\nWacht op beheerder goedkeuring. U ontvangt een melding wanneer goedgekeurd.",
+    "requestFailed": "Koppelingsverzoek mislukt.",
+    "requestError": "Er is een fout opgetreden tijdens het koppelingsverzoek. Probeer opnieuw."
+  },
+  "adminModal": {
+    "partnerSelectionTitle": "Koppelingspartner Selecteren",
+    "partnerSelectionMessage": "Selecteer een partner om te koppelen met",
+    "cancel": "Annuleren",
+    "approveMatch": "Koppeling Goedkeuren",
+    "matchComplete": "De koppeling met is voltooid!"
+  },
+  "genderSettings": {
+    "title": "Geslacht selectie",
+    "male": "Mannelijk",
+    "female": "Vrouwelijk"
+  },
+  "universitySettings": {
+    "title": "Universiteit selectie",
+    "seoulArea": "Seoul gebied",
+    "gyeonggiArea": "Gyeonggi gebied",
+    "incheonArea": "Incheon gebied",
+    "busanArea": "Busan gebied",
+    "daeguArea": "Daegu gebied",
+    "gwangjuArea": "Gwangju gebied",
+    "daejeonArea": "Daejeon gebied",
+    "ulsanArea": "Ulsan gebied",
+    "gangwonArea": "Gangwon gebied",
+    "chungcheongArea": "Chungcheong gebied",
+    "jeollaArea": "Jeolla gebied",
+    "gyeongsangArea": "Gyeongsang gebied",
+    "jejuArea": "Jeju gebied"
+  },
+  "matchingUniversitySettings": {
+    "title": "Universiteit selectie",
+    "sameUniversity": "Zelfde universiteit",
+    "specificUniversity": "Specifieke universiteit",
+    "seoulArea": "Seoul regio",
+    "gyeonggiArea": "Gyeonggi regio",
+    "incheonArea": "Incheon regio",
+    "busanArea": "Busan regio",
+    "daeguArea": "Daegu regio",
+    "gwangjuArea": "Gwangju regio",
+    "daejeonArea": "Daejeon regio",
+    "ulsanArea": "Ulsan regio",
+    "gangwonArea": "Gangwon regio",
+    "chungcheongArea": "Chungcheong regio",
+    "jeollaArea": "Jeolla regio",
+    "gyeongsangArea": "Gyeongsang regio",
+    "jejuArea": "Jeju regio",
+    "anywhere": "Overal"
   }
 }

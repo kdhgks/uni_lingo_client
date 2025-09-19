@@ -38,65 +38,10 @@ const MatchingUniversitySettingsContainer = styled.div`
 const Main = styled.main`
   max-width: 1000px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem 2rem;
 
   @media (max-width: 768px) {
-    padding: 1rem;
-  }
-`;
-
-const Header = styled.header`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #e1e8ed;
-  transition: border-color 0.3s ease;
-  position: relative;
-
-  .dark-mode & {
-    border-color: #555;
-  }
-`;
-
-const BackButton = styled.button`
-  position: absolute;
-  left: 0;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: none;
-  border: none;
-  color: #3498db;
-  font-size: 1rem;
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-
-  @media (min-width: 769px) {
-    &:hover {
-      background: rgba(52, 152, 219, 0.1);
-    }
-  }
-
-  .dark-mode & {
-    color: #5dade2;
-  }
-`;
-
-const Title = styled.h1`
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #2c3e50;
-  margin: 0;
-  text-align: center;
-  transition: color 0.3s ease;
-
-  .dark-mode & {
-    color: #ffffff;
+    padding: 0.5rem 1rem;
   }
 `;
 
@@ -104,7 +49,7 @@ const UniversityGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1rem;
-  margin-top: 2rem;
+  margin-top: 1rem;
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -194,29 +139,44 @@ const SelectedIndicator = styled.div`
   }
 `;
 
-const universities = [
-  { code: "same_university", name: "같은 대학교" },
-  { code: "specific_university", name: "특정 대학교" },
-  { code: "seoul_area", name: "서울 지역" },
-  { code: "gyeonggi_area", name: "경기 지역" },
-  { code: "incheon_area", name: "인천 지역" },
-  { code: "busan_area", name: "부산 지역" },
-  { code: "daegu_area", name: "대구 지역" },
-  { code: "gwangju_area", name: "광주 지역" },
-  { code: "daejeon_area", name: "대전 지역" },
-  { code: "ulsan_area", name: "울산 지역" },
-  { code: "gangwon_area", name: "강원 지역" },
-  { code: "chungcheong_area", name: "충청 지역" },
-  { code: "jeolla_area", name: "전라 지역" },
-  { code: "gyeongsang_area", name: "경상 지역" },
-  { code: "jeju_area", name: "제주 지역" },
-  { code: "anywhere", name: "어디든 상관없음" },
-];
-
 const MatchingUniversitySettings = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const [selectedUniversity, setSelectedUniversity] = useState("");
+
+  const universities = [
+    {
+      code: "same_university",
+      name: t("matchingUniversitySettings.sameUniversity"),
+    },
+    {
+      code: "specific_university",
+      name: t("matchingUniversitySettings.specificUniversity"),
+    },
+    { code: "seoul_area", name: t("matchingUniversitySettings.seoulArea") },
+    {
+      code: "gyeonggi_area",
+      name: t("matchingUniversitySettings.gyeonggiArea"),
+    },
+    { code: "incheon_area", name: t("matchingUniversitySettings.incheonArea") },
+    { code: "busan_area", name: t("matchingUniversitySettings.busanArea") },
+    { code: "daegu_area", name: t("matchingUniversitySettings.daeguArea") },
+    { code: "gwangju_area", name: t("matchingUniversitySettings.gwangjuArea") },
+    { code: "daejeon_area", name: t("matchingUniversitySettings.daejeonArea") },
+    { code: "ulsan_area", name: t("matchingUniversitySettings.ulsanArea") },
+    { code: "gangwon_area", name: t("matchingUniversitySettings.gangwonArea") },
+    {
+      code: "chungcheong_area",
+      name: t("matchingUniversitySettings.chungcheongArea"),
+    },
+    { code: "jeolla_area", name: t("matchingUniversitySettings.jeollaArea") },
+    {
+      code: "gyeongsang_area",
+      name: t("matchingUniversitySettings.gyeongsangArea"),
+    },
+    { code: "jeju_area", name: t("matchingUniversitySettings.jejuArea") },
+    { code: "anywhere", name: t("matchingUniversitySettings.anywhere") },
+  ];
 
   const handleUniversitySelect = (university) => {
     setSelectedUniversity(university);
@@ -234,13 +194,6 @@ const MatchingUniversitySettings = () => {
   return (
     <MatchingUniversitySettingsContainer>
       <Main>
-        <Header>
-          <BackButton onClick={() => navigate(-1)}>
-            ← {t("common.back")}
-          </BackButton>
-          <Title>대학교 선택</Title>
-        </Header>
-
         <UniversityGrid>
           {universities.map((university) => (
             <UniversityCard

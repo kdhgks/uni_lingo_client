@@ -243,5 +243,65 @@
     "noNotifications": "No new notifications",
     "newMessage": "New Message",
     "matchComplete": "Match Complete"
+  },
+  "modal": {
+    "success": "Success!",
+    "warning": "Warning",
+    "error": "Error",
+    "info": "Info",
+    "confirm": "Confirm",
+    "selectAllRequired": "Please select gender, learning language, and university.",
+    "enterUniversityName": "Please enter university name.",
+    "alreadyRequested": "A matching request is already in progress. Please wait for admin approval.",
+    "requestComplete": "Friend request submitted successfully! 🎉\n\nPlease wait for admin approval. You will receive a notification when approved.",
+    "requestFailed": "Matching request failed.",
+    "requestError": "An error occurred during matching request. Please try again."
+  },
+  "adminModal": {
+    "partnerSelectionTitle": "Select Matching Partner",
+    "partnerSelectionMessage": "Select a partner to match with",
+    "cancel": "Cancel",
+    "approveMatch": "Approve Match",
+    "matchComplete": "'s match has been completed!"
+  },
+  "genderSettings": {
+    "title": "Gender Selection",
+    "male": "Male",
+    "female": "Female"
+  },
+  "universitySettings": {
+    "title": "University Selection",
+    "seoulArea": "Seoul Area",
+    "gyeonggiArea": "Gyeonggi Area",
+    "incheonArea": "Incheon Area",
+    "busanArea": "Busan Area",
+    "daeguArea": "Daegu Area",
+    "gwangjuArea": "Gwangju Area",
+    "daejeonArea": "Daejeon Area",
+    "ulsanArea": "Ulsan Area",
+    "gangwonArea": "Gangwon Area",
+    "chungcheongArea": "Chungcheong Area",
+    "jeollaArea": "Jeolla Area",
+    "gyeongsangArea": "Gyeongsang Area",
+    "jejuArea": "Jeju Area"
+  },
+  "matchingUniversitySettings": {
+    "title": "University Selection",
+    "sameUniversity": "Same University",
+    "specificUniversity": "Specific University",
+    "seoulArea": "Seoul Region",
+    "gyeonggiArea": "Gyeonggi Region",
+    "incheonArea": "Incheon Region",
+    "busanArea": "Busan Region",
+    "daeguArea": "Daegu Region",
+    "gwangjuArea": "Gwangju Region",
+    "daejeonArea": "Daejeon Region",
+    "ulsanArea": "Ulsan Region",
+    "gangwonArea": "Gangwon Region",
+    "chungcheongArea": "Chungcheong Region",
+    "jeollaArea": "Jeolla Region",
+    "gyeongsangArea": "Gyeongsang Region",
+    "jejuArea": "Jeju Region",
+    "anywhere": "Anywhere"
   }
 }

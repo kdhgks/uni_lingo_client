@@ -276,14 +276,6 @@ const ChatBtn = styled.button`
     padding: 0.5rem 1rem;
     font-size: 0.85rem;
   }
-
-  @media (min-width: 769px) {
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(52, 152, 219, 0.6);
-      animation: ${pulse} 0.6s ease-in-out;
-    }
-  }
 `;
 
 // Mobile Menu Components 제거됨 - PC에서만 사이드바 사용
@@ -299,12 +291,6 @@ const NotificationContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-
-  @media (min-width: 769px) {
-    &:hover {
-      background: rgba(52, 152, 219, 0.1);
-    }
-  }
 `;
 
 const NotificationIcon = styled.span`
@@ -346,26 +332,6 @@ const ProfileSection = styled.div`
   position: relative;
   overflow: hidden;
   transition: all 0.3s ease;
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(52, 152, 219, 0.2),
-      transparent
-    );
-    transition: left 0.5s;
-  }
-
-  &:hover::before {
-    left: 100%;
-  }
 
   .dark-mode & {
     background: rgba(52, 152, 219, 0.2);
@@ -501,11 +467,6 @@ const ProfileInterestTag = styled.span`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 
-  &:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  }
-
   button {
     background: none;
     border: none;
@@ -520,10 +481,6 @@ const ProfileInterestTag = styled.span`
     justify-content: center;
     border-radius: 50%;
     transition: all 0.3s ease;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
   }
 `;
 
@@ -620,13 +577,6 @@ const LanguageButton = styled.button`
   text-align: left;
   min-height: 48px;
 
-  &:hover {
-    border-color: #2ecc71;
-    background: rgba(46, 204, 113, 0.05);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(46, 204, 113, 0.2);
-  }
-
   &:focus {
     outline: none;
     border-color: #2ecc71;
@@ -637,11 +587,6 @@ const LanguageButton = styled.button`
     background: rgba(60, 60, 60, 0.9);
     color: #ffffff;
     border-color: #555;
-
-    &:hover {
-      border-color: #5dade2;
-      background: rgba(93, 173, 226, 0.1);
-    }
   }
 `;
 
@@ -747,14 +692,6 @@ const InterestTag = styled.button`
   transition: all 0.3s ease;
   font-size: 0.9rem;
 
-  @media (min-width: 769px) {
-    &:hover:not(:disabled) {
-      background: rgba(52, 152, 219, 0.2);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
-    }
-  }
-
   &.selected {
     background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
     border-color: #3498db;
@@ -798,10 +735,6 @@ const SelectedInterest = styled.span`
     justify-content: center;
     border-radius: 50%;
     transition: all 0.3s ease;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
   }
 `;
 
@@ -817,14 +750,6 @@ const MatchingBtn = styled.button`
   color: white;
   box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
   margin-top: 0.7rem;
-
-  @media (min-width: 769px) {
-    &:hover:not(:disabled) {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 30px rgba(52, 152, 219, 0.6);
-      animation: ${pulse} 0.6s ease-in-out;
-    }
-  }
 
   &:disabled {
     opacity: 0.5;
@@ -1000,11 +925,6 @@ const ModalButton = styled.button`
   font-size: 1rem;
   font-weight: 600;
   transition: all 0.3s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  }
 `;
 
 // 파트너 프로필 모달 컴포넌트들
@@ -1084,17 +1004,8 @@ const CloseButton = styled.button`
   border-radius: 50%;
   transition: all 0.3s ease;
 
-  &:hover {
-    background: rgba(0, 0, 0, 0.1);
-    transform: scale(1.1);
-  }
-
   .dark-mode & {
     color: #ccc;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
   }
 `;
 
@@ -1231,11 +1142,6 @@ const ActionButton = styled.button`
     background: #f8f9fa;
     color: #6c757d;
     border: 2px solid #e9ecef;
-  }
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   }
 
   .dark-mode & {
@@ -1661,7 +1567,7 @@ const Matching = () => {
       !filterSettings.learningLanguage ||
       !filterSettings.university
     ) {
-      setModalMessage("성별, 배우고 싶은 언어, 대학교를 모두 선택해주세요.");
+      setModalMessage(t("modal.selectAllRequired"));
       setModalType("warning");
       setShowStatusModal(true);
       return;
@@ -1671,7 +1577,7 @@ const Matching = () => {
       filterSettings.university === "specific_university" &&
       !filterSettings.specificUniversity.trim()
     ) {
-      setModalMessage("대학명을 입력해주세요.");
+      setModalMessage(t("modal.enterUniversityName"));
       setModalType("warning");
       setShowStatusModal(true);
       return;
@@ -1680,9 +1586,7 @@ const Matching = () => {
     // 매칭 상태 확인
     const canRequest = await checkMatchingStatus();
     if (!canRequest) {
-      setModalMessage(
-        "이미 매칭 신청이 진행 중입니다. 관리자가 승인할 때까지 기다려주세요."
-      );
+      setModalMessage(t("modal.alreadyRequested"));
       setModalType("warning");
       setShowStatusModal(true);
       return;
@@ -1711,21 +1615,19 @@ const Matching = () => {
 
       if (response.ok) {
         // 매칭 신청 성공 시 바로 완료 모달 표시
-        setModalMessage(
-          "친구찾기 신청이 완료되었습니다! 🎉\n\n관리자가 승인할 때까지 기다려주세요. 승인되면 알림을 받으실 수 있습니다."
-        );
+        setModalMessage(t("modal.requestComplete"));
         setModalType("success");
         setShowStatusModal(true);
       } else {
         const errorData = await response.json();
         console.error("매칭 신청 실패:", errorData);
-        setModalMessage(errorData.message || "매칭 신청에 실패했습니다.");
+        setModalMessage(errorData.message || t("modal.requestFailed"));
         setModalType("warning");
         setShowStatusModal(true);
       }
     } catch (error) {
       console.error("매칭 신청 중 오류:", error);
-      setModalMessage("매칭 신청 중 오류가 발생했습니다. 다시 시도해주세요.");
+      setModalMessage(t("modal.requestError"));
       setModalType("warning");
       setShowStatusModal(true);
     } finally {
@@ -2110,14 +2012,14 @@ const Matching = () => {
               {modalType === "info" && "ℹ️"}
             </ModalIcon>
             <ModalTitle>
-              {modalType === "success" && "성공!"}
-              {modalType === "warning" && "알림"}
-              {modalType === "error" && "오류"}
-              {modalType === "info" && "정보"}
+              {modalType === "success" && t("modal.success")}
+              {modalType === "warning" && t("modal.warning")}
+              {modalType === "error" && t("modal.error")}
+              {modalType === "info" && t("modal.info")}
             </ModalTitle>
             <ModalMessage>{modalMessage}</ModalMessage>
             <ModalButton type={modalType} onClick={closeModal}>
-              확인
+              {t("modal.confirm")}
             </ModalButton>
           </ModalContent>
         </ModalOverlay>

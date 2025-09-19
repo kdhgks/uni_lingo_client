@@ -243,5 +243,65 @@
     "noNotifications": "Không có thông báo mới",
     "newMessage": "Tin nhắn mới",
     "matchComplete": "Kết nối hoàn thành"
+  },
+  "modal": {
+    "success": "Thành công!",
+    "warning": "Cảnh báo",
+    "error": "Lỗi",
+    "info": "Thông tin",
+    "confirm": "Xác nhận",
+    "selectAllRequired": "Vui lòng chọn giới tính, ngôn ngữ học và trường đại học.",
+    "enterUniversityName": "Vui lòng nhập tên trường đại học.",
+    "alreadyRequested": "Yêu cầu kết nối đã được gửi. Vui lòng đợi quản trị viên phê duyệt.",
+    "requestComplete": "Yêu cầu kết bạn đã được gửi thành công! 🎉\n\nVui lòng đợi quản trị viên phê duyệt. Bạn sẽ nhận được thông báo khi được phê duyệt.",
+    "requestFailed": "Yêu cầu kết nối thất bại.",
+    "requestError": "Đã xảy ra lỗi trong quá trình yêu cầu kết nối. Vui lòng thử lại."
+  },
+  "adminModal": {
+    "partnerSelectionTitle": "Chọn Đối Tác Kết Nối",
+    "partnerSelectionMessage": "Chọn một đối tác để kết nối với",
+    "cancel": "Hủy",
+    "approveMatch": "Phê Duyệt Kết Nối",
+    "matchComplete": "Kết nối với đã hoàn thành!"
+  },
+  "genderSettings": {
+    "title": "Lựa chọn Giới tính",
+    "male": "Nam",
+    "female": "Nữ"
+  },
+  "universitySettings": {
+    "title": "Lựa chọn Trường đại học",
+    "seoulArea": "Khu vực Seoul",
+    "gyeonggiArea": "Khu vực Gyeonggi",
+    "incheonArea": "Khu vực Incheon",
+    "busanArea": "Khu vực Busan",
+    "daeguArea": "Khu vực Daegu",
+    "gwangjuArea": "Khu vực Gwangju",
+    "daejeonArea": "Khu vực Daejeon",
+    "ulsanArea": "Khu vực Ulsan",
+    "gangwonArea": "Khu vực Gangwon",
+    "chungcheongArea": "Khu vực Chungcheong",
+    "jeollaArea": "Khu vực Jeolla",
+    "gyeongsangArea": "Khu vực Gyeongsang",
+    "jejuArea": "Khu vực Jeju"
+  },
+  "matchingUniversitySettings": {
+    "title": "Lựa chọn Trường đại học",
+    "sameUniversity": "Cùng trường đại học",
+    "specificUniversity": "Trường đại học cụ thể",
+    "seoulArea": "Vùng Seoul",
+    "gyeonggiArea": "Vùng Gyeonggi",
+    "incheonArea": "Vùng Incheon",
+    "busanArea": "Vùng Busan",
+    "daeguArea": "Vùng Daegu",
+    "gwangjuArea": "Vùng Gwangju",
+    "daejeonArea": "Vùng Daejeon",
+    "ulsanArea": "Vùng Ulsan",
+    "gangwonArea": "Vùng Gangwon",
+    "chungcheongArea": "Vùng Chungcheong",
+    "jeollaArea": "Vùng Jeolla",
+    "gyeongsangArea": "Vùng Gyeongsang",
+    "jejuArea": "Vùng Jeju",
+    "anywhere": "Ở đâu cũng được"
   }
 }

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { API_ENDPOINTS } from "../config/api";
+import { useLanguage } from "../contexts/LanguageContext";
 
 const AdminContainer = styled.div`
   min-height: 100vh;
@@ -551,6 +552,7 @@ const ModalButtons = styled.div`
 
 const AdminMatching = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState("pending");
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -698,7 +700,7 @@ const AdminMatching = () => {
       );
 
       if (response.ok) {
-        alert(`${selectedPartner.nickname}님과의 매칭이 완료되었습니다!`);
+        alert(`${selectedPartner.nickname}${t("adminModal.matchComplete")}`);
         setShowPartnerModal(false);
         setSelectedRequest(null);
         setSelectedPartner(null);
@@ -1024,7 +1026,7 @@ const AdminMatching = () => {
       {showPartnerModal && (
         <ModalOverlay onClick={() => setShowPartnerModal(false)}>
           <ModalContent onClick={(e) => e.stopPropagation()}>
-            <ModalTitle>매칭 파트너 선택</ModalTitle>
+            <ModalTitle>{t("adminModal.partnerSelectionTitle")}</ModalTitle>
             <p
               style={{
                 textAlign: "center",
@@ -1032,8 +1034,8 @@ const AdminMatching = () => {
                 marginBottom: "1rem",
               }}
             >
-              <strong>{selectedRequest?.user?.nickname}</strong>님과 매칭할
-              파트너를 선택하세요
+              <strong>{selectedRequest?.user?.nickname}</strong>
+              {t("adminModal.partnerSelectionMessage")}
             </p>
 
             <PartnerList>
@@ -1073,14 +1075,14 @@ const AdminMatching = () => {
                 variant="secondary"
                 onClick={() => setShowPartnerModal(false)}
               >
-                취소
+                {t("adminModal.cancel")}
               </ActionBtn>
               <ActionBtn
                 variant="primary"
                 onClick={handleConfirmMatch}
                 disabled={!selectedPartner}
               >
-                매칭 승인
+                {t("adminModal.approveMatch")}
               </ActionBtn>
             </ModalButtons>
           </ModalContent>

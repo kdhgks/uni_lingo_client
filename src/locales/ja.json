@@ -243,5 +243,65 @@
     "noNotifications": "新しい通知はありません",
     "newMessage": "新しいメッセージ",
     "matchComplete": "マッチング完了"
+  },
+  "modal": {
+    "success": "成功！",
+    "warning": "警告",
+    "error": "エラー",
+    "info": "情報",
+    "confirm": "確認",
+    "selectAllRequired": "性別、学習言語、大学をすべて選択してください。",
+    "enterUniversityName": "大学名を入力してください。",
+    "alreadyRequested": "マッチング申請が既に進行中です。管理者の承認をお待ちください。",
+    "requestComplete": "友達探し申請が完了しました！🎉\n\n管理者の承認をお待ちください。承認されると通知を受け取ります。",
+    "requestFailed": "マッチング申請に失敗しました。",
+    "requestError": "マッチング申請中にエラーが発生しました。もう一度お試しください。"
+  },
+  "adminModal": {
+    "partnerSelectionTitle": "マッチングパートナー選択",
+    "partnerSelectionMessage": "とマッチングするパートナーを選択してください",
+    "cancel": "キャンセル",
+    "approveMatch": "マッチング承認",
+    "matchComplete": "とのマッチングが完了しました！"
+  },
+  "genderSettings": {
+    "title": "性別選択",
+    "male": "男性",
+    "female": "女性"
+  },
+  "universitySettings": {
+    "title": "大学選択",
+    "seoulArea": "ソウル圏",
+    "gyeonggiArea": "京畿圏",
+    "incheonArea": "仁川圏",
+    "busanArea": "釜山圏",
+    "daeguArea": "大邱圏",
+    "gwangjuArea": "光州圏",
+    "daejeonArea": "大田圏",
+    "ulsanArea": "蔚山圏",
+    "gangwonArea": "江原圏",
+    "chungcheongArea": "忠清圏",
+    "jeollaArea": "全羅圏",
+    "gyeongsangArea": "慶尚圏",
+    "jejuArea": "済州圏"
+  },
+  "matchingUniversitySettings": {
+    "title": "大学選択",
+    "sameUniversity": "同じ大学",
+    "specificUniversity": "特定の大学",
+    "seoulArea": "ソウル地域",
+    "gyeonggiArea": "京畿地域",
+    "incheonArea": "仁川地域",
+    "busanArea": "釜山地域",
+    "daeguArea": "大邱地域",
+    "gwangjuArea": "光州地域",
+    "daejeonArea": "大田地域",
+    "ulsanArea": "蔚山地域",
+    "gangwonArea": "江原地域",
+    "chungcheongArea": "忠清地域",
+    "jeollaArea": "全羅地域",
+    "gyeongsangArea": "慶尚地域",
+    "jejuArea": "済州地域",
+    "anywhere": "どこでも構わない"
   }
 }

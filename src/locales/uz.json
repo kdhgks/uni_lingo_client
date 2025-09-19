@@ -243,5 +243,65 @@
     "noNotifications": "Yangi bildirishnomalar yo'q",
     "newMessage": "Yangi xabar",
     "matchComplete": "Uchrashuv yakunlandi"
+  },
+  "modal": {
+    "success": "Muvaffaqiyat!",
+    "warning": "Ogohlantirish",
+    "error": "Xato",
+    "info": "Ma'lumot",
+    "confirm": "Tasdiqlash",
+    "selectAllRequired": "Iltimos, jinsni, o'rganilayotgan tilni va universitetni tanlang.",
+    "enterUniversityName": "Iltimos, universitet nomini kiriting.",
+    "alreadyRequested": "Uchrashuv so'rovi allaqachon jarayonda. Administrator tasdigini kuting.",
+    "requestComplete": "Do'stlik so'rovi muvaffaqiyatli yuborildi! 🎉\n\nAdministrator tasdigini kuting. Tasdiqlanganda bildirishnoma olasiz.",
+    "requestFailed": "Uchrashuv so'rovi muvaffaqiyatsiz tugadi.",
+    "requestError": "Uchrashuv so'rovi jarayonida xato yuz berdi. Iltimos, qayta urinib ko'ring."
+  },
+  "adminModal": {
+    "partnerSelectionTitle": "Uchrashuv Sherigini Tanlash",
+    "partnerSelectionMessage": "Uchrashuv uchun sherigini tanlang",
+    "cancel": "Bekor qilish",
+    "approveMatch": "Uchrashuvni Tasdiqlash",
+    "matchComplete": "bilan uchrashuv yakunlandi!"
+  },
+  "genderSettings": {
+    "title": "Jinsni tanlash",
+    "male": "Erkak",
+    "female": "Ayol"
+  },
+  "universitySettings": {
+    "title": "Universitetni tanlash",
+    "seoulArea": "Seul hududi",
+    "gyeonggiArea": "Gyeonggi hududi",
+    "incheonArea": "Incheon hududi",
+    "busanArea": "Busan hududi",
+    "daeguArea": "Daegu hududi",
+    "gwangjuArea": "Gwangju hududi",
+    "daejeonArea": "Daejeon hududi",
+    "ulsanArea": "Ulsan hududi",
+    "gangwonArea": "Gangwon hududi",
+    "chungcheongArea": "Chungcheong hududi",
+    "jeollaArea": "Jeolla hududi",
+    "gyeongsangArea": "Gyeongsang hududi",
+    "jejuArea": "Jeju hududi"
+  },
+  "matchingUniversitySettings": {
+    "title": "Universitetni tanlash",
+    "sameUniversity": "Bir xil universitet",
+    "specificUniversity": "Muayyan universitet",
+    "seoulArea": "Seul mintaqasi",
+    "gyeonggiArea": "Gyeonggi mintaqasi",
+    "incheonArea": "Incheon mintaqasi",
+    "busanArea": "Busan mintaqasi",
+    "daeguArea": "Daegu mintaqasi",
+    "gwangjuArea": "Gwangju mintaqasi",
+    "daejeonArea": "Daejeon mintaqasi",
+    "ulsanArea": "Ulsan mintaqasi",
+    "gangwonArea": "Gangwon mintaqasi",
+    "chungcheongArea": "Chungcheong mintaqasi",
+    "jeollaArea": "Jeolla mintaqasi",
+    "gyeongsangArea": "Gyeongsang mintaqasi",
+    "jejuArea": "Jeju mintaqasi",
+    "anywhere": "Istalgan joy"
   }
 }

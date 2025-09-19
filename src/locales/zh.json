@@ -243,5 +243,65 @@
     "noNotifications": "没有新通知",
     "newMessage": "新消息",
     "matchComplete": "匹配完成"
+  },
+  "modal": {
+    "success": "成功！",
+    "warning": "警告",
+    "error": "错误",
+    "info": "信息",
+    "confirm": "确认",
+    "selectAllRequired": "请选择性别、学习语言和大学。",
+    "enterUniversityName": "请输入大学名称。",
+    "alreadyRequested": "匹配申请已在进行中。请等待管理员批准。",
+    "requestComplete": "朋友匹配申请已提交！🎉\n\n请等待管理员批准。批准后您将收到通知。",
+    "requestFailed": "匹配申请失败。",
+    "requestError": "匹配申请过程中发生错误。请重试。"
+  },
+  "adminModal": {
+    "partnerSelectionTitle": "选择匹配伙伴",
+    "partnerSelectionMessage": "选择与匹配的伙伴",
+    "cancel": "取消",
+    "approveMatch": "批准匹配",
+    "matchComplete": "的匹配已完成！"
+  },
+  "genderSettings": {
+    "title": "性别选择",
+    "male": "男性",
+    "female": "女性"
+  },
+  "universitySettings": {
+    "title": "大学选择",
+    "seoulArea": "首尔圈",
+    "gyeonggiArea": "京畿圈",
+    "incheonArea": "仁川圈",
+    "busanArea": "釜山圈",
+    "daeguArea": "大邱圈",
+    "gwangjuArea": "光州圈",
+    "daejeonArea": "大田圈",
+    "ulsanArea": "蔚山圈",
+    "gangwonArea": "江原圈",
+    "chungcheongArea": "忠清圈",
+    "jeollaArea": "全罗圈",
+    "gyeongsangArea": "庆尚圈",
+    "jejuArea": "济州圈"
+  },
+  "matchingUniversitySettings": {
+    "title": "大学选择",
+    "sameUniversity": "同一所大学",
+    "specificUniversity": "特定大学",
+    "seoulArea": "首尔地区",
+    "gyeonggiArea": "京畿地区",
+    "incheonArea": "仁川地区",
+    "busanArea": "釜山地区",
+    "daeguArea": "大邱地区",
+    "gwangjuArea": "光州地区",
+    "daejeonArea": "大田地区",
+    "ulsanArea": "蔚山地区",
+    "gangwonArea": "江原地区",
+    "chungcheongArea": "忠清地区",
+    "jeollaArea": "全罗地区",
+    "gyeongsangArea": "庆尚地区",
+    "jejuArea": "济州地区",
+    "anywhere": "任何地方都可以"
   }
 }

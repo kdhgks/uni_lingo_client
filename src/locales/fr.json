@@ -243,5 +243,65 @@
     "noNotifications": "Aucune nouvelle notification",
     "newMessage": "Nouveau message",
     "matchComplete": "Appariement terminé"
+  },
+  "modal": {
+    "success": "Succès !",
+    "warning": "Avertissement",
+    "error": "Erreur",
+    "info": "Information",
+    "confirm": "Confirmer",
+    "selectAllRequired": "Veuillez sélectionner le sexe, la langue d'apprentissage et l'université.",
+    "enterUniversityName": "Veuillez saisir le nom de l'université.",
+    "alreadyRequested": "Une demande d'appariement est déjà en cours. Veuillez attendre l'approbation de l'administrateur.",
+    "requestComplete": "Demande d'ami soumise avec succès ! 🎉\n\nVeuillez attendre l'approbation de l'administrateur. Vous recevrez une notification une fois approuvée.",
+    "requestFailed": "La demande d'appariement a échoué.",
+    "requestError": "Une erreur s'est produite lors de la demande d'appariement. Veuillez réessayer."
+  },
+  "adminModal": {
+    "partnerSelectionTitle": "Sélectionner le Partenaire d'Appariement",
+    "partnerSelectionMessage": "Sélectionnez un partenaire pour l'appariement avec",
+    "cancel": "Annuler",
+    "approveMatch": "Approuver l'Appariement",
+    "matchComplete": "L'appariement de a été complété !"
+  },
+  "genderSettings": {
+    "title": "Sélection du Genre",
+    "male": "Masculin",
+    "female": "Féminin"
+  },
+  "universitySettings": {
+    "title": "Sélection d'Université",
+    "seoulArea": "Zone de Séoul",
+    "gyeonggiArea": "Zone de Gyeonggi",
+    "incheonArea": "Zone d'Incheon",
+    "busanArea": "Zone de Busan",
+    "daeguArea": "Zone de Daegu",
+    "gwangjuArea": "Zone de Gwangju",
+    "daejeonArea": "Zone de Daejeon",
+    "ulsanArea": "Zone d'Ulsan",
+    "gangwonArea": "Zone de Gangwon",
+    "chungcheongArea": "Zone de Chungcheong",
+    "jeollaArea": "Zone de Jeolla",
+    "gyeongsangArea": "Zone de Gyeongsang",
+    "jejuArea": "Zone de Jeju"
+  },
+  "matchingUniversitySettings": {
+    "title": "Sélection d'Université",
+    "sameUniversity": "Même Université",
+    "specificUniversity": "Université Spécifique",
+    "seoulArea": "Région de Séoul",
+    "gyeonggiArea": "Région de Gyeonggi",
+    "incheonArea": "Région d'Incheon",
+    "busanArea": "Région de Busan",
+    "daeguArea": "Région de Daegu",
+    "gwangjuArea": "Région de Gwangju",
+    "daejeonArea": "Région de Daejeon",
+    "ulsanArea": "Région d'Ulsan",
+    "gangwonArea": "Région de Gangwon",
+    "chungcheongArea": "Région de Chungcheong",
+    "jeollaArea": "Région de Jeolla",
+    "gyeongsangArea": "Région de Gyeongsang",
+    "jejuArea": "Région de Jeju",
+    "anywhere": "N'importe où"
   }
 }

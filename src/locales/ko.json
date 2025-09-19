@@ -243,5 +243,65 @@
     "noNotifications": "새로운 알림이 없습니다",
     "newMessage": "새로운 메시지",
     "matchComplete": "매칭 완료"
+  },
+  "modal": {
+    "success": "성공!",
+    "warning": "알림",
+    "error": "오류",
+    "info": "정보",
+    "confirm": "확인",
+    "selectAllRequired": "성별, 배우고 싶은 언어, 대학교를 모두 선택해주세요.",
+    "enterUniversityName": "대학명을 입력해주세요.",
+    "alreadyRequested": "이미 매칭 신청이 진행 중입니다. 관리자가 승인할 때까지 기다려주세요.",
+    "requestComplete": "친구찾기 신청이 완료되었습니다! 🎉\n\n관리자가 승인할 때까지 기다려주세요. 승인되면 알림을 받으실 수 있습니다.",
+    "requestFailed": "매칭 신청에 실패했습니다.",
+    "requestError": "매칭 신청 중 오류가 발생했습니다. 다시 시도해주세요."
+  },
+  "adminModal": {
+    "partnerSelectionTitle": "매칭 파트너 선택",
+    "partnerSelectionMessage": "님과 매칭할 파트너를 선택하세요",
+    "cancel": "취소",
+    "approveMatch": "매칭 승인",
+    "matchComplete": "님과의 매칭이 완료되었습니다!"
+  },
+  "genderSettings": {
+    "title": "성별 선택",
+    "male": "남성",
+    "female": "여성"
+  },
+  "universitySettings": {
+    "title": "대학교 선택",
+    "seoulArea": "서울권",
+    "gyeonggiArea": "경기권",
+    "incheonArea": "인천권",
+    "busanArea": "부산권",
+    "daeguArea": "대구권",
+    "gwangjuArea": "광주권",
+    "daejeonArea": "대전권",
+    "ulsanArea": "울산권",
+    "gangwonArea": "강원권",
+    "chungcheongArea": "충청권",
+    "jeollaArea": "전라권",
+    "gyeongsangArea": "경상권",
+    "jejuArea": "제주권"
+  },
+  "matchingUniversitySettings": {
+    "title": "대학교 선택",
+    "sameUniversity": "같은 대학교",
+    "specificUniversity": "특정 대학교",
+    "seoulArea": "서울 지역",
+    "gyeonggiArea": "경기 지역",
+    "incheonArea": "인천 지역",
+    "busanArea": "부산 지역",
+    "daeguArea": "대구 지역",
+    "gwangjuArea": "광주 지역",
+    "daejeonArea": "대전 지역",
+    "ulsanArea": "울산 지역",
+    "gangwonArea": "강원 지역",
+    "chungcheongArea": "충청 지역",
+    "jeollaArea": "전라 지역",
+    "gyeongsangArea": "경상 지역",
+    "jejuArea": "제주 지역",
+    "anywhere": "어디든 상관없음"
   }
 }

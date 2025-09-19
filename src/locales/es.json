@@ -243,5 +243,65 @@
     "noNotifications": "No hay notificaciones nuevas",
     "newMessage": "Nuevo mensaje",
     "matchComplete": "Emparejamiento completado"
+  },
+  "modal": {
+    "success": "¡Éxito!",
+    "warning": "Advertencia",
+    "error": "Error",
+    "info": "Información",
+    "confirm": "Confirmar",
+    "selectAllRequired": "Por favor selecciona género, idioma de aprendizaje y universidad.",
+    "enterUniversityName": "Por favor ingresa el nombre de la universidad.",
+    "alreadyRequested": "Ya hay una solicitud de emparejamiento en progreso. Espera la aprobación del administrador.",
+    "requestComplete": "¡Solicitud de amistad enviada exitosamente! 🎉\n\nEspera la aprobación del administrador. Recibirás una notificación cuando sea aprobada.",
+    "requestFailed": "La solicitud de emparejamiento falló.",
+    "requestError": "Ocurrió un error durante la solicitud de emparejamiento. Inténtalo de nuevo."
+  },
+  "adminModal": {
+    "partnerSelectionTitle": "Seleccionar Pareja de Emparejamiento",
+    "partnerSelectionMessage": "Selecciona una pareja para emparejar con",
+    "cancel": "Cancelar",
+    "approveMatch": "Aprobar Emparejamiento",
+    "matchComplete": "¡El emparejamiento de ha sido completado!"
+  },
+  "genderSettings": {
+    "title": "Selección de Género",
+    "male": "Masculino",
+    "female": "Femenino"
+  },
+  "universitySettings": {
+    "title": "Selección de Universidad",
+    "seoulArea": "Área de Seúl",
+    "gyeonggiArea": "Área de Gyeonggi",
+    "incheonArea": "Área de Incheon",
+    "busanArea": "Área de Busan",
+    "daeguArea": "Área de Daegu",
+    "gwangjuArea": "Área de Gwangju",
+    "daejeonArea": "Área de Daejeon",
+    "ulsanArea": "Área de Ulsan",
+    "gangwonArea": "Área de Gangwon",
+    "chungcheongArea": "Área de Chungcheong",
+    "jeollaArea": "Área de Jeolla",
+    "gyeongsangArea": "Área de Gyeongsang",
+    "jejuArea": "Área de Jeju"
+  },
+  "matchingUniversitySettings": {
+    "title": "Selección de Universidad",
+    "sameUniversity": "Misma Universidad",
+    "specificUniversity": "Universidad Específica",
+    "seoulArea": "Región de Seúl",
+    "gyeonggiArea": "Región de Gyeonggi",
+    "incheonArea": "Región de Incheon",
+    "busanArea": "Región de Busan",
+    "daeguArea": "Región de Daegu",
+    "gwangjuArea": "Región de Gwangju",
+    "daejeonArea": "Región de Daejeon",
+    "ulsanArea": "Región de Ulsan",
+    "gangwonArea": "Región de Gangwon",
+    "chungcheongArea": "Región de Chungcheong",
+    "jeollaArea": "Región de Jeolla",
+    "gyeongsangArea": "Región de Gyeongsang",
+    "jejuArea": "Región de Jeju",
+    "anywhere": "Cualquier lugar"
   }
 }

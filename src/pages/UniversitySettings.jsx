@@ -38,65 +38,10 @@ const UniversitySettingsContainer = styled.div`
 const Main = styled.main`
   max-width: 1000px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem 2rem;
 
   @media (max-width: 768px) {
-    padding: 1rem;
-  }
-`;
-
-const Header = styled.header`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #e1e8ed;
-  transition: border-color 0.3s ease;
-  position: relative;
-
-  .dark-mode & {
-    border-color: #555;
-  }
-`;
-
-const BackButton = styled.button`
-  position: absolute;
-  left: 0;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: none;
-  border: none;
-  color: #3498db;
-  font-size: 1rem;
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-
-  @media (min-width: 769px) {
-    &:hover {
-      background: rgba(52, 152, 219, 0.1);
-    }
-  }
-
-  .dark-mode & {
-    color: #5dade2;
-  }
-`;
-
-const Title = styled.h1`
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #2c3e50;
-  margin: 0;
-  text-align: center;
-  transition: color 0.3s ease;
-
-  .dark-mode & {
-    color: #ffffff;
+    padding: 0.5rem 1rem;
   }
 `;
 
@@ -104,7 +49,7 @@ const UniversityGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1rem;
-  margin-top: 2rem;
+  margin-top: 1rem;
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -194,26 +139,26 @@ const SelectedIndicator = styled.div`
   }
 `;
 
-const universities = [
-  { code: "seoul_area", name: "서울권" },
-  { code: "gyeonggi_area", name: "경기권" },
-  { code: "incheon_area", name: "인천권" },
-  { code: "busan_area", name: "부산권" },
-  { code: "daegu_area", name: "대구권" },
-  { code: "gwangju_area", name: "광주권" },
-  { code: "daejeon_area", name: "대전권" },
-  { code: "ulsan_area", name: "울산권" },
-  { code: "gangwon_area", name: "강원권" },
-  { code: "chungcheong_area", name: "충청권" },
-  { code: "jeolla_area", name: "전라권" },
-  { code: "gyeongsang_area", name: "경상권" },
-  { code: "jeju_area", name: "제주권" },
-];
-
 const UniversitySettings = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const [selectedUniversity, setSelectedUniversity] = useState("");
+
+  const universities = [
+    { code: "seoul_area", name: t("universitySettings.seoulArea") },
+    { code: "gyeonggi_area", name: t("universitySettings.gyeonggiArea") },
+    { code: "incheon_area", name: t("universitySettings.incheonArea") },
+    { code: "busan_area", name: t("universitySettings.busanArea") },
+    { code: "daegu_area", name: t("universitySettings.daeguArea") },
+    { code: "gwangju_area", name: t("universitySettings.gwangjuArea") },
+    { code: "daejeon_area", name: t("universitySettings.daejeonArea") },
+    { code: "ulsan_area", name: t("universitySettings.ulsanArea") },
+    { code: "gangwon_area", name: t("universitySettings.gangwonArea") },
+    { code: "chungcheong_area", name: t("universitySettings.chungcheongArea") },
+    { code: "jeolla_area", name: t("universitySettings.jeollaArea") },
+    { code: "gyeongsang_area", name: t("universitySettings.gyeongsangArea") },
+    { code: "jeju_area", name: t("universitySettings.jejuArea") },
+  ];
 
   const handleUniversitySelect = (university) => {
     console.log("대학교 선택됨:", university);
@@ -240,13 +185,6 @@ const UniversitySettings = () => {
   return (
     <UniversitySettingsContainer>
       <Main>
-        <Header>
-          <BackButton onClick={() => navigate(-1)}>
-            ← {t("common.back")}
-          </BackButton>
-          <Title>대학교 선택</Title>
-        </Header>
-
         <UniversityGrid>
           {universities.map((university) => (
             <UniversityCard

@@ -38,65 +38,10 @@ const GenderSettingsContainer = styled.div`
 const Main = styled.main`
   max-width: 1000px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem 2rem;
 
   @media (max-width: 768px) {
-    padding: 1rem;
-  }
-`;
-
-const Header = styled.header`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #e1e8ed;
-  transition: border-color 0.3s ease;
-  position: relative;
-
-  .dark-mode & {
-    border-color: #555;
-  }
-`;
-
-const BackButton = styled.button`
-  position: absolute;
-  left: 0;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: none;
-  border: none;
-  color: #3498db;
-  font-size: 1rem;
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-
-  @media (min-width: 769px) {
-    &:hover {
-      background: rgba(52, 152, 219, 0.1);
-    }
-  }
-
-  .dark-mode & {
-    color: #5dade2;
-  }
-`;
-
-const Title = styled.h1`
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #2c3e50;
-  margin: 0;
-  text-align: center;
-  transition: color 0.3s ease;
-
-  .dark-mode & {
-    color: #ffffff;
+    padding: 0.5rem 1rem;
   }
 `;
 
@@ -104,7 +49,7 @@ const GenderGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
-  margin-top: 2rem;
+  margin-top: 1rem;
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -200,15 +145,15 @@ const SelectedIndicator = styled.div`
   }
 `;
 
-const genders = [
-  { code: "male", name: "남성", icon: "👨" },
-  { code: "female", name: "여성", icon: "👩" },
-];
-
 const GenderSettings = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const [selectedGender, setSelectedGender] = useState("");
+
+  const genders = [
+    { code: "male", name: t("genderSettings.male"), icon: "👨" },
+    { code: "female", name: t("genderSettings.female"), icon: "👩" },
+  ];
 
   const handleGenderSelect = (gender) => {
     setSelectedGender(gender);
@@ -224,13 +169,6 @@ const GenderSettings = () => {
   return (
     <GenderSettingsContainer>
       <Main>
-        <Header>
-          <BackButton onClick={() => navigate(-1)}>
-            ← {t("common.back")}
-          </BackButton>
-          <Title>성별 선택</Title>
-        </Header>
-
         <GenderGrid>
           {genders.map((gender) => (
             <GenderCard

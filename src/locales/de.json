@@ -243,5 +243,65 @@
     "noNotifications": "Keine neuen Benachrichtigungen",
     "newMessage": "Neue Nachricht",
     "matchComplete": "Matching abgeschlossen"
+  },
+  "modal": {
+    "success": "Erfolg!",
+    "warning": "Warnung",
+    "error": "Fehler",
+    "info": "Information",
+    "confirm": "Bestätigen",
+    "selectAllRequired": "Bitte wählen Sie Geschlecht, Lernsprache und Universität aus.",
+    "enterUniversityName": "Bitte geben Sie den Universitätsnamen ein.",
+    "alreadyRequested": "Ein Matching-Antrag ist bereits in Bearbeitung. Warten Sie auf die Admin-Genehmigung.",
+    "requestComplete": "Freundschaftsantrag erfolgreich eingereicht! 🎉\n\nWarten Sie auf die Admin-Genehmigung. Sie erhalten eine Benachrichtigung, wenn genehmigt.",
+    "requestFailed": "Matching-Antrag fehlgeschlagen.",
+    "requestError": "Ein Fehler ist beim Matching-Antrag aufgetreten. Bitte versuchen Sie es erneut."
+  },
+  "adminModal": {
+    "partnerSelectionTitle": "Matching-Partner Auswählen",
+    "partnerSelectionMessage": "Wählen Sie einen Partner für das Matching mit",
+    "cancel": "Abbrechen",
+    "approveMatch": "Matching Genehmigen",
+    "matchComplete": "Das Matching mit wurde abgeschlossen!"
+  },
+  "genderSettings": {
+    "title": "Geschlechtsauswahl",
+    "male": "Männlich",
+    "female": "Weiblich"
+  },
+  "universitySettings": {
+    "title": "Universitätsauswahl",
+    "seoulArea": "Seoul-Gebiet",
+    "gyeonggiArea": "Gyeonggi-Gebiet",
+    "incheonArea": "Incheon-Gebiet",
+    "busanArea": "Busan-Gebiet",
+    "daeguArea": "Daegu-Gebiet",
+    "gwangjuArea": "Gwangju-Gebiet",
+    "daejeonArea": "Daejeon-Gebiet",
+    "ulsanArea": "Ulsan-Gebiet",
+    "gangwonArea": "Gangwon-Gebiet",
+    "chungcheongArea": "Chungcheong-Gebiet",
+    "jeollaArea": "Jeolla-Gebiet",
+    "gyeongsangArea": "Gyeongsang-Gebiet",
+    "jejuArea": "Jeju-Gebiet"
+  },
+  "matchingUniversitySettings": {
+    "title": "Universitätsauswahl",
+    "sameUniversity": "Gleiche Universität",
+    "specificUniversity": "Bestimmte Universität",
+    "seoulArea": "Seoul-Region",
+    "gyeonggiArea": "Gyeonggi-Region",
+    "incheonArea": "Incheon-Region",
+    "busanArea": "Busan-Region",
+    "daeguArea": "Daegu-Region",
+    "gwangjuArea": "Gwangju-Region",
+    "daejeonArea": "Daejeon-Region",
+    "ulsanArea": "Ulsan-Region",
+    "gangwonArea": "Gangwon-Region",
+    "chungcheongArea": "Chungcheong-Region",
+    "jeollaArea": "Jeolla-Region",
+    "gyeongsangArea": "Gyeongsang-Region",
+    "jejuArea": "Jeju-Region",
+    "anywhere": "Überall"
   }
 }

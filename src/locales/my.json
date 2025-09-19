@@ -243,5 +243,65 @@
     "noNotifications": "အကြောင်းကြားချက်အသစ်မရှိပါ",
     "newMessage": "မက်ဆေ့ချ်အသစ်",
     "matchComplete": "တိုက်ဆိုင်မှုပြီးဆုံးပါပြီ"
+  },
+  "modal": {
+    "success": "အောင်မြင်ပါပြီ!",
+    "warning": "သတိပေးချက်",
+    "error": "အမှား",
+    "info": "အချက်အလက်",
+    "confirm": "အတည်ပြုပါ",
+    "selectAllRequired": "ကျေးဇူးပြု၍ လိင်အမျိုးအစား၊ သင်ယူလိုသောဘာသာစကားနှင့် တက္ကသိုလ်ကို ရွေးချယ်ပါ။",
+    "enterUniversityName": "ကျေးဇူးပြု၍ တက္ကသိုလ်အမည်ကို ရိုက်ထည့်ပါ။",
+    "alreadyRequested": "တိုက်ဆိုင်မှုတောင်းဆိုချက်သည် လုပ်ငန်းစဉ်တွင် ရှိနေပါပြီ။ စီမံခန့်ခွဲသူ၏ ခွင့်ပြုချက်ကို စောင့်ဆိုင်းပါ။",
+    "requestComplete": "သူငယ်ချင်းတောင်းဆိုချက် အောင်မြင်စွာ တင်သွင်းပြီးပါပြီ! 🎉\n\nစီမံခန့်ခွဲသူ၏ ခွင့်ပြုချက်ကို စောင့်ဆိုင်းပါ။ ခွင့်ပြုချက်ရရှိပါက အကြောင်းကြားချက် ရရှိပါမည်။",
+    "requestFailed": "တိုက်ဆိုင်မှုတောင်းဆိုချက် မအောင်မြင်ပါ။",
+    "requestError": "တိုက်ဆိုင်မှုတောင်းဆိုချက် လုပ်ငန်းစဉ်တွင် အမှားတစ်ခု ဖြစ်ပွားပါပြီ။ ကျေးဇူးပြု၍ ထပ်ကြိုးစားပါ။"
+  },
+  "adminModal": {
+    "partnerSelectionTitle": "တိုက်ဆိုင်မှုပါတနာ ရွေးချယ်ပါ",
+    "partnerSelectionMessage": "တိုက်ဆိုင်မှုပါတနာ ရွေးချယ်ပါ",
+    "cancel": "ပယ်ဖျက်ပါ",
+    "approveMatch": "တိုက်ဆိုင်မှု ခွင့်ပြုပါ",
+    "matchComplete": "နှင့် တိုက်ဆိုင်မှု ပြီးဆုံးပါပြီ!"
+  },
+  "genderSettings": {
+    "title": "လိင်ရွေးချယ်မှု",
+    "male": "ယောက်ျား",
+    "female": "မိန်းမ"
+  },
+  "universitySettings": {
+    "title": "တက္ကသိုလ်ရွေးချယ်မှု",
+    "seoulArea": "ဆိုးလ်ဒေသ",
+    "gyeonggiArea": "ဂျုံဂီဒေသ",
+    "incheonArea": "အင်ချွန်ဒေသ",
+    "busanArea": "ပူဆန်ဒေသ",
+    "daeguArea": "ဒေးဂူဒေသ",
+    "gwangjuArea": "ဂွမ်ဂျူဒေသ",
+    "daejeonArea": "ဒေးဂျုံဒေသ",
+    "ulsanArea": "အူလ်ဆန်ဒေသ",
+    "gangwonArea": "ဂန်ဝုံဒေသ",
+    "chungcheongArea": "ချုံချုံဒေသ",
+    "jeollaArea": "ဂျုံလားဒေသ",
+    "gyeongsangArea": "ဂျုံဆန်ဒေသ",
+    "jejuArea": "ဂျုံဂျူဒေသ"
+  },
+  "matchingUniversitySettings": {
+    "title": "တက္ကသိုလ်ရွေးချယ်မှု",
+    "sameUniversity": "တူညီသောတက္ကသိုလ်",
+    "specificUniversity": "အထူးတက္ကသိုလ်",
+    "seoulArea": "ဆိုးလ်ဒေသ",
+    "gyeonggiArea": "ဂျုံဂီဒေသ",
+    "incheonArea": "အင်ချွန်ဒေသ",
+    "busanArea": "ပူဆန်ဒေသ",
+    "daeguArea": "ဒေးဂူဒေသ",
+    "gwangjuArea": "ဂွမ်ဂျူဒေသ",
+    "daejeonArea": "ဒေးဂျုံဒေသ",
+    "ulsanArea": "အူလ်ဆန်ဒေသ",
+    "gangwonArea": "ဂန်ဝုံဒေသ",
+    "chungcheongArea": "ချုံချုံဒေသ",
+    "jeollaArea": "ဂျုံလားဒေသ",
+    "gyeongsangArea": "ဂျုံဆန်ဒေသ",
+    "jejuArea": "ဂျုံဂျူဒေသ",
+    "anywhere": "ဘယ်နေရာမဆို"
   }
 }
