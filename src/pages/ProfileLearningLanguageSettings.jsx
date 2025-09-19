@@ -193,10 +193,17 @@ const ProfileLearningLanguageSettings = () => {
     localStorage.setItem("currentLearningLanguage", languageName);
 
     // 커스텀 이벤트 발생
+    console.log(
+      "Dispatching profileLearningLanguageSelected event with:",
+      languageName
+    );
     const event = new CustomEvent("profileLearningLanguageSelected", {
-      detail: languageCode,
+      detail: languageName,
     });
     window.dispatchEvent(event);
+
+    // localStorage 업데이트 알림 이벤트 발생
+    window.dispatchEvent(new CustomEvent("localStorageUpdated"));
 
     // 프로필 페이지로 돌아가기
     navigate(-1);

@@ -126,25 +126,6 @@ const GenderName = styled.h3`
   }
 `;
 
-const SelectedIndicator = styled.div`
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: 2px solid #3498db;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #3498db;
-  color: white;
-  font-size: 0.8rem;
-  font-weight: bold;
-
-  .dark-mode & {
-    border-color: #5dade2;
-    background: #5dade2;
-  }
-`;
-
 const GenderSettings = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
@@ -180,9 +161,6 @@ const GenderSettings = () => {
                 <GenderIcon>{gender.icon}</GenderIcon>
                 <GenderName>{gender.name}</GenderName>
               </div>
-              {selectedGender === gender.code && (
-                <SelectedIndicator>✓</SelectedIndicator>
-              )}
             </GenderCard>
           ))}
         </GenderGrid>

@@ -218,21 +218,16 @@ const MatchingHeader = styled.header`
 `;
 
 const Logo = styled.div`
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-family: "Fredoka One", cursive;
+  font-size: 1.8rem;
+  font-weight: 400;
   background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  position: relative;
-
-  @media (max-width: 768px) {
-    font-size: 1.5rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 1.3rem;
-  }
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-left: 0.7rem;
 `;
 
 const BackBtn = styled.button`
@@ -291,6 +286,10 @@ const NotificationContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  &:hover {
+    background: rgba(52, 152, 219, 0.1);
+  }
 `;
 
 const NotificationIcon = styled.span`
@@ -1185,6 +1184,7 @@ const Matching = () => {
     school: "",
     interests: [],
   });
+
   const [isProfileLoaded, setIsProfileLoaded] = useState(false);
   const [filterSettings, setFilterSettings] = useState({
     gender: "",
@@ -1477,12 +1477,65 @@ const Matching = () => {
       }));
     };
 
+    const handleProfileLearningLanguageSelected = (event) => {
+      const languageName = event.detail;
+      console.log(
+        "Main page: Profile learning language selected:",
+        languageName
+      );
+
+      // localStorage 업데이트
+      localStorage.setItem("selectedLearningLanguageName", languageName);
+      localStorage.setItem("currentLearningLanguage", languageName);
+
+      // state 업데이트
+      setSelectedLearningLanguageName(languageName);
+
+      setFilterSettings((prev) => ({
+        ...prev,
+        learningLanguage: languageName,
+      }));
+    };
+
+    const handleTeachingLanguageChanged = (event) => {
+      const languageName = event.detail;
+      console.log("🎯 Teaching language changed to:", languageName);
+      console.log(
+        "🎯 Current userProfile.teachingLanguage:",
+        userProfile.teachingLanguage
+      );
+
+      // 사용자 프로필의 teaching language 업데이트
+      setUserProfile((prev) => {
+        console.log(
+          "🎯 Updating teachingLanguage from",
+          prev.teachingLanguage,
+          "to",
+          languageName
+        );
+        return {
+          ...prev,
+          teachingLanguage: languageName,
+        };
+      });
+    };
+
     window.addEventListener("genderSelected", handleGenderSelected);
     window.addEventListener("universitySelected", handleUniversitySelected);
     window.addEventListener(
       "learningLanguageSelected",
       handleLearningLanguageSelected
     );
+    window.addEventListener(
+      "profileLearningLanguageSelected",
+      handleProfileLearningLanguageSelected
+    );
+    window.addEventListener(
+      "teachingLanguageChanged",
+      handleTeachingLanguageChanged
+    );
+
+    console.log("🎯 Event listener for teachingLanguageChanged registered");
 
     return () => {
       window.removeEventListener("genderSelected", handleGenderSelected);
@@ -1493,6 +1546,14 @@ const Matching = () => {
       window.removeEventListener(
         "learningLanguageSelected",
         handleLearningLanguageSelected
+      );
+      window.removeEventListener(
+        "profileLearningLanguageSelected",
+        handleProfileLearningLanguageSelected
+      );
+      window.removeEventListener(
+        "teachingLanguageChanged",
+        handleTeachingLanguageChanged
       );
     };
   }, []);
@@ -1505,7 +1566,8 @@ const Matching = () => {
       setUserProfile((prev) => ({
         ...prev,
         learningLanguage,
-        teachingLanguage,
+        // teachingLanguage는 이미 업데이트되었다면 덮어쓰지 않음
+        teachingLanguage: prev.teachingLanguage || teachingLanguage,
       }));
 
       // 필터도 업데이트
@@ -1766,7 +1828,7 @@ const Matching = () => {
   return (
     <MatchingContainer>
       <MatchingHeader>
-        <Logo>🎓 UniLingo</Logo>
+        <Logo>UniLingo</Logo>
         <NotificationContainer onClick={handleNotificationClick}>
           <NotificationIcon>
             <FiBell />

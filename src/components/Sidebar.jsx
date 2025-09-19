@@ -34,15 +34,21 @@ const SidebarHeader = styled.div`
   margin-bottom: 3rem;
   padding-bottom: 1.5rem;
   border-bottom: 1px solid rgba(52, 152, 219, 0.2);
+  margin-left: -2rem;
+  padding-left: 0;
 
   h2 {
     margin: 0;
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-family: "Fredoka One", cursive;
+    font-size: 1.8rem;
+    font-weight: 400;
     background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-left: 3rem;
   }
 `;
 
@@ -205,7 +211,7 @@ const Sidebar = () => {
   return (
     <SidebarContainer>
       <SidebarHeader>
-        <h2>🎓 UniLingo</h2>
+        <h2>UniLingo</h2>
       </SidebarHeader>
 
       <SidebarNav>

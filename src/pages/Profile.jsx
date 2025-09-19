@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import {
@@ -796,99 +796,92 @@ const Profile = () => {
   ];
 
   // 프로필 데이터 로드
-  useEffect(() => {
-    // 로그인 상태 확인
-    const isLoggedIn = localStorage.getItem("isLoggedIn");
-    if (!isLoggedIn) {
-      navigate("/login");
-      return;
-    }
+  // 백엔드에서 최신 사용자 데이터 로드
+  const loadUserProfile = useCallback(async () => {
+    try {
+      setIsDataLoading(true);
 
-    // 백엔드에서 최신 사용자 데이터 로드
-    const loadUserProfile = async () => {
-      try {
-        setIsDataLoading(true);
+      // URL 파라미터가 있으면 다른 사용자 프로필 보기 모드
+      if (id) {
+        setIsViewMode(true);
+      }
 
-        // URL 파라미터가 있으면 다른 사용자 프로필 보기 모드
-        if (id) {
-          setIsViewMode(true);
+      const response = await fetch(
+        id ? `${API_ENDPOINTS.PROFILE}${id}/` : API_ENDPOINTS.PROFILE,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const userData = await response.json();
+
+        const {
+          learningLanguage: parsedLearning,
+          teachingLanguage: parsedTeaching,
+        } = extractLanguageData(userData);
+        let learningLanguage = parsedLearning;
+        let teachingLanguage = parsedTeaching;
+
+        // 언어 코드를 언어 이름으로 변환
+        if (learningLanguage) {
+          const learningLangObj = languages.find(
+            (lang) =>
+              lang.code === learningLanguage || lang.name === learningLanguage
+          );
+          if (learningLangObj) {
+            learningLanguage = learningLangObj.name;
+          }
         }
 
-        const response = await fetch(
-          id ? `${API_ENDPOINTS.PROFILE}${id}/` : API_ENDPOINTS.PROFILE,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
+        if (teachingLanguage) {
+          const teachingLangObj = languages.find(
+            (lang) =>
+              lang.code === teachingLanguage || lang.name === teachingLanguage
+          );
+          if (teachingLangObj) {
+            teachingLanguage = teachingLangObj.name;
           }
-        );
+        }
 
-        if (response.ok) {
-          const userData = await response.json();
+        // 언어 정보가 없으면 기본값 설정
+        if (!learningLanguage || learningLanguage === "")
+          learningLanguage = "English";
+        if (!teachingLanguage || teachingLanguage === "")
+          teachingLanguage = "한국어";
 
-          const {
-            learningLanguage: parsedLearning,
-            teachingLanguage: parsedTeaching,
-          } = extractLanguageData(userData);
-          let learningLanguage = parsedLearning;
-          let teachingLanguage = parsedTeaching;
-
-          // 언어 코드를 언어 이름으로 변환
-          if (learningLanguage) {
-            const learningLangObj = languages.find(
-              (lang) =>
-                lang.code === learningLanguage || lang.name === learningLanguage
+        // 기본값을 백엔드에 자동 저장
+        if (learningLanguage === "English" || teachingLanguage === "한국어") {
+          try {
+            const formDataToSend = new FormData();
+            formDataToSend.append(
+              "learning_languages",
+              JSON.stringify([learningLanguage])
             );
-            if (learningLangObj) {
-              learningLanguage = learningLangObj.name;
-            }
-          }
-
-          if (teachingLanguage) {
-            const teachingLangObj = languages.find(
-              (lang) =>
-                lang.code === teachingLanguage || lang.name === teachingLanguage
+            formDataToSend.append(
+              "teaching_languages",
+              JSON.stringify([teachingLanguage])
             );
-            if (teachingLangObj) {
-              teachingLanguage = teachingLangObj.name;
-            }
+
+            await fetch(API_ENDPOINTS.PROFILE, {
+              method: "PUT",
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+              body: formDataToSend,
+            });
+          } catch (error) {
+            console.error("기본 언어 정보 저장 실패:", error);
           }
+        }
 
-          // 언어 정보가 없으면 기본값 설정
-          if (!learningLanguage || learningLanguage === "")
-            learningLanguage = "English";
-          if (!teachingLanguage || teachingLanguage === "")
-            teachingLanguage = "한국어";
+        const normalizedInterests = normalizeInterests(userData.interests);
 
-          // 기본값을 백엔드에 자동 저장
-          if (learningLanguage === "English" || teachingLanguage === "한국어") {
-            try {
-              const formDataToSend = new FormData();
-              formDataToSend.append(
-                "learning_languages",
-                JSON.stringify([learningLanguage])
-              );
-              formDataToSend.append(
-                "teaching_languages",
-                JSON.stringify([teachingLanguage])
-              );
-
-              await fetch(API_ENDPOINTS.PROFILE, {
-                method: "PUT",
-                headers: {
-                  Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                body: formDataToSend,
-              });
-            } catch (error) {
-              console.error("기본 언어 정보 저장 실패:", error);
-            }
-          }
-
-          const normalizedInterests = normalizeInterests(userData.interests);
-
-          setFormData({
+        setFormData((prevFormData) => {
+          return {
             nickname: userData.nickname || "",
             phone: userData.phone || "",
             gender: userData.gender || "",
@@ -900,53 +893,69 @@ const Profile = () => {
             studentId: userData.student_id || userData.studentId || "",
             university: userData.university || "",
             studentCard: userData.student_card || userData.studentCard || null,
-            learningLanguage,
-            teachingLanguage,
+            // 언어 정보는 현재 formData에 있으면 그것을 우선으로 사용
+            learningLanguage: prevFormData.learningLanguage || learningLanguage,
+            teachingLanguage: prevFormData.teachingLanguage || teachingLanguage,
             interests: normalizedInterests,
-          });
+          };
+        });
 
-          // 현재 선택된 언어를 로컬 스토리지에 저장
-          localStorage.setItem("currentLearningLanguage", learningLanguage);
-          localStorage.setItem("currentTeachingLanguage", teachingLanguage);
+        // 현재 선택된 언어를 로컬 스토리지에 저장
+        localStorage.setItem("currentLearningLanguage", learningLanguage);
+        localStorage.setItem("currentTeachingLanguage", teachingLanguage);
 
-          setOriginalSchool(userData.school || "");
-        } else {
-          console.error("프로필 데이터를 불러오는데 실패했습니다.");
-        }
-      } catch (error) {
-        console.error("프로필 로딩 중 오류가 발생했습니다:", error);
-      } finally {
-        setIsDataLoading(false);
+        setOriginalSchool(userData.school || "");
+      } else {
+        console.error("프로필 데이터를 불러오는데 실패했습니다.");
       }
-    };
+    } catch (error) {
+      console.error("프로필 로딩 중 오류가 발생했습니다:", error);
+    } finally {
+      setIsDataLoading(false);
+    }
+  }, [id, navigate]);
+
+  // 사용자 프로필 로드
+  useEffect(() => {
+    // 로그인 상태 확인
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    if (!isLoggedIn) {
+      navigate("/login");
+      return;
+    }
 
     loadUserProfile();
-  }, [navigate]);
+  }, [id, navigate, loadUserProfile]);
 
   // 언어 선택 이벤트 처리
   useEffect(() => {
     const handleTeachingLanguageSelected = (event) => {
-      const languageCode = event.detail;
-      const languageName =
-        languages.find((lang) => lang.code === languageCode)?.name ||
-        languageCode;
-      setFormData((prev) => ({
-        ...prev,
-        teachingLanguage: languageName,
-      }));
+      const languageName = event.detail;
+      console.log("Teaching language selected:", languageName);
+      setFormData((prev) => {
+        const newData = {
+          ...prev,
+          teachingLanguage: languageName,
+        };
+        console.log("Updated formData:", newData);
+        return newData;
+      });
     };
 
     const handleProfileLearningLanguageSelected = (event) => {
-      const languageCode = event.detail;
-      const languageName =
-        languages.find((lang) => lang.code === languageCode)?.name ||
-        languageCode;
-      setFormData((prev) => ({
-        ...prev,
-        learningLanguage: languageName,
-      }));
+      const languageName = event.detail;
+      console.log("Learning language selected:", languageName);
+      setFormData((prev) => {
+        const newData = {
+          ...prev,
+          learningLanguage: languageName,
+        };
+        console.log("Updated formData:", newData);
+        return newData;
+      });
     };
 
+    console.log("Registering event listeners...");
     window.addEventListener(
       "teachingLanguageSelected",
       handleTeachingLanguageSelected
@@ -955,8 +964,10 @@ const Profile = () => {
       "profileLearningLanguageSelected",
       handleProfileLearningLanguageSelected
     );
+    console.log("Event listeners registered successfully");
 
     return () => {
+      console.log("Removing event listeners...");
       window.removeEventListener(
         "teachingLanguageSelected",
         handleTeachingLanguageSelected
@@ -965,8 +976,63 @@ const Profile = () => {
         "profileLearningLanguageSelected",
         handleProfileLearningLanguageSelected
       );
+      console.log("Event listeners removed");
     };
   }, []);
+
+  // localStorage에서 언어 변경 감지
+  useEffect(() => {
+    const checkLanguageChanges = () => {
+      const currentLearningLanguage = localStorage.getItem(
+        "currentLearningLanguage"
+      );
+      const currentTeachingLanguage = localStorage.getItem(
+        "currentTeachingLanguage"
+      );
+
+      if (
+        currentLearningLanguage &&
+        currentLearningLanguage !== formData.learningLanguage
+      ) {
+        console.log(
+          "Learning language changed in localStorage:",
+          currentLearningLanguage
+        );
+        setFormData((prev) => ({
+          ...prev,
+          learningLanguage: currentLearningLanguage,
+        }));
+      }
+
+      if (
+        currentTeachingLanguage &&
+        currentTeachingLanguage !== formData.teachingLanguage
+      ) {
+        console.log(
+          "Teaching language changed in localStorage:",
+          currentTeachingLanguage
+        );
+        setFormData((prev) => ({
+          ...prev,
+          teachingLanguage: currentTeachingLanguage,
+        }));
+      }
+    };
+
+    // 페이지 포커스 시 localStorage 확인
+    const handleFocus = () => {
+      checkLanguageChanges();
+    };
+
+    window.addEventListener("focus", handleFocus);
+
+    // 컴포넌트 마운트 시에도 확인
+    checkLanguageChanges();
+
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+    };
+  }, [formData.learningLanguage, formData.teachingLanguage]);
 
   // 번역이 로드되지 않았으면 로딩 표시
   if (!translations || Object.keys(translations).length === 0) {
@@ -1097,6 +1163,10 @@ const Profile = () => {
       );
       formDataToSend.append("interests", JSON.stringify(formData.interests));
 
+      // 디버깅: 전송할 언어 정보 확인
+      console.log("Sending teaching language:", formData.teachingLanguage);
+      console.log("Sending learning language:", formData.learningLanguage);
+
       const response = await fetch(API_ENDPOINTS.PROFILE, {
         method: "PUT",
         headers: {
@@ -1126,6 +1196,9 @@ const Profile = () => {
       if (response.ok && data.success) {
         // 백엔드에서 받은 업데이트된 사용자 정보를 localStorage에 저장
         if (data.user) {
+          console.log("Backend response user data:", data.user);
+          console.log("User teaching languages:", data.user.teaching_languages);
+          console.log("User learning languages:", data.user.learning_languages);
           localStorage.setItem("user", JSON.stringify(data.user));
           window.dispatchEvent(new Event("storage"));
         }
@@ -1133,6 +1206,10 @@ const Profile = () => {
         // 재인증 상태 초기화
         setNeedsReverification(false);
         setOriginalSchool(formData.school);
+
+        // 프로필 저장 성공 후 최신 데이터 다시 로드
+        console.log("Profile saved successfully, reloading user data...");
+        await loadUserProfile();
 
         setSuccess(t("profile.profileUpdateSuccess"));
 
@@ -1362,6 +1439,11 @@ const Profile = () => {
               >
                 <LanguageDisplay>
                   {formData.learningLanguage || "선택하세요"}
+                  {/* 디버깅용 - 나중에 제거 */}
+                  {console.log(
+                    "Current learningLanguage:",
+                    formData.learningLanguage
+                  )}
                 </LanguageDisplay>
                 <ArrowIcon>→</ArrowIcon>
               </LanguageButton>
@@ -1376,6 +1458,11 @@ const Profile = () => {
               >
                 <LanguageDisplay>
                   {formData.teachingLanguage || "선택하세요"}
+                  {/* 디버깅용 - 나중에 제거 */}
+                  {console.log(
+                    "Current teachingLanguage:",
+                    formData.teachingLanguage
+                  )}
                 </LanguageDisplay>
                 <ArrowIcon>→</ArrowIcon>
               </LanguageButton>

@@ -156,7 +156,7 @@ const ChattingHeader = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 2rem;
+  padding: 1rem 2rem;
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(52, 152, 219, 0.2);
@@ -269,12 +269,16 @@ const MatchingBtn = styled.button`
 // Header Components
 
 const Logo = styled.div`
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-family: "Fredoka One", cursive;
+  font-size: 1.8rem;
+  font-weight: 400;
   background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-left: 0.7rem;
 `;
 
 const NotificationContainer = styled.div`
@@ -810,7 +814,7 @@ const Chatting = () => {
   return (
     <ChattingContainer>
       <ChattingHeader>
-        <Logo>🎓 UniLingo</Logo>
+        <Logo>UniLingo</Logo>
         <NotificationContainer onClick={handleNotificationClick}>
           <NotificationIcon>
             <FiBell />

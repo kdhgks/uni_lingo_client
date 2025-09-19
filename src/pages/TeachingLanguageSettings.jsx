@@ -190,11 +190,17 @@ const TeachingLanguageSettings = () => {
     localStorage.setItem("selectedTeachingLanguage", languageCode);
     localStorage.setItem("currentTeachingLanguage", languageName);
 
-    // 커스텀 이벤트 발생
-    const event = new CustomEvent("teachingLanguageSelected", {
-      detail: languageCode,
-    });
-    window.dispatchEvent(event);
+    // 간단한 이벤트 발생
+    console.log(
+      "🎯 Dispatching teachingLanguageChanged event with:",
+      languageName
+    );
+    window.dispatchEvent(
+      new CustomEvent("teachingLanguageChanged", {
+        detail: languageName,
+      })
+    );
+    console.log("🎯 Event dispatched successfully");
 
     // 프로필 페이지로 돌아가기
     navigate(-1);
