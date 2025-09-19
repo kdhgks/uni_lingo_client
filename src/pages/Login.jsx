@@ -217,25 +217,58 @@ const Login = () => {
 
       // 테스트 계정 로그인 (프론트엔드 배포용)
       // 테스트 계정 정보: test@example.com / test123456
-      if (formData.email === "test@example.com" && formData.password === "test123456") {
+      if (
+        formData.email === "test@example.com" &&
+        formData.password === "test123456"
+      ) {
         const testUser = {
           id: 1,
           email: "test@example.com",
           nickname: "테스트유저",
           phone: "01012345678",
           gender: "male",
-          birth_date: "1995-01-01",
+          birth_date: "1995-06-15",
           student_name: "홍길동",
           school: "서강대학교",
           department: "컴퓨터공학과",
           student_id: "20240001",
           university: "seoul_area",
-          learning_languages: ["영어", "일본어"],
-          teaching_languages: ["한국어"],
+          learning_languages: ["영어", "일본어", "중국어"],
+          teaching_languages: ["한국어", "영어"],
           interests: ["K-pop", "드라마", "여행"],
           avatar: "👤",
-          is_verified: true,
+          is_student_verified: true,
+          profile_image: null,
           created_at: "2024-01-01T00:00:00.000Z",
+          updated_at: "2024-01-01T00:00:00.000Z",
+          // 추가 프로필 정보
+          bio: "안녕하세요! 언어 교환을 통해 새로운 친구들과 소통하고 싶습니다. K-pop과 드라마를 좋아해요!",
+          location: "서울시 서대문구",
+          nationality: "한국",
+          level: {
+            english: "intermediate",
+            japanese: "beginner",
+            chinese: "beginner",
+          },
+          // 매칭 관련 정보
+          matching_preferences: {
+            gender_preference: "both",
+            age_range: {
+              min: 20,
+              max: 30,
+            },
+            university_preference: "same_university",
+          },
+          // 활동 상태
+          is_online: false,
+          last_active: new Date().toISOString(),
+          // 알림 설정
+          notification_settings: {
+            email_notifications: true,
+            push_notifications: true,
+            chat_notifications: true,
+            matching_notifications: true,
+          },
         };
 
         const testToken = "test_token_" + Date.now();
@@ -256,7 +289,7 @@ const Login = () => {
         // 기존 저장된 사용자 계정 확인
         const savedUser = localStorage.getItem("user");
         const savedToken = localStorage.getItem("token");
-        
+
         if (savedUser && savedToken) {
           const user = JSON.parse(savedUser);
           if (user.email === formData.email) {
@@ -266,8 +299,10 @@ const Login = () => {
             return;
           }
         }
-        
-        setError("잘못된 이메일 또는 비밀번호입니다.\n테스트 계정: test@example.com / test123456");
+
+        setError(
+          "잘못된 이메일 또는 비밀번호입니다.\n테스트 계정: test@example.com / test123456"
+        );
       }
     } catch (err) {
       setError(t("auth.loginError"));

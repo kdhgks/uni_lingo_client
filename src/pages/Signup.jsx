@@ -738,8 +738,37 @@ const Signup = () => {
         teaching_languages: formData.teaching_languages,
         interests: formData.interests,
         avatar: "👤",
-        is_verified: true,
+        is_student_verified: true,
+        profile_image: null,
         created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        // 추가 프로필 정보
+        bio: `안녕하세요! ${formData.nickname}입니다. 언어 교환을 통해 새로운 친구들과 소통하고 싶습니다.`,
+        location: "서울시",
+        nationality: "한국",
+        level: formData.learning_languages.reduce((acc, lang) => {
+          acc[lang.toLowerCase()] = "beginner";
+          return acc;
+        }, {}),
+        // 매칭 관련 정보
+        matching_preferences: {
+          gender_preference: "both",
+          age_range: {
+            min: 20,
+            max: 30,
+          },
+          university_preference: "same_university",
+        },
+        // 활동 상태
+        is_online: false,
+        last_active: new Date().toISOString(),
+        // 알림 설정
+        notification_settings: {
+          email_notifications: true,
+          push_notifications: true,
+          chat_notifications: true,
+          matching_notifications: true,
+        },
       };
 
       // 테스트 계정을 localStorage에 저장
