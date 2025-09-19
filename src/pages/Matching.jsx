@@ -1293,7 +1293,62 @@ const Matching = () => {
 
       setIsLoadingPartners(true);
       try {
-        // 백엔드에서 파트너 목록 불러오기
+        // 테스트 환경: 가짜 파트너 데이터 생성
+        const savedUser = localStorage.getItem("user");
+        if (savedUser) {
+          // 테스트용 가짜 파트너 데이터
+          const mockPartners = [
+            {
+              id: 2,
+              nickname: "김영희",
+              gender: "female",
+              school: "연세대학교",
+              department: "영어영문학과",
+              learning_languages: ["한국어", "영어"],
+              teaching_languages: ["일본어", "중국어"],
+              interests: ["드라마", "음악", "여행"],
+              profile_image: null,
+              avatar: "👩",
+              age: 22,
+              university: "seoul_area",
+            },
+            {
+              id: 3,
+              nickname: "박민수",
+              gender: "male",
+              school: "고려대학교",
+              department: "중국어중문학과",
+              learning_languages: ["한국어"],
+              teaching_languages: ["중국어", "영어"],
+              interests: ["게임", "스포츠", "영화"],
+              profile_image: null,
+              avatar: "👨",
+              age: 24,
+              university: "seoul_area",
+            },
+            {
+              id: 4,
+              nickname: "이지은",
+              gender: "female",
+              school: "서강대학교",
+              department: "일본어일본문학과",
+              learning_languages: ["한국어", "일본어"],
+              teaching_languages: ["영어", "중국어"],
+              interests: ["K-pop", "요리", "책"],
+              profile_image: null,
+              avatar: "👩",
+              age: 21,
+              university: "seoul_area",
+            },
+          ];
+
+          setPotentialPartners(mockPartners);
+          setIsLoadingPartners(false);
+          console.log("테스트 파트너 데이터 로드 완료:", mockPartners);
+          return;
+        }
+
+        // 백엔드에서 파트너 목록 불러오기 (실제 배포 시)
         const response = await fetch(API_ENDPOINTS.MATCHING_PARTNERS, {
           method: "GET",
           headers: {
@@ -1345,7 +1400,30 @@ const Matching = () => {
       if (!token) return;
 
       try {
-        // 백엔드에서 프로필 데이터 불러오기
+        // 테스트 환경: localStorage에서 사용자 정보 로드
+        const savedUser = localStorage.getItem("user");
+        if (savedUser) {
+          const userData = JSON.parse(savedUser);
+          const { learningLanguage, teachingLanguage } =
+            extractLanguageData(userData);
+
+          const normalizedInterests = normalizeInterests(userData.interests);
+
+          setUserProfile({
+            nickname: userData.nickname || "",
+            gender: userData.gender || "",
+            profileImage: userData.profile_image || null,
+            teachingLanguage,
+            learningLanguage,
+            school: userData.school || "",
+            interests: normalizedInterests,
+          });
+          setIsProfileLoaded(true);
+          console.log("테스트 계정 프로필 로드 완료:", userData);
+          return;
+        }
+
+        // 백엔드에서 프로필 데이터 불러오기 (실제 배포 시)
         const response = await fetch(API_ENDPOINTS.PROFILE, {
           method: "GET",
           headers: {
