@@ -354,8 +354,9 @@ const AccountButton = styled.button`
   background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
   color: white;
   border: none;
-  padding: 0.6rem 1.2rem;
+  padding: 0.8rem 1.2rem;
   border-radius: 8px;
+  min-height: 44px;
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
@@ -372,8 +373,9 @@ const DangerButton = styled.button`
   background: #ff6b6b;
   color: white;
   border: none;
-  padding: 0.6rem 1.2rem;
+  padding: 0.8rem 1.2rem;
   border-radius: 8px;
+  min-height: 44px;
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
@@ -391,8 +393,9 @@ const LogoutButton = styled.button`
   background: #6c757d;
   color: white;
   border: none;
-  padding: 0.6rem 1.2rem;
+  padding: 0.8rem 1.2rem;
   border-radius: 8px;
+  min-height: 44px;
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
@@ -460,7 +463,7 @@ const Input = styled.input`
   padding: 0.8rem;
   border: 2px solid #e1e8ed;
   border-radius: 8px;
-  font-size: 0.95rem;
+  font-size: 1rem;
   transition: all 0.3s ease;
 
   &:focus {

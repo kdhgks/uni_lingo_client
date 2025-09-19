@@ -509,43 +509,8 @@ const UnreadBadge = styled.span`
 const EmptyState = styled.div`
   text-align: center;
   padding: 2rem 1rem;
-  background: rgba(52, 152, 219, 0.1);
-  backdrop-filter: blur(20px);
-  border: 2px solid #3498db;
-  border-radius: 12px;
   position: relative;
-  overflow: hidden;
   transition: all 0.3s ease;
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(52, 152, 219, 0.2),
-      transparent
-    );
-    transition: left 0.5s;
-  }
-
-  &:hover::before {
-    left: 100%;
-  }
-
-  .dark-mode & {
-    background: linear-gradient(
-      135deg,
-      rgba(45, 45, 45, 0.95) 0%,
-      rgba(35, 35, 35, 0.95) 100%
-    );
-    border-color: rgba(52, 152, 219, 0.3);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  }
 
   h2 {
     font-size: 1.8rem;
@@ -566,11 +531,6 @@ const EmptyState = styled.div`
     .dark-mode & {
       color: #b0b0b0;
     }
-  }
-
-  .dark-mode & {
-    background: rgba(30, 30, 30, 0.9);
-    border: 2px solid #3498db;
   }
 `;
 
