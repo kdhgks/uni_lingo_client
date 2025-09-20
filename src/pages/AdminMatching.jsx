@@ -700,8 +700,6 @@ const AdminMatching = () => {
       );
 
       if (response.ok) {
-        console.log("매칭 완료 - 백엔드에서 알림 생성됨");
-
         alert(`${selectedPartner.nickname}${t("adminModal.matchComplete")}`);
         setShowPartnerModal(false);
         setSelectedRequest(null);

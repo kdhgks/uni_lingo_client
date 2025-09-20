@@ -133,8 +133,6 @@ const UnderBar = () => {
   const [totalUnreadCount, setTotalUnreadCount] = useState(0);
   const [hasNewNotification, setHasNewNotification] = useState(false);
 
-  // console.log("UnderBar 렌더링됨, 현재 경로:", location.pathname);
-
   // 전역 unread count 변경 감지 (성능 최적화)
   useEffect(() => {
     const updateUnreadCount = () => {

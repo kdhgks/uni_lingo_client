@@ -605,7 +605,6 @@ const Chatting = () => {
     const user = localStorage.getItem("user");
 
     if (!token || !user) {
-      console.log("No authentication found, redirecting to login");
       navigate("/login");
       return;
     }
@@ -753,7 +752,6 @@ const Chatting = () => {
 
         if (response.ok) {
           const chatsData = await response.json();
-          console.log("📱 API 응답 데이터:", chatsData);
 
           if (chatsData.success && chatsData.rooms) {
             // API 응답 구조에 맞게 데이터 변환 (백엔드에서 이미 정렬됨)
@@ -773,7 +771,6 @@ const Chatting = () => {
               unreadCount: room.unread_count || 0,
             }));
 
-            console.log("📱 채팅 데이터:", transformedChats);
             setChats(transformedChats);
 
             // 전체 unread count 계산
@@ -856,8 +853,6 @@ const Chatting = () => {
         if (response.ok) {
           const data = await response.json();
           if (data.success && data.rooms) {
-            console.log("📱 채팅방 상세 정보:", data.rooms);
-
             // 전체 읽지 않은 메시지 수 계산
             const totalUnreadCount = data.rooms.reduce((total, room) => {
               return total + (room.unread_count || 0);
@@ -865,7 +860,6 @@ const Chatting = () => {
 
             // 전역 변수에 전체 unread count 저장
             window.globalTotalUnreadCount = totalUnreadCount;
-            console.log("📱 전체 읽지 않은 메시지 수:", totalUnreadCount);
 
             // 읽지 않은 메시지가 있는 채팅방 확인
             data.rooms.forEach((room) => {
@@ -873,10 +867,7 @@ const Chatting = () => {
                 `📱 채팅방 ${room.id}: unreadCount = ${room.unread_count}`
               );
               if (room.unread_count > 0) {
-                console.log("📱 읽지 않은 메시지 발견:", room);
-
                 // 전역 변수에 직접 알림 추가
-                console.log("📱 전역 변수에 알림 추가 시도");
 
                 if (window.addMessageNotification) {
                   // roomId를 포함한 알림 생성
@@ -895,10 +886,7 @@ const Chatting = () => {
                     ...window.globalNotifications,
                   ];
                   window.globalHasNewNotification = true;
-
-                  console.log("📱 채팅방 알림 추가 완료:", notification);
                 } else {
-                  console.log("📱 addMessageNotification 함수가 정의되지 않음");
                 }
               }
             });

@@ -161,7 +161,6 @@ const UniversitySettings = () => {
   ];
 
   const handleUniversitySelect = (university) => {
-    console.log("대학교 선택됨:", university);
     setSelectedUniversity(university);
 
     // 선택된 대학교를 localStorage에 저장
@@ -173,7 +172,6 @@ const UniversitySettings = () => {
       bubbles: true,
       cancelable: true,
     });
-    console.log("이벤트 발생:", event);
     window.dispatchEvent(event);
 
     // 이전 페이지로 돌아가기

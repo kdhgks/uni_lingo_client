@@ -37,10 +37,10 @@ const TeachingLanguageSettingsContainer = styled.div`
 const Main = styled.main`
   max-width: 1000px;
   margin: 0 auto;
-  padding: 1rem 2rem;
+  padding: 1rem 2rem 4rem 2rem;
 
   @media (max-width: 768px) {
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 1rem 4rem 1rem;
   }
 `;
 
@@ -191,16 +191,11 @@ const TeachingLanguageSettings = () => {
     localStorage.setItem("currentTeachingLanguage", languageName);
 
     // 간단한 이벤트 발생
-    console.log(
-      "🎯 Dispatching teachingLanguageChanged event with:",
-      languageName
-    );
     window.dispatchEvent(
       new CustomEvent("teachingLanguageChanged", {
         detail: languageName,
       })
     );
-    console.log("🎯 Event dispatched successfully");
 
     // 프로필 페이지로 돌아가기
     navigate(-1);

@@ -278,8 +278,6 @@ const Login = () => {
         // AuthContext를 통해 로그인 처리
         login(testUser, testToken);
 
-        console.log("테스트 계정으로 로그인 성공:", testUser);
-
         // Navigate to home page
         navigate("/");
       } else {
@@ -308,8 +306,6 @@ const Login = () => {
 
           // AuthContext를 통해 로그인 처리
           login(user, token);
-
-          console.log("백엔드 로그인 성공:", user);
 
           // Navigate to home page
           navigate("/");

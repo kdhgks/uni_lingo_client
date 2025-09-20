@@ -21,33 +21,15 @@ const slideIn = keyframes`
 `;
 
 const heartAnimation = keyframes`
-  0% {
-    opacity: 0;
-    transform: scale(0.3);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.1);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
+  0% { opacity: 0; transform: scale(0.3); }
+  50% { opacity: 1; transform: scale(1.1); }
+  100% { opacity: 1; transform: scale(1); }
 `;
 
 const heartDisappearAnimation = keyframes`
-  0% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.5;
-    transform: scale(1.2);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(0.3);
-  }
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.2); }
+  100% { opacity: 0; transform: scale(0.3); }
 `;
 
 const slideInLeft = keyframes`
@@ -281,12 +263,12 @@ const HeartReaction = styled.div`
   color: #ff6b6b;
   pointer-events: none;
   z-index: 1000;
+  opacity: 1;
   animation: ${(props) =>
       props.$isDisappearing ? heartDisappearAnimation : heartAnimation}
     0.3s ease-out forwards;
-  text-shadow: 0 0 8px rgba(255, 107, 107, 0.6);
-  opacity: 1;
   animation-fill-mode: forwards;
+  text-shadow: 0 0 8px rgba(255, 107, 107, 0.6);
 `;
 
 const LoadingContainer = styled.div`
@@ -1049,50 +1031,6 @@ const ChattingDetail = () => {
     return typeof value === "string" ? value : key;
   };
 
-  // 디버깅을 위한 로그
-  console.log("ChattingDetail - Current language:", language);
-  console.log(
-    "ChattingDetail - Translations loaded:",
-    Object.keys(translations).length > 0
-  );
-  console.log(
-    "ChattingDetail - Profile keys:",
-    translations.profile ? Object.keys(translations.profile) : "No profile key"
-  );
-  console.log(
-    "ChattingDetail - PartnerModal keys:",
-    translations.profile?.partnerModal
-      ? Object.keys(translations.profile.partnerModal)
-      : "No partnerModal key"
-  );
-
-  // t 함수 테스트
-  console.log(
-    "t('profile.partnerModal.title'):",
-    t("profile.partnerModal.title")
-  );
-  console.log(
-    "t('profile.partnerModal.gender'):",
-    t("profile.partnerModal.gender")
-  );
-  console.log(
-    "t('profile.partnerModal.male'):",
-    t("profile.partnerModal.male")
-  );
-
-  // 직접 번역 접근 테스트
-  console.log(
-    "Direct access - profile.partnerModal.title:",
-    translations.profile?.partnerModal?.title
-  );
-  console.log(
-    "Direct access - profile.partnerModal.gender:",
-    translations.profile?.partnerModal?.gender
-  );
-  console.log(
-    "Direct access - profile.partnerModal.male:",
-    translations.profile?.partnerModal?.male
-  );
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
   const [message, setMessage] = useState("");
@@ -1142,22 +1080,6 @@ const ChattingDetail = () => {
         if (partnerResponse.ok && messagesResponse.ok) {
           const partnerData = await partnerResponse.json();
           const messagesData = await messagesResponse.json();
-
-          console.log("📱 파트너 데이터:", partnerData);
-          console.log(
-            "📱 파트너 언어 정보:",
-            partnerData.partner?.teaching_languages,
-            partnerData.partner?.learning_languages
-          );
-          console.log(
-            "📱 가르치는 언어 타입:",
-            typeof partnerData.partner?.teaching_languages
-          );
-          console.log(
-            "📱 가르치는 언어 값:",
-            partnerData.partner?.teaching_languages
-          );
-          console.log("📱 메시지 데이터:", messagesData);
 
           if (partnerData.success && partnerData.partner) {
             setPartner(partnerData.partner);
@@ -1325,24 +1247,11 @@ const ChattingDetail = () => {
           setIsTyping(false);
 
           // 새로운 메시지 알림 추가
-          console.log(
-            "Adding notification for Sarah Kim response:",
-            randomResponse
-          );
-          console.log("Partner info:", partner?.name || partner?.nickname);
-          console.log(
-            "addMessageNotification function exists:",
-            !!window.addMessageNotification
-          );
 
           if (window.addMessageNotification) {
             window.addMessageNotification(
               randomResponse,
               partner?.name || partner?.nickname
-            );
-            console.log(
-              "Notification added. Global notifications:",
-              window.globalNotifications
             );
           }
         }, 2000);
@@ -1444,24 +1353,12 @@ const ChattingDetail = () => {
               setMessages((prev) => [...prev, ...actualNewMessages]);
 
               // 전역 상태에 직접 알림 추가
-              console.log(
-                "Processing new messages from backend:",
-                actualNewMessages
-              );
               actualNewMessages.forEach((newMsg) => {
-                console.log(
-                  "Adding notification for backend message:",
-                  newMsg.text
-                );
                 if (window.addMessageNotification) {
                   window.addMessageNotification(
                     newMsg.text,
                     partner?.name || partner?.nickname,
                     id
-                  );
-                  console.log(
-                    "Backend notification added. Global notifications:",
-                    window.globalNotifications
                   );
                 }
               });
@@ -1499,12 +1396,12 @@ const ChattingDetail = () => {
 
   // 하트 반응 함수
   const handleHeartReaction = (messageId) => {
-    // 이미 하트가 있는 메시지인지 확인
     const existingHeart = heartReactions.find(
       (heart) => heart.messageId === messageId
     );
+
     if (existingHeart) {
-      // 하트 제거 애니메이션을 위해 상태를 업데이트
+      // 하트 제거 애니메이션
       setHeartReactions((prev) =>
         prev.map((heart) =>
           heart.messageId === messageId
@@ -1513,18 +1410,18 @@ const ChattingDetail = () => {
         )
       );
 
-      // 애니메이션 완료 후 실제로 제거
       setTimeout(() => {
         setHeartReactions((prev) =>
           prev.filter((heart) => heart.messageId !== messageId)
         );
-      }, 300); // 애니메이션 시간과 동일
+      }, 300);
       return;
     }
 
+    // 하트 추가
     const newHeart = {
       id: Date.now(),
-      messageId: messageId,
+      messageId,
       timestamp: Date.now(),
       isDisappearing: false,
     };
@@ -1532,11 +1429,9 @@ const ChattingDetail = () => {
     setHeartReactions((prev) => [...prev, newHeart]);
   };
 
-  // 모바일을 위한 탭 핸들러
+  // 모바일 더블탭 핸들러
   const handleTap = (messageId, sender) => {
-    if (sender !== "partner") {
-      return;
-    }
+    if (sender !== "partner") return;
 
     const newTapCount = tapCount + 1;
     setTapCount(newTapCount);
@@ -1549,9 +1444,7 @@ const ChattingDetail = () => {
       handleHeartReaction(messageId);
       setTapCount(0);
     } else {
-      const timeout = setTimeout(() => {
-        setTapCount(0);
-      }, 300);
+      const timeout = setTimeout(() => setTapCount(0), 300);
       setTapTimeout(timeout);
     }
   };
@@ -1708,7 +1601,7 @@ const ChattingDetail = () => {
                     </MessageFile>
                   )}
 
-                  {/* 하트 반응 표시 */}
+                  {/* 하트 반응 */}
                   {heartReactions
                     .filter((heart) => heart.messageId === msg.id)
                     .map((heart) => (

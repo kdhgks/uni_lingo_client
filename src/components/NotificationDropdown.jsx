@@ -137,7 +137,6 @@ const NotificationDropdown = ({ isOpen, onClose, notifications = [] }) => {
 
   const handleNotificationClick = (notification) => {
     // 알림 클릭 시 처리 로직
-    console.log("알림 클릭:", notification);
 
     // 알림을 읽음 처리
     if (notification.roomId) {

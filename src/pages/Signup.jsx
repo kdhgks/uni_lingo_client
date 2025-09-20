@@ -772,8 +772,6 @@ const Signup = () => {
 
         setSuccess(t("signup.signupSuccess"));
 
-        console.log("백엔드 회원가입 성공:", user);
-
         // Navigate to home page after a short delay
         setTimeout(() => {
           navigate("/");
@@ -854,8 +852,6 @@ const Signup = () => {
       localStorage.setItem("token", "test_token_" + Date.now());
 
       setSuccess(t("signup.signupSuccess"));
-
-      console.log("네트워크 오류로 인한 테스트 계정 생성:", testUser);
 
       // Navigate to home page after a short delay
       setTimeout(() => {

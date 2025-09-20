@@ -1164,7 +1164,6 @@ const Matching = () => {
     const user = localStorage.getItem("user");
 
     if (!token || !user) {
-      console.log("No authentication found, redirecting to login");
       navigate("/login");
       return;
     }

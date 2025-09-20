@@ -38,10 +38,10 @@ const LearningLanguageSettingsContainer = styled.div`
 const Main = styled.main`
   max-width: 1000px;
   margin: 0 auto;
-  padding: 1rem 2rem;
+  padding: 1rem 2rem 4rem 2rem;
 
   @media (max-width: 768px) {
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 1rem 4rem 1rem;
   }
 `;
 

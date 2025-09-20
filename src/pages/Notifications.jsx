@@ -221,7 +221,6 @@ const Notifications = () => {
     const user = localStorage.getItem("user");
 
     if (!token || !user) {
-      console.log("No authentication found, redirecting to login");
       navigate("/login");
       return;
     }
@@ -242,7 +241,6 @@ const Notifications = () => {
       if (response.ok) {
         const data = await response.json();
         setNotifications(data.notifications || []);
-        console.log("백엔드에서 알림 로드:", data.notifications);
       } else {
         console.error("알림 로드 실패:", response.status);
         // 백엔드 실패 시 빈 배열 설정
@@ -257,8 +255,6 @@ const Notifications = () => {
 
   const formatTime = (timeString) => {
     try {
-      console.log("formatTime received:", timeString, typeof timeString);
-
       if (!timeString) {
         return "시간 정보 없음";
       }

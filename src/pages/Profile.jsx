@@ -797,7 +797,6 @@ const Profile = () => {
     const user = localStorage.getItem("user");
 
     if (!token || !user) {
-      console.log("No authentication found, redirecting to login");
       navigate("/login");
       return;
     }
@@ -1003,7 +1002,6 @@ const Profile = () => {
 
         // 전역 변수에 설정하여 언더바에서 사용
         window.globalTotalUnreadCount = totalUnreadCount;
-        console.log("프로필 페이지 - 안읽은 메시지 수:", totalUnreadCount);
       }
     } catch (error) {
       console.error("프로필 페이지 - 안읽은 메시지 수 로드 중 오류:", error);

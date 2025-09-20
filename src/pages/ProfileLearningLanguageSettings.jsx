@@ -37,10 +37,10 @@ const ProfileLearningLanguageSettingsContainer = styled.div`
 const Main = styled.main`
   max-width: 1000px;
   margin: 0 auto;
-  padding: 1rem 2rem;
+  padding: 1rem 2rem 4rem 2rem;
 
   @media (max-width: 768px) {
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 1rem 4rem 1rem;
   }
 `;
 
@@ -193,10 +193,6 @@ const ProfileLearningLanguageSettings = () => {
     localStorage.setItem("currentLearningLanguage", languageName);
 
     // 커스텀 이벤트 발생
-    console.log(
-      "Dispatching profileLearningLanguageSelected event with:",
-      languageName
-    );
     const event = new CustomEvent("profileLearningLanguageSelected", {
       detail: languageName,
     });
