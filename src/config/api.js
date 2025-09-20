@@ -6,8 +6,8 @@ export const API_ENDPOINTS = {
   // Authentication
   LOGIN: `${API_BASE_URL}/auth/login/`,
   SIGNUP: `${API_BASE_URL}/auth/signup/`,
-  CHANGE_PASSWORD: `${API_BASE_URL}/auth/change-password/`,
-  DELETE_USER: `${API_BASE_URL}/auth/delete-user/`,
+  CHANGE_PASSWORD: `${API_BASE_URL}/users/change-password/`,
+  DELETE_USER: `${API_BASE_URL}/users/delete/`,
 
   // Profile
   PROFILE: `${API_BASE_URL}/users/profile/`,
@@ -34,6 +34,10 @@ export const API_ENDPOINTS = {
     `${API_BASE_URL}/chat/rooms/${roomId}/messages/read/`,
   CHAT_ROOM_MESSAGES_SEND: (roomId) =>
     `${API_BASE_URL}/chat/rooms/${roomId}/messages/send/`,
+
+  // Notifications
+  NOTIFICATIONS: `${API_BASE_URL}/notifications/`,
+  MARK_NOTIFICATIONS_READ: `${API_BASE_URL}/notifications/mark-read/`,
 };
 
 export default API_ENDPOINTS;

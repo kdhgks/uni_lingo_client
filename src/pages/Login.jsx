@@ -196,15 +196,13 @@ const Login = () => {
     setError("");
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
+      // 입력 검증
       if (!formData.email || !formData.password) {
         setError(t("auth.loginError"));
         return;
       }
 
-      // Simple validation
+      // 이메일 형식 검증
       if (!formData.email.includes("@")) {
         setError(t("auth.emailFormatError"));
         return;
@@ -215,8 +213,7 @@ const Login = () => {
         return;
       }
 
-      // 테스트 계정 로그인 (프론트엔드 배포용)
-      // 테스트 계정 정보: test@example.com / test123456
+      // 테스트 계정 우선 처리 (백엔드 연결 실패 시 fallback)
       if (
         formData.email === "test@example.com" &&
         formData.password === "test123456"
@@ -286,26 +283,50 @@ const Login = () => {
         // Navigate to home page
         navigate("/");
       } else {
-        // 기존 저장된 사용자 계정 확인
-        const savedUser = localStorage.getItem("user");
-        const savedToken = localStorage.getItem("token");
+        // 백엔드 API 호출
+        const response = await fetch(API_ENDPOINTS.LOGIN, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+          }),
+        });
 
-        if (savedUser && savedToken) {
-          const user = JSON.parse(savedUser);
-          if (user.email === formData.email) {
-            // AuthContext를 통해 로그인 처리
-            login(user, savedToken);
-            navigate("/");
-            return;
-          }
+        const data = await response.json();
+
+        if (response.ok) {
+          // 로그인 성공
+          const { user, token } = data;
+
+          // localStorage에 저장
+          localStorage.setItem("user", JSON.stringify(user));
+          localStorage.setItem("isLoggedIn", "true");
+          localStorage.setItem("token", token);
+
+          // AuthContext를 통해 로그인 처리
+          login(user, token);
+
+          console.log("백엔드 로그인 성공:", user);
+
+          // Navigate to home page
+          navigate("/");
+        } else {
+          // 로그인 실패
+          setError(data.message || t("auth.loginError"));
         }
-
-        setError(
-          "잘못된 이메일 또는 비밀번호입니다.\n테스트 계정: test@example.com / test123456"
-        );
       }
     } catch (err) {
-      setError(t("auth.loginError"));
+      console.error("로그인 오류:", err);
+
+      // 네트워크 오류 시 안내 메시지
+      if (err.name === "TypeError" && err.message.includes("fetch")) {
+        setError("서버에 연결할 수 없습니다. 인터넷 연결을 확인해주세요.");
+      } else {
+        setError(t("auth.loginError"));
+      }
     } finally {
       setIsLoading(false);
     }

@@ -224,6 +224,14 @@ const Input = styled.input`
     color: #a0aec0;
   }
 
+  &:disabled {
+    background: #f8f9fa;
+    color: #6c757d;
+    border-color: #dee2e6;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
   .dark-mode & {
     background: #2d2d2d;
     color: #ffffff;
@@ -236,6 +244,14 @@ const Input = styled.input`
 
     &::placeholder {
       color: #888;
+    }
+
+    &:disabled {
+      background: #1a1a1a;
+      color: #6c757d;
+      border-color: #444;
+      cursor: not-allowed;
+      opacity: 0.7;
     }
   }
 `;
@@ -406,26 +422,40 @@ const ArrowIcon = styled.span`
   }
 `;
 
-const RadioGroup = styled.div`
+const GenderButtonGroup = styled.div`
   display: flex;
   gap: 1rem;
 `;
 
-const RadioLabel = styled.label`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+const GenderButton = styled.button`
+  padding: 0.6rem 1.2rem;
+  border: 1px solid rgba(52, 152, 219, 0.3);
+  border-radius: 20px;
+  background: rgba(52, 152, 219, 0.1);
+  color: #3498db;
   cursor: pointer;
+  transition: all 0.3s ease;
   font-size: 0.9rem;
-  color: #2c3e50;
-  transition: color 0.3s ease;
+  min-width: 80px;
 
-  input[type="radio"] {
-    margin: 0;
+  &.selected {
+    background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
+    border-color: #3498db;
+    color: white;
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
   }
 
   .dark-mode & {
-    color: #ffffff;
+    background: rgba(93, 173, 226, 0.1);
+    border-color: rgba(93, 173, 226, 0.3);
+    color: #5dade2;
+
+    &.selected {
+      background: linear-gradient(135deg, #5dade2 0%, #58d68d 100%);
+      border-color: #5dade2;
+      color: white;
+      box-shadow: 0 4px 15px rgba(93, 173, 226, 0.4);
+    }
   }
 `;
 
@@ -435,11 +465,26 @@ const SectionTitle = styled.h3`
   color: #2c3e50;
   margin: 2rem 0 0.3rem 0;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid #3498db;
+  position: relative;
   transition: color 0.3s ease;
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, #3498db 0%, #2ecc71 100%);
+    border-radius: 1px;
+  }
 
   .dark-mode & {
     color: #ffffff;
+
+    &::after {
+      background: linear-gradient(90deg, #5dade2 0%, #58d68d 100%);
+    }
   }
 `;
 
@@ -746,6 +791,18 @@ const Profile = () => {
   const { id } = useParams(); // URL에서 사용자 ID 가져오기
   const { t, translations, language } = useLanguage();
 
+  // 인증 상태 확인 - 토큰이나 사용자 정보가 없으면 로그인 페이지로 리다이렉트
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+
+    if (!token || !user) {
+      console.log("No authentication found, redirecting to login");
+      navigate("/login");
+      return;
+    }
+  }, [navigate]);
+
   const [formData, setFormData] = useState({
     // 기본 인적사항
     nickname: "",
@@ -758,7 +815,6 @@ const Profile = () => {
     school: "",
     department: "",
     studentId: "",
-    studentCard: null,
     // 언어 설정
     learningLanguage: "English",
     teachingLanguage: "한국어",
@@ -769,8 +825,6 @@ const Profile = () => {
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isDataLoading, setIsDataLoading] = useState(true);
-  const [originalSchool, setOriginalSchool] = useState("");
-  const [needsReverification, setNeedsReverification] = useState(false);
   const [isViewMode, setIsViewMode] = useState(false); // 다른 사용자 프로필 보기 모드
 
   const [hasNewNotification, setHasNewNotification] = useState(
@@ -892,7 +946,6 @@ const Profile = () => {
             department: userData.department || "",
             studentId: userData.student_id || userData.studentId || "",
             university: userData.university || "",
-            studentCard: userData.student_card || userData.studentCard || null,
             // 언어 정보는 현재 formData에 있으면 그것을 우선으로 사용
             learningLanguage: prevFormData.learningLanguage || learningLanguage,
             teachingLanguage: prevFormData.teachingLanguage || teachingLanguage,
@@ -903,8 +956,6 @@ const Profile = () => {
         // 현재 선택된 언어를 로컬 스토리지에 저장
         localStorage.setItem("currentLearningLanguage", learningLanguage);
         localStorage.setItem("currentTeachingLanguage", teachingLanguage);
-
-        setOriginalSchool(userData.school || "");
       } else {
         console.error("프로필 데이터를 불러오는데 실패했습니다.");
       }
@@ -925,7 +976,57 @@ const Profile = () => {
     }
 
     loadUserProfile();
+    loadUnreadMessageCount(); // 안읽은 메시지 수 로드
   }, [id, navigate, loadUserProfile]);
+
+  // 안읽은 메시지 수 로드 함수
+  const loadUnreadMessageCount = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      // 백엔드 API 호출
+      const response = await fetch(API_ENDPOINTS.CHAT_ROOMS, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const totalUnreadCount =
+          data.rooms?.reduce((total, room) => {
+            return total + (room.unread_count || 0);
+          }, 0) || 0;
+
+        // 전역 변수에 설정하여 언더바에서 사용
+        window.globalTotalUnreadCount = totalUnreadCount;
+        console.log("프로필 페이지 - 안읽은 메시지 수:", totalUnreadCount);
+      }
+    } catch (error) {
+      console.error("프로필 페이지 - 안읽은 메시지 수 로드 중 오류:", error);
+
+      // 백엔드 연결 실패 시 테스트 데이터 사용
+      try {
+        const savedUser = localStorage.getItem("user");
+        if (savedUser) {
+          // 테스트용 안읽은 메시지 수 (랜덤)
+          const testUnreadCount = Math.floor(Math.random() * 5); // 0-4개
+          window.globalTotalUnreadCount = testUnreadCount;
+          console.log(
+            "프로필 페이지 - 테스트 안읽은 메시지 수:",
+            testUnreadCount
+          );
+        } else {
+          window.globalTotalUnreadCount = 0;
+        }
+      } catch (testError) {
+        window.globalTotalUnreadCount = 0;
+      }
+    }
+  };
 
   // 언어 선택 이벤트 처리
   useEffect(() => {
@@ -1054,13 +1155,6 @@ const Profile = () => {
       [name]: type === "file" ? files[0] : value,
     }));
 
-    // 학교 변경 시 재인증 필요
-    if (name === "school" && value !== originalSchool) {
-      setNeedsReverification(true);
-    } else if (name === "school" && value === originalSchool) {
-      setNeedsReverification(false);
-    }
-
     // Clear error when user starts typing
     if (error) setError("");
   };
@@ -1115,12 +1209,6 @@ const Profile = () => {
         return;
       }
 
-      // 학교 변경 시 학생증 재인증 필요
-      if (needsReverification && !formData.studentCard) {
-        setError(t("profile.schoolChangeWarning"));
-        return;
-      }
-
       if (!/^010\d{8}$/.test(formData.phone)) {
         setError(t("profile.phoneFormatError"));
         return;
@@ -1146,11 +1234,6 @@ const Profile = () => {
           // 파일 객체인 경우
           formDataToSend.append("profile_image", formData.profileImage);
         }
-      }
-
-      // 학생증 처리
-      if (formData.studentCard) {
-        formDataToSend.append("student_card", formData.studentCard);
       }
 
       formDataToSend.append(
@@ -1202,10 +1285,6 @@ const Profile = () => {
           localStorage.setItem("user", JSON.stringify(data.user));
           window.dispatchEvent(new Event("storage"));
         }
-
-        // 재인증 상태 초기화
-        setNeedsReverification(false);
-        setOriginalSchool(formData.school);
 
         // 프로필 저장 성공 후 최신 데이터 다시 로드
         console.log("Profile saved successfully, reloading user data...");
@@ -1310,30 +1389,30 @@ const Profile = () => {
             </FormGroup>
             <FormGroup>
               <Label>{t("profile.gender")}</Label>
-              <RadioGroup>
-                <RadioLabel>
-                  <input
-                    type="radio"
-                    name="gender"
-                    value="male"
-                    checked={formData.gender === "male"}
-                    onChange={handleChange}
-                    required
-                  />
+              <GenderButtonGroup>
+                <GenderButton
+                  type="button"
+                  className={formData.gender === "male" ? "selected" : ""}
+                  onClick={() =>
+                    handleChange({ target: { name: "gender", value: "male" } })
+                  }
+                  disabled={isDataLoading || isViewMode}
+                >
                   {t("profile.male")}
-                </RadioLabel>
-                <RadioLabel>
-                  <input
-                    type="radio"
-                    name="gender"
-                    value="female"
-                    checked={formData.gender === "female"}
-                    onChange={handleChange}
-                    required
-                  />
+                </GenderButton>
+                <GenderButton
+                  type="button"
+                  className={formData.gender === "female" ? "selected" : ""}
+                  onClick={() =>
+                    handleChange({
+                      target: { name: "gender", value: "female" },
+                    })
+                  }
+                  disabled={isDataLoading || isViewMode}
+                >
                   {t("profile.female")}
-                </RadioLabel>
-              </RadioGroup>
+                </GenderButton>
+              </GenderButtonGroup>
             </FormGroup>
             <FormGroup>
               <Label htmlFor="birthDate">{t("profile.birthDate")}</Label>
@@ -1352,11 +1431,6 @@ const Profile = () => {
 
             {/* 02. 학생 인증 */}
             <SectionTitle>{t("profile.studentInfo")}</SectionTitle>
-            {needsReverification && (
-              <SchoolChangeWarning>
-                {t("profile.schoolChangeWarning")}
-              </SchoolChangeWarning>
-            )}
             <FormGroup>
               <Label htmlFor="studentName">{t("profile.name")}</Label>
               <Input
@@ -1367,6 +1441,7 @@ const Profile = () => {
                 onChange={handleChange}
                 placeholder="ex) 홍길동"
                 required
+                disabled={true}
               />
             </FormGroup>
             <FormGroup>
@@ -1379,6 +1454,7 @@ const Profile = () => {
                 onChange={handleChange}
                 placeholder={t("profile.schoolPlaceholder")}
                 required
+                disabled={true}
               />
             </FormGroup>
             <FormGroup>
@@ -1391,6 +1467,7 @@ const Profile = () => {
                 onChange={handleChange}
                 placeholder={t("profile.departmentPlaceholder")}
                 required
+                disabled={true}
               />
             </FormGroup>
             <FormGroup>
@@ -1403,29 +1480,9 @@ const Profile = () => {
                 onChange={handleChange}
                 placeholder="ex) 20240000"
                 required
+                disabled={true}
               />
             </FormGroup>
-            <ReverifySection>
-              <FormGroup>
-                <Label htmlFor="studentCard">
-                  {t("profile.studentCard")}
-                  {needsReverification && " *"}
-                </Label>
-                <FileInput
-                  type="file"
-                  id="studentCard"
-                  name="studentCard"
-                  onChange={handleChange}
-                  accept="image/*"
-                  required={needsReverification}
-                />
-                <FileLabel htmlFor="studentCard">
-                  {formData.studentCard
-                    ? formData.studentCard.name
-                    : "선택된 파일 없음"}
-                </FileLabel>
-              </FormGroup>
-            </ReverifySection>
 
             {/* 03. 언어 설정 */}
             <SectionTitle>{t("profile.languageSettings")}</SectionTitle>

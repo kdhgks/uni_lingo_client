@@ -131,6 +131,7 @@ const UnderBar = () => {
   const location = useLocation();
   const { t } = useLanguage();
   const [totalUnreadCount, setTotalUnreadCount] = useState(0);
+  const [hasNewNotification, setHasNewNotification] = useState(false);
 
   // console.log("UnderBar 렌더링됨, 현재 경로:", location.pathname);
 
@@ -149,6 +150,22 @@ const UnderBar = () => {
 
     // 주기적으로 업데이트 (2초마다로 변경하여 성능 개선)
     const interval = setInterval(updateUnreadCount, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // 새로운 알림 상태 감지
+  useEffect(() => {
+    const updateNotificationStatus = () => {
+      const newNotificationStatus = window.globalHasNewNotification || false;
+      setHasNewNotification(newNotificationStatus);
+    };
+
+    // 초기값 설정
+    updateNotificationStatus();
+
+    // 주기적으로 업데이트
+    const interval = setInterval(updateNotificationStatus, 1000);
 
     return () => clearInterval(interval);
   }, []);
@@ -196,7 +213,9 @@ const UnderBar = () => {
           <TabItem
             key={tab.id}
             className={isActive(tab.path) ? "active" : ""}
-            onClick={() => navigate(tab.path)}
+            onClick={() => {
+              navigate(tab.path);
+            }}
           >
             <TabIcon>
               {tab.icon}

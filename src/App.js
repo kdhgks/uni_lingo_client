@@ -30,20 +30,7 @@ if (window.globalHasNewNotification === undefined) {
 }
 
 // 전역 알림 함수들
-window.addMessageNotification = (message, senderName, roomId = null) => {
-  const newNotification = {
-    id: Date.now(),
-    type: "message",
-    message: `${senderName}에게 채팅이 왔습니다: "${message}"`,
-    time: new Date(),
-    isRead: false,
-    roomId: roomId,
-    partnerName: senderName,
-  };
-
-  window.globalNotifications = [newNotification, ...window.globalNotifications];
-  window.globalHasNewNotification = true;
-};
+// 메시지 알림은 제거하고 친구 매칭 알림만 남김
 
 // 매칭 성공 알림 추가 함수
 window.addMatchingNotification = (partnerName) => {

@@ -299,22 +299,22 @@ const NotificationContainer = styled.div`
 const NotificationIcon = styled.span`
   font-size: 1.8rem;
   display: block;
+  color: #6c757d;
+  transition: color 0.3s ease;
+
+  .dark-mode & {
+    color: #b0b0b0;
+  }
 `;
 
 const NotificationBadge = styled.div`
   position: absolute;
-  top: 0.25rem;
-  right: 0.25rem;
+  top: 5px;
+  right: 5px;
   background: #e74c3c;
-  color: white;
   border-radius: 50%;
-  width: 16px;
-  height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.6rem;
-  font-weight: bold;
+  width: 10px;
+  height: 10px;
 `;
 
 const ChattingMain = styled.main`
@@ -404,7 +404,7 @@ const ChatItem = styled.div`
 `;
 
 const PartnerAvatar = styled.div`
-  font-size: 3rem;
+  font-size: 2.5rem;
   min-width: 70px;
   height: 70px;
   text-align: center;
@@ -482,6 +482,14 @@ const ChatMeta = styled.div`
   margin: 0;
 `;
 
+const ChatRightSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
+  min-width: 60px;
+`;
+
 const TimeStamp = styled.span`
   font-size: 0.8rem;
   color: #6c757d;
@@ -498,14 +506,13 @@ const UnreadBadge = styled.span`
   background: linear-gradient(135deg, #e74c3c 0%, #f39c12 100%);
   color: white;
   border-radius: 50%;
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  margin-left: auto;
   box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
   animation: ${pulse} 2s infinite;
 `;
@@ -589,9 +596,86 @@ const Chatting = () => {
   const { t } = useLanguage();
   const [chats, setChats] = useState([]);
   const [isLoadingChats, setIsLoadingChats] = useState(false);
-  const [hasNewNotification, setHasNewNotification] = useState(
-    window.globalHasNewNotification || false
-  );
+  const [hasNewNotification, setHasNewNotification] = useState(false);
+  const [totalUnreadCount, setTotalUnreadCount] = useState(0);
+
+  // 인증 상태 확인 - 토큰이나 사용자 정보가 없으면 로그인 페이지로 리다이렉트
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+
+    if (!token || !user) {
+      console.log("No authentication found, redirecting to login");
+      navigate("/login");
+      return;
+    }
+  }, [navigate]);
+
+  // 채팅 시간 포맷팅 함수 (카카오톡 스타일)
+  const formatChatTime = (timestamp, hasMessage = true) => {
+    if (!timestamp) return "방금 전";
+
+    const now = new Date();
+    const messageTime = new Date(timestamp);
+
+    // Invalid Date 체크
+    if (isNaN(messageTime.getTime())) return "방금 전";
+
+    const diffInMinutes = Math.floor((now - messageTime) / (1000 * 60));
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    const diffInDays = Math.floor(diffInHours / 24);
+
+    // 메시지가 없는 경우 (채팅방 생성 시간)
+    if (!hasMessage) {
+      if (diffInDays < 1) {
+        // 오늘 생성된 채팅방: 시간:분 형식 (예: 2:30 PM)
+        return messageTime.toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+        });
+      } else if (diffInDays === 1) {
+        return "어제";
+      } else if (diffInDays < 7) {
+        return messageTime.toLocaleDateString("ko-KR", { weekday: "short" });
+      } else {
+        return messageTime.toLocaleDateString("ko-KR", {
+          month: "numeric",
+          day: "numeric",
+        });
+      }
+    }
+
+    // 메시지가 있는 경우 (기존 로직)
+    // 오늘인지 확인 (같은 날)
+    const isToday = now.toDateString() === messageTime.toDateString();
+
+    // 어제인지 확인
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const isYesterday = yesterday.toDateString() === messageTime.toDateString();
+
+    if (isToday) {
+      // 오늘: 시간:분 형식 (예: 2:30 PM)
+      return messageTime.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      });
+    } else if (isYesterday) {
+      // 어제: "어제" 텍스트
+      return "어제";
+    } else if (diffInDays < 7) {
+      // 이번 주: 요일 (예: 월요일)
+      return messageTime.toLocaleDateString("ko-KR", { weekday: "short" });
+    } else {
+      // 그 외: 월/일 형식 (예: 12/25)
+      return messageTime.toLocaleDateString("ko-KR", {
+        month: "numeric",
+        day: "numeric",
+      });
+    }
+  };
 
   // 채팅방 목록 로드 함수
   const loadChats = async () => {
@@ -605,31 +689,47 @@ const Chatting = () => {
           {
             id: 1,
             partner: {
+              name: "박지영",
+              avatar: "👩‍🎓",
+            },
+            lastMessage: "안녕하세요! 오늘 영어 공부 어떠셨나요?",
+            timestamp: formatChatTime(new Date().toISOString()), // 오늘
+            unreadCount: 2,
+          },
+          {
+            id: 2,
+            partner: {
               name: "김민수",
               avatar: "👨‍🎓",
             },
             lastMessage: "Thank you for helping me with English!",
-            timestamp: "1일 전",
+            timestamp: formatChatTime(
+              new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+            ), // 1일 전 (어제)
             unreadCount: 0,
           },
           {
-            id: 2,
+            id: 3,
             partner: {
               name: "Yuki Tanaka",
               avatar: "👩‍💼",
             },
             lastMessage: "こんにちは！今日は日本語を教えてください。",
-            timestamp: "3일 전",
+            timestamp: formatChatTime(
+              new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
+            ), // 3일 전
             unreadCount: 1,
           },
           {
-            id: 3,
+            id: 4,
             partner: {
               name: "Alex Johnson",
               avatar: "👨‍💼",
             },
             lastMessage: "Hello! How was your Korean study today?",
-            timestamp: "5일 전",
+            timestamp: formatChatTime(
+              new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString()
+            ), // 5일 전
             unreadCount: 0,
           },
         ];
@@ -640,6 +740,7 @@ const Chatting = () => {
           return total + (chat.unreadCount || 0);
         }, 0);
         window.globalTotalUnreadCount = totalUnreadCount;
+        setTotalUnreadCount(totalUnreadCount);
       } else {
         // 새로운 유저의 경우 백엔드에서 채팅방 목록 불러오기
         const response = await fetch(API_ENDPOINTS.CHAT_ROOMS, {
@@ -655,7 +756,7 @@ const Chatting = () => {
           console.log("📱 API 응답 데이터:", chatsData);
 
           if (chatsData.success && chatsData.rooms) {
-            // API 응답 구조에 맞게 데이터 변환
+            // API 응답 구조에 맞게 데이터 변환 (백엔드에서 이미 정렬됨)
             const transformedChats = chatsData.rooms.map((room) => ({
               id: room.id,
               partner: {
@@ -664,25 +765,23 @@ const Chatting = () => {
               },
               lastMessage: room.last_message?.content || "메시지가 없습니다",
               timestamp: room.last_message?.timestamp
-                ? new Date(room.last_message.timestamp).toLocaleDateString(
-                    "ko-KR",
-                    {
-                      month: "short",
-                      day: "numeric",
-                    }
+                ? formatChatTime(
+                    room.last_message.timestamp,
+                    !!room.last_message?.content
                   )
                 : "방금 전",
               unreadCount: room.unread_count || 0,
             }));
 
-            console.log("📱 변환된 채팅 데이터:", transformedChats);
+            console.log("📱 채팅 데이터:", transformedChats);
             setChats(transformedChats);
 
-            // 실제 데이터에서 전체 unread count 계산
+            // 전체 unread count 계산
             const totalUnreadCount = transformedChats.reduce((total, chat) => {
               return total + (chat.unreadCount || 0);
             }, 0);
             window.globalTotalUnreadCount = totalUnreadCount;
+            setTotalUnreadCount(totalUnreadCount);
           } else {
             console.error("채팅방 데이터 형식이 올바르지 않습니다:", chatsData);
             setChats([]);
@@ -693,19 +792,43 @@ const Chatting = () => {
             response.status
           );
           setChats([]);
+          window.globalTotalUnreadCount = 0;
+          setTotalUnreadCount(0);
         }
       }
     } catch (error) {
       console.error("채팅방 목록 로딩 중 오류가 발생했습니다:", error);
       setChats([]);
+      window.globalTotalUnreadCount = 0;
+      setTotalUnreadCount(0);
     } finally {
       setIsLoadingChats(false);
+    }
+  };
+
+  // 읽지 않은 알림 확인 함수
+  const checkUnreadNotifications = async () => {
+    try {
+      const response = await fetch(API_ENDPOINTS.NOTIFICATIONS, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const hasUnread = (data.unread_count || 0) > 0;
+        setHasNewNotification(hasUnread);
+      }
+    } catch (error) {
+      console.error("알림 확인 중 오류:", error);
     }
   };
 
   // 초기 로드
   useEffect(() => {
     loadChats();
+    checkUnreadNotifications();
   }, []);
 
   // 페이지 포커스 시 채팅방 목록 새로고침
@@ -792,6 +915,20 @@ const Chatting = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // 알림 상태 업데이트 감지
+  useEffect(() => {
+    const handleNotificationUpdate = () => {
+      setHasNewNotification(window.globalHasNewNotification || false);
+    };
+
+    window.addEventListener("notificationUpdate", handleNotificationUpdate);
+    return () =>
+      window.removeEventListener(
+        "notificationUpdate",
+        handleNotificationUpdate
+      );
+  }, []);
+
   const handleChatClick = (chatId) => {
     navigate(`/chatting/${chatId}`);
   };
@@ -819,7 +956,7 @@ const Chatting = () => {
           <NotificationIcon>
             <FiBell />
           </NotificationIcon>
-          {hasNewNotification && <NotificationBadge>!</NotificationBadge>}
+          {hasNewNotification && <NotificationBadge></NotificationBadge>}
         </NotificationContainer>
       </ChattingHeader>
 
@@ -833,13 +970,13 @@ const Chatting = () => {
                 <ChatInfo>
                   <PartnerName>{chat.partner.name}</PartnerName>
                   <LastMessage>{chat.lastMessage}</LastMessage>
-                  <ChatMeta>
-                    <TimeStamp>{chat.timestamp}</TimeStamp>
-                  </ChatMeta>
                 </ChatInfo>
-                {chat.unreadCount > 0 && (
-                  <UnreadBadge>{chat.unreadCount}</UnreadBadge>
-                )}
+                <ChatRightSection>
+                  <TimeStamp>{chat.timestamp}</TimeStamp>
+                  {chat.unreadCount > 0 && (
+                    <UnreadBadge>{chat.unreadCount}</UnreadBadge>
+                  )}
+                </ChatRightSection>
               </ChatItem>
             ))}
           </ChatList>

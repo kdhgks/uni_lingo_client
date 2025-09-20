@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 import UnderBar from "../components/UnderBar";
 import Sidebar from "../components/Sidebar";
 import { useLanguage } from "../contexts/LanguageContext";
-import { FiBell, FiMessageCircle, FiGift } from "react-icons/fi";
+import { FiBell } from "react-icons/fi";
+import { API_ENDPOINTS } from "../config/api";
 
 const NotificationsContainer = styled.div`
   min-height: 100vh;
@@ -78,7 +79,7 @@ const BackBtn = styled.button`
 `;
 
 const NotificationsMain = styled.div`
-  padding: 5rem 1rem 1rem 1rem;
+  padding: 5rem 0.5rem 1rem 0.5rem;
   max-width: 800px;
   margin: 0 auto;
 `;
@@ -100,7 +101,7 @@ const NotificationList = styled.div`
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border-radius: 16px;
-  padding: 1rem;
+  padding: 0.5rem;
   border: 1px solid rgba(255, 255, 255, 0.2);
   transition: all 0.3s ease;
 
@@ -111,7 +112,7 @@ const NotificationList = styled.div`
 `;
 
 const NotificationItem = styled.div`
-  padding: 1.25rem 1rem;
+  padding: 1rem 0.5rem;
   border-bottom: 1px solid rgba(52, 152, 219, 0.1);
   cursor: pointer;
   transition: all 0.3s ease;
@@ -156,7 +157,8 @@ const NotificationTitle = styled.div`
   font-weight: 600;
   color: #2c3e50;
   font-size: 1rem;
-  margin-bottom: 0.25rem;
+  margin: -1rem -0.5rem 0.5rem -0.5rem;
+  padding: 0.5rem 0.5rem;
   transition: color 0.3s ease;
 
   .dark-mode & {
@@ -213,31 +215,78 @@ const Notifications = () => {
   const { t } = useLanguage();
   const [notifications, setNotifications] = useState([]);
 
+  // 인증 상태 확인 - 토큰이나 사용자 정보가 없으면 로그인 페이지로 리다이렉트
   useEffect(() => {
-    // 전역 알림 데이터 가져오기
-    const globalNotifications = window.globalNotifications || [];
-    setNotifications(globalNotifications);
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
 
-    // 전역 알림 상태 초기화
-    window.globalHasNewNotification = false;
-    window.dispatchEvent(new CustomEvent("notificationUpdate"));
+    if (!token || !user) {
+      console.log("No authentication found, redirecting to login");
+      navigate("/login");
+      return;
+    }
+  }, [navigate]);
+
+  useEffect(() => {
+    loadNotifications();
   }, []);
 
-  const formatTime = (time) => {
-    const now = new Date();
-    const notificationTime = new Date(time);
-    const diffInMinutes = Math.floor((now - notificationTime) / (1000 * 60));
+  const loadNotifications = async () => {
+    try {
+      const response = await fetch(API_ENDPOINTS.NOTIFICATIONS, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
 
-    if (diffInMinutes < 1) return "방금 전";
-    if (diffInMinutes < 60) return `${diffInMinutes}분 전`;
-    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}시간 전`;
-    return notificationTime.toLocaleDateString();
+      if (response.ok) {
+        const data = await response.json();
+        setNotifications(data.notifications || []);
+        console.log("백엔드에서 알림 로드:", data.notifications);
+      } else {
+        console.error("알림 로드 실패:", response.status);
+        // 백엔드 실패 시 빈 배열 설정
+        setNotifications([]);
+      }
+    } catch (error) {
+      console.error("알림 로드 오류:", error);
+      // 오류 시 빈 배열 설정
+      setNotifications([]);
+    }
+  };
+
+  const formatTime = (timeString) => {
+    try {
+      console.log("formatTime received:", timeString, typeof timeString);
+
+      if (!timeString) {
+        return "시간 정보 없음";
+      }
+
+      const now = new Date();
+      const notificationTime = new Date(timeString);
+
+      // Invalid Date 체크
+      if (isNaN(notificationTime.getTime())) {
+        console.error("Invalid date:", timeString);
+        return "시간 정보 없음";
+      }
+
+      const diffInMinutes = Math.floor((now - notificationTime) / (1000 * 60));
+
+      if (diffInMinutes < 1) return "방금 전";
+      if (diffInMinutes < 60) return `${diffInMinutes}분 전`;
+      if (diffInMinutes < 1440)
+        return `${Math.floor(diffInMinutes / 60)}시간 전`;
+      return notificationTime.toLocaleDateString();
+    } catch (error) {
+      console.error("formatTime error:", error, timeString);
+      return "시간 정보 없음";
+    }
   };
 
   const handleNotificationClick = (notification) => {
-    if (notification.roomId) {
-      navigate(`/chatting/${notification.roomId}`);
-    } else if (notification.type === "matching") {
+    if (notification.type === "matching") {
       // 매칭 성공 알림 클릭 시 채팅방으로 이동
       navigate("/chatting");
     } else if (notification.type === "match") {
@@ -245,7 +294,20 @@ const Notifications = () => {
     }
   };
 
-  const handleBack = () => {
+  const handleBack = async () => {
+    // 모든 알림을 읽음으로 표시
+    try {
+      await fetch(API_ENDPOINTS.MARK_NOTIFICATIONS_READ, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+      });
+    } catch (error) {
+      console.error("알림 읽음 처리 실패:", error);
+    }
+
     navigate(-1);
   };
 
@@ -273,30 +335,21 @@ const Notifications = () => {
                     flex: 1,
                   }}
                 >
-                  <NotificationIcon>
-                    {notification.type === "message" ? (
-                      <FiMessageCircle />
-                    ) : notification.type === "matching" ? (
-                      <FiGift />
-                    ) : (
-                      <FiBell />
-                    )}
-                  </NotificationIcon>
                   <NotificationContent>
                     <NotificationTitle>
-                      {notification.type === "message"
-                        ? t("notifications.newMessage")
-                        : notification.type === "matching"
-                        ? "매칭 성공"
-                        : t("notifications.matchComplete")}
+                      {notification.type === "matching" ? "매칭 완료" : "알림"}
                     </NotificationTitle>
                     <NotificationMessage>
-                      {notification.message}
+                      {notification.type === "matching"
+                        ? `${
+                            notification.partnerName || "새로운 파트너"
+                          }와 언어교환 매칭이 완료되었습니다!`
+                        : notification.message}
                     </NotificationMessage>
                   </NotificationContent>
                 </div>
                 <NotificationTime>
-                  {formatTime(notification.time)}
+                  {formatTime(notification.created_at)}
                 </NotificationTime>
               </NotificationItem>
             ))

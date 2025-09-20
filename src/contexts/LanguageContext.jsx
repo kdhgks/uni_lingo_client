@@ -10,15 +10,93 @@ export const useLanguage = () => {
   return context;
 };
 
+// 지원하는 언어 목록
+const supportedLanguages = {
+  ko: "ko",
+  "ko-KR": "ko",
+  en: "en",
+  "en-US": "en",
+  "en-GB": "en",
+  ja: "ja",
+  "ja-JP": "ja",
+  zh: "zh",
+  "zh-CN": "zh",
+  "zh-TW": "zh",
+  "zh-HK": "zh",
+  es: "es",
+  "es-ES": "es",
+  "es-MX": "es",
+  fr: "fr",
+  "fr-FR": "fr",
+  "fr-CA": "fr",
+  de: "de",
+  "de-DE": "de",
+  it: "it",
+  "it-IT": "it",
+  ru: "ru",
+  "ru-RU": "ru",
+  pt: "pt",
+  "pt-PT": "pt",
+  "pt-BR": "pt",
+  nl: "nl",
+  "nl-NL": "nl",
+  vi: "vi",
+  "vi-VN": "vi",
+  th: "th",
+  "th-TH": "th",
+  mn: "mn",
+  "mn-MN": "mn",
+  ne: "ne",
+  "ne-NP": "ne",
+  my: "my",
+  "my-MM": "my",
+  uz: "uz",
+  "uz-UZ": "uz",
+  ar: "ar",
+  "ar-SA": "ar",
+  "ar-EG": "ar",
+};
+
+// 기기 언어 감지 함수
+const detectDeviceLanguage = () => {
+  // 1. localStorage에 저장된 언어가 있으면 우선 사용
+  const savedLanguage = localStorage.getItem("language");
+  if (savedLanguage && supportedLanguages[savedLanguage]) {
+    return savedLanguage;
+  }
+
+  // 2. 브라우저 언어 설정 감지
+  const browserLanguage = navigator.language || navigator.languages?.[0];
+  if (browserLanguage && supportedLanguages[browserLanguage]) {
+    return supportedLanguages[browserLanguage];
+  }
+
+  // 3. 언어 코드의 첫 두 글자만 확인 (예: ko-KR -> ko)
+  if (browserLanguage) {
+    const primaryLanguage = browserLanguage.split("-")[0];
+    if (supportedLanguages[primaryLanguage]) {
+      return supportedLanguages[primaryLanguage];
+    }
+  }
+
+  // 4. 기본값: 한국어
+  return "ko";
+};
+
 export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState("ko");
   const [translations, setTranslations] = useState({});
 
   useEffect(() => {
-    // 로컬 스토리지에서 언어 설정 불러오기
-    const savedLanguage = localStorage.getItem("language") || "ko";
-    setLanguage(savedLanguage);
-    loadTranslations(savedLanguage);
+    // 기기 언어 자동 감지
+    const detectedLanguage = detectDeviceLanguage();
+    setLanguage(detectedLanguage);
+    loadTranslations(detectedLanguage);
+
+    // 감지된 언어를 localStorage에 저장 (처음 방문한 경우)
+    if (!localStorage.getItem("language")) {
+      localStorage.setItem("language", detectedLanguage);
+    }
   }, []);
 
   const loadTranslations = async (lang) => {

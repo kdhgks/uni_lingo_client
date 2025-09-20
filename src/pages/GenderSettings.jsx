@@ -61,50 +61,35 @@ const GenderCard = styled.button`
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  padding: 2rem;
-  border: 2px solid #e1e8ed;
-  border-radius: 12px;
-  background: #ffffff;
+  padding: 1.5rem;
+  border: 1px solid rgba(52, 152, 219, 0.3);
+  border-radius: 20px;
+  background: rgba(52, 152, 219, 0.1);
+  color: #3498db;
   cursor: pointer;
   transition: all 0.3s ease;
   text-align: center;
   animation: ${slideInUp} 0.3s ease-out;
   min-height: 120px;
-
-  &:hover {
-    border-color: #3498db;
-    background: rgba(52, 152, 219, 0.05);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
-  }
+  font-size: 1rem;
 
   &.selected {
+    background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
     border-color: #3498db;
-    background: linear-gradient(
-      135deg,
-      rgba(52, 152, 219, 0.1) 0%,
-      rgba(46, 204, 113, 0.1) 100%
-    );
-    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+    color: white;
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
   }
 
   .dark-mode & {
-    background: #2d2d2d;
-    border-color: #555;
-    color: #ffffff;
-
-    &:hover {
-      border-color: #5dade2;
-      background: rgba(93, 173, 226, 0.1);
-    }
+    background: rgba(93, 173, 226, 0.1);
+    border-color: rgba(93, 173, 226, 0.3);
+    color: #5dade2;
 
     &.selected {
+      background: linear-gradient(135deg, #5dade2 0%, #58d68d 100%);
       border-color: #5dade2;
-      background: linear-gradient(
-        135deg,
-        rgba(93, 173, 226, 0.2) 0%,
-        rgba(46, 204, 113, 0.2) 100%
-      );
+      color: white;
+      box-shadow: 0 4px 15px rgba(93, 173, 226, 0.4);
     }
   }
 `;

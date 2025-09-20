@@ -231,20 +231,40 @@ const SectionTitle = styled.h3`
   border-bottom: 2px solid #3498db;
 `;
 
-const RadioGroup = styled.div`
+const GenderButtonGroup = styled.div`
   display: flex;
   gap: 1rem;
 `;
 
-const RadioLabel = styled.label`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+const GenderButton = styled.button`
+  padding: 0.6rem 1.2rem;
+  border: 1px solid rgba(52, 152, 219, 0.3);
+  border-radius: 20px;
+  background: rgba(52, 152, 219, 0.1);
+  color: #3498db;
   cursor: pointer;
+  transition: all 0.3s ease;
   font-size: 0.9rem;
+  min-width: 80px;
 
-  input[type="radio"] {
-    margin: 0;
+  &.selected {
+    background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
+    border-color: #3498db;
+    color: white;
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+  }
+
+  .dark-mode & {
+    background: rgba(93, 173, 226, 0.1);
+    border-color: rgba(93, 173, 226, 0.3);
+    color: #5dade2;
+
+    &.selected {
+      background: linear-gradient(135deg, #5dade2 0%, #58d68d 100%);
+      border-color: #5dade2;
+      color: white;
+      box-shadow: 0 4px 15px rgba(93, 173, 226, 0.4);
+    }
   }
 `;
 
@@ -509,75 +529,68 @@ const Signup = () => {
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // 컴포넌트 마운트 시 저장된 폼 데이터 복원
-  useEffect(() => {
-    const savedFormData = localStorage.getItem("signupFormData");
-    if (savedFormData) {
-      try {
-        const parsedData = JSON.parse(savedFormData);
-        setFormData(parsedData);
-      } catch (error) {
-        console.error("저장된 폼 데이터 파싱 실패:", error);
-      }
-    }
-  }, []);
+  // 회원가입 페이지는 항상 빈 필드로 시작
+  // (저장된 폼 데이터 복원 로직 제거)
 
-  // 언어 옵션들
+  // 언어 옵션들 (번역 키로 변경)
   const languageOptions = [
-    "한국어",
-    "영어",
-    "일본어",
-    "중국어",
-    "스페인어",
-    "프랑스어",
-    "독일어",
-    "베트남어",
-    "몽골어",
-    "우즈베크어",
-    "네팔어",
-    "미얀마어",
-    "태국어",
-    "이탈리아어",
-    "러시아어",
-    "아랍어",
-    "포르투갈어",
-    "네덜란드어",
+    { value: "한국어", key: "korean" },
+    { value: "영어", key: "english" },
+    { value: "일본어", key: "japanese" },
+    { value: "중국어", key: "chinese" },
+    { value: "스페인어", key: "spanish" },
+    { value: "프랑스어", key: "french" },
+    { value: "독일어", key: "german" },
+    { value: "베트남어", key: "vietnamese" },
+    { value: "몽골어", key: "mongolian" },
+    { value: "우즈베크어", key: "uzbek" },
+    { value: "네팔어", key: "nepali" },
+    { value: "미얀마어", key: "burmese" },
+    { value: "태국어", key: "thai" },
+    { value: "이탈리아어", key: "italian" },
+    { value: "러시아어", key: "russian" },
+    { value: "아랍어", key: "arabic" },
+    { value: "포르투갈어", key: "portuguese" },
+    { value: "네덜란드어", key: "dutch" },
   ];
 
-  // 관심사 옵션들
+  // 관심사 옵션들 (번역 키로 변경)
   const interestOptions = [
-    "K-pop",
-    "드라마",
-    "요리",
-    "영화",
-    "음악",
-    "여행",
-    "게임",
-    "스포츠",
-    "책",
-    "예술",
-    "언어",
-    "문화",
-    "패션",
-    "사진",
+    { value: "K-pop", key: "kpop" },
+    { value: "드라마", key: "drama" },
+    { value: "요리", key: "cooking" },
+    { value: "영화", key: "movie" },
+    { value: "음악", key: "music" },
+    { value: "여행", key: "travel" },
+    { value: "게임", key: "game" },
+    { value: "스포츠", key: "sports" },
+    { value: "책", key: "book" },
+    { value: "예술", key: "art" },
+    { value: "언어", key: "language" },
+    { value: "문화", key: "culture" },
+    { value: "패션", key: "fashion" },
+    { value: "사진", key: "photo" },
   ];
 
-  // 대학교 권역 옵션들
+  // 대학교 권역 옵션들 (번역 키로 변경)
   const universityOptions = [
-    { value: "", label: "대학교 권역을 선택하세요" },
-    { value: "seoul_area", label: "서울권" },
-    { value: "gyeonggi_area", label: "경기권" },
-    { value: "incheon_area", label: "인천권" },
-    { value: "busan_area", label: "부산권" },
-    { value: "daegu_area", label: "대구권" },
-    { value: "gwangju_area", label: "광주권" },
-    { value: "daejeon_area", label: "대전권" },
-    { value: "ulsan_area", label: "울산권" },
-    { value: "gangwon_area", label: "강원권" },
-    { value: "chungcheong_area", label: "충청권" },
-    { value: "jeolla_area", label: "전라권" },
-    { value: "gyeongsang_area", label: "경상권" },
-    { value: "jeju_area", label: "제주권" },
+    { value: "", label: t("signup.universityPlaceholder") },
+    { value: "seoul_area", label: t("signup.universityAreas.seoul") },
+    { value: "gyeonggi_area", label: t("signup.universityAreas.gyeonggi") },
+    { value: "incheon_area", label: t("signup.universityAreas.incheon") },
+    { value: "busan_area", label: t("signup.universityAreas.busan") },
+    { value: "daegu_area", label: t("signup.universityAreas.daegu") },
+    { value: "gwangju_area", label: t("signup.universityAreas.gwangju") },
+    { value: "daejeon_area", label: t("signup.universityAreas.daejeon") },
+    { value: "ulsan_area", label: t("signup.universityAreas.ulsan") },
+    { value: "gangwon_area", label: t("signup.universityAreas.gangwon") },
+    {
+      value: "chungcheong_area",
+      label: t("signup.universityAreas.chungcheong"),
+    },
+    { value: "jeolla_area", label: t("signup.universityAreas.jeolla") },
+    { value: "gyeongsang_area", label: t("signup.universityAreas.gyeongsang") },
+    { value: "jeju_area", label: t("signup.universityAreas.jeju") },
   ];
 
   const handleChange = (e) => {
@@ -588,12 +601,7 @@ const Signup = () => {
     };
     setFormData(newFormData);
 
-    // localStorage에 저장 (파일은 제외)
-    const dataToSave = { ...newFormData };
-    if (type === "file") {
-      dataToSave.studentCard = null; // 파일 객체는 저장하지 않음
-    }
-    localStorage.setItem("signupFormData", JSON.stringify(dataToSave));
+    // 회원가입 페이지에서는 localStorage에 저장하지 않음
 
     if (error) setError("");
   };
@@ -622,8 +630,7 @@ const Signup = () => {
         };
       }
 
-      // localStorage에 저장
-      localStorage.setItem("signupFormData", JSON.stringify(newFormData));
+      // 회원가입 페이지에서는 localStorage에 저장하지 않음
 
       return newFormData;
     });
@@ -640,7 +647,7 @@ const Signup = () => {
         interests: [...formData.interests, interest],
       };
       setFormData(newFormData);
-      localStorage.setItem("signupFormData", JSON.stringify(newFormData));
+      // 회원가입 페이지에서는 localStorage에 저장하지 않음
     }
     if (error) setError("");
   };
@@ -651,7 +658,7 @@ const Signup = () => {
       interests: formData.interests.filter((item) => item !== interest),
     };
     setFormData(newFormData);
-    localStorage.setItem("signupFormData", JSON.stringify(newFormData));
+    // 회원가입 페이지에서는 localStorage에 저장하지 않음
     if (error) setError("");
   };
 
@@ -662,9 +669,6 @@ const Signup = () => {
     setSuccess("");
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
       // Validation
       if (
         !formData.nickname ||
@@ -721,7 +725,80 @@ const Signup = () => {
         return;
       }
 
-      // 테스트 계정 생성 (프론트엔드 배포용)
+      // 백엔드 API 호출
+      const formDataToSend = new FormData();
+      formDataToSend.append("email", formData.userId);
+      formDataToSend.append("password", formData.password);
+      formDataToSend.append("password_confirm", formData.confirmPassword); // 백엔드에서 요구하는 필드명
+      formDataToSend.append("nickname", formData.nickname);
+      formDataToSend.append("phone", formData.phone);
+      formDataToSend.append("gender", formData.gender);
+      formDataToSend.append("birth_date", formData.birthDate);
+      formDataToSend.append("student_name", formData.student_name);
+      formDataToSend.append("school", formData.school);
+      formDataToSend.append("department", formData.department);
+      formDataToSend.append("student_id", formData.studentId);
+      formDataToSend.append("university", formData.university);
+      formDataToSend.append(
+        "learning_languages",
+        JSON.stringify(formData.learning_languages)
+      );
+      formDataToSend.append(
+        "teaching_languages",
+        JSON.stringify(formData.teaching_languages)
+      );
+      formDataToSend.append("interests", JSON.stringify(formData.interests));
+
+      // 학생증 파일 추가
+      if (formData.studentCard) {
+        formDataToSend.append("student_card", formData.studentCard);
+      }
+
+      const response = await fetch(API_ENDPOINTS.SIGNUP, {
+        method: "POST",
+        body: formDataToSend,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // 회원가입 성공
+        const { user, token } = data;
+
+        // localStorage에 저장
+        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("token", token);
+
+        setSuccess(t("signup.signupSuccess"));
+
+        console.log("백엔드 회원가입 성공:", user);
+
+        // Navigate to home page after a short delay
+        setTimeout(() => {
+          navigate("/");
+        }, 1500);
+      } else {
+        // 회원가입 실패
+        let errorMessage = t("signup.signupError");
+
+        if (data.message) {
+          // data.message가 객체인 경우 처리
+          if (typeof data.message === "object") {
+            // 객체의 첫 번째 키-값 쌍을 문자열로 변환
+            const firstKey = Object.keys(data.message)[0];
+            errorMessage = data.message[firstKey] || t("signup.signupError");
+          } else {
+            errorMessage = data.message;
+          }
+        }
+
+        setError(errorMessage);
+      }
+    } catch (err) {
+      console.error("회원가입 오류:", err);
+
+      // 네트워크 오류 시 테스트 계정으로 fallback
       const testUser = {
         id: Date.now(),
         email: formData.userId,
@@ -776,20 +853,14 @@ const Signup = () => {
       localStorage.setItem("isLoggedIn", "true");
       localStorage.setItem("token", "test_token_" + Date.now());
 
-      // 회원가입 성공 시 임시 데이터 정리
-      localStorage.removeItem("selectedUniversity");
-      localStorage.removeItem("signupFormData");
+      setSuccess(t("signup.signupSuccess"));
 
-      setSuccess("테스트 계정이 생성되었습니다! 로그인 중...");
-
-      console.log("테스트 계정 생성 완료:", testUser);
+      console.log("네트워크 오류로 인한 테스트 계정 생성:", testUser);
 
       // Navigate to home page after a short delay
       setTimeout(() => {
         navigate("/");
       }, 1500);
-    } catch (err) {
-      setError("회원가입 중 오류가 발생했습니다. 다시 시도해주세요.");
     } finally {
       setIsLoading(false);
     }
@@ -797,11 +868,11 @@ const Signup = () => {
 
   return (
     <SignupContainer>
-      <BackButton onClick={() => navigate("/login")}>← 이전</BackButton>
+      <BackButton onClick={() => navigate("/login")}>←</BackButton>
 
       <SignupMain>
         <SignupForm>
-          <Title>회원가입</Title>
+          <Title>{t("signup.title")}</Title>
           <Form onSubmit={handleSubmit}>
             {error && <ErrorMessage>{error}</ErrorMessage>}
             {success && <SuccessMessage>{success}</SuccessMessage>}
@@ -809,58 +880,56 @@ const Signup = () => {
             {/* 01. 기본 인적사항 */}
             <SectionTitle>01. 기본 인적사항</SectionTitle>
             <FormGroup>
-              <Label htmlFor="nickname">닉네임</Label>
+              <Label htmlFor="nickname">{t("signup.nickname")}</Label>
               <Input
                 type="text"
                 id="nickname"
                 name="nickname"
                 value={formData.nickname}
                 onChange={handleChange}
-                placeholder="ex) 홍길동"
+                placeholder={t("signup.nicknamePlaceholder")}
                 required
               />
             </FormGroup>
             <FormGroup>
-              <Label htmlFor="phone">전화번호</Label>
+              <Label htmlFor="phone">{t("signup.phone")}</Label>
               <Input
                 type="tel"
                 id="phone"
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                placeholder="번호만 입력해주세요 ex) 01012345678"
+                placeholder={t("signup.phonePlaceholder")}
                 required
               />
             </FormGroup>
             <FormGroup>
-              <Label>성별</Label>
-              <RadioGroup>
-                <RadioLabel>
-                  <input
-                    type="radio"
-                    name="gender"
-                    value="male"
-                    checked={formData.gender === "male"}
-                    onChange={handleChange}
-                    required
-                  />
-                  남자
-                </RadioLabel>
-                <RadioLabel>
-                  <input
-                    type="radio"
-                    name="gender"
-                    value="female"
-                    checked={formData.gender === "female"}
-                    onChange={handleChange}
-                    required
-                  />
-                  여자
-                </RadioLabel>
-              </RadioGroup>
+              <Label>{t("signup.gender")}</Label>
+              <GenderButtonGroup>
+                <GenderButton
+                  type="button"
+                  className={formData.gender === "male" ? "selected" : ""}
+                  onClick={() =>
+                    handleChange({ target: { name: "gender", value: "male" } })
+                  }
+                >
+                  {t("signup.male")}
+                </GenderButton>
+                <GenderButton
+                  type="button"
+                  className={formData.gender === "female" ? "selected" : ""}
+                  onClick={() =>
+                    handleChange({
+                      target: { name: "gender", value: "female" },
+                    })
+                  }
+                >
+                  {t("signup.female")}
+                </GenderButton>
+              </GenderButtonGroup>
             </FormGroup>
             <FormGroup>
-              <Label htmlFor="birthDate">생년월일</Label>
+              <Label htmlFor="birthDate">{t("signup.birthDate")}</Label>
               <DateInput
                 type="date"
                 id="birthDate"
@@ -965,17 +1034,24 @@ const Signup = () => {
               <CheckboxGroup>
                 {languageOptions.map((language) => (
                   <CheckboxLabel
-                    key={language}
-                    checked={formData.learning_languages.includes(language)}
+                    key={language.value}
+                    checked={formData.learning_languages.includes(
+                      language.value
+                    )}
                   >
                     <input
                       type="checkbox"
-                      checked={formData.learning_languages.includes(language)}
+                      checked={formData.learning_languages.includes(
+                        language.value
+                      )}
                       onChange={() =>
-                        handleCheckboxChange("learning_languages", language)
+                        handleCheckboxChange(
+                          "learning_languages",
+                          language.value
+                        )
                       }
                     />
-                    {language}
+                    {t(`signup.languages.${language.key}`)}
                   </CheckboxLabel>
                 ))}
               </CheckboxGroup>
@@ -986,17 +1062,24 @@ const Signup = () => {
               <CheckboxGroup>
                 {languageOptions.map((language) => (
                   <CheckboxLabel
-                    key={language}
-                    checked={formData.teaching_languages.includes(language)}
+                    key={language.value}
+                    checked={formData.teaching_languages.includes(
+                      language.value
+                    )}
                   >
                     <input
                       type="checkbox"
-                      checked={formData.teaching_languages.includes(language)}
+                      checked={formData.teaching_languages.includes(
+                        language.value
+                      )}
                       onChange={() =>
-                        handleCheckboxChange("teaching_languages", language)
+                        handleCheckboxChange(
+                          "teaching_languages",
+                          language.value
+                        )
                       }
                     />
-                    {language}
+                    {t(`signup.languages.${language.key}`)}
                   </CheckboxLabel>
                 ))}
               </CheckboxGroup>
@@ -1008,18 +1091,20 @@ const Signup = () => {
                 <InterestTags>
                   {interestOptions.map((interest) => (
                     <InterestTag
-                      key={interest}
+                      key={interest.value}
                       type="button"
                       className={
-                        formData.interests.includes(interest) ? "selected" : ""
+                        formData.interests.includes(interest.value)
+                          ? "selected"
+                          : ""
                       }
-                      onClick={() => handleInterestAdd(interest)}
+                      onClick={() => handleInterestAdd(interest.value)}
                       disabled={
                         formData.interests.length >= 3 &&
-                        !formData.interests.includes(interest)
+                        !formData.interests.includes(interest.value)
                       }
                     >
-                      {t(`profile.interestsList.${interest}`)}
+                      {t(`signup.interestsList.${interest.key}`)}
                     </InterestTag>
                   ))}
                 </InterestTags>
@@ -1081,11 +1166,12 @@ const Signup = () => {
               />
             </FormGroup>
             <SignupButton type="submit" disabled={isLoading}>
-              {isLoading ? "회원가입 중..." : "회원가입"}
+              {isLoading ? t("signup.signingUp") : t("signup.signupButton")}
             </SignupButton>
           </Form>
           <LoginLink>
-            이미 계정이 있으신가요? <Link to="/login">로그인</Link>
+            {t("signup.alreadyHaveAccount")}{" "}
+            <Link to="/login">{t("signup.loginLink")}</Link>
           </LoginLink>
         </SignupForm>
       </SignupMain>

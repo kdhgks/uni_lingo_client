@@ -660,7 +660,7 @@ const AdminMatching = () => {
   const loadAvailablePartners = async (request) => {
     try {
       const response = await fetch(
-        `${API_ENDPOINTS.AVAILABLE_PARTNERS}/?request_id=${request.id}`,
+        `${API_ENDPOINTS.AVAILABLE_PARTNERS}?request_id=${request.id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -700,6 +700,8 @@ const AdminMatching = () => {
       );
 
       if (response.ok) {
+        console.log("매칭 완료 - 백엔드에서 알림 생성됨");
+
         alert(`${selectedPartner.nickname}${t("adminModal.matchComplete")}`);
         setShowPartnerModal(false);
         setSelectedRequest(null);

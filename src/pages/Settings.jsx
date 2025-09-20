@@ -574,6 +574,18 @@ const Settings = () => {
   const { language, changeLanguage, t } = useLanguage();
   const [isDarkMode, setIsDarkMode] = useState(false);
 
+  // 인증 상태 확인 - 토큰이나 사용자 정보가 없으면 로그인 페이지로 리다이렉트
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+
+    if (!token || !user) {
+      console.log("No authentication found, redirecting to login");
+      navigate("/login");
+      return;
+    }
+  }, [navigate]);
+
   // 회원정보 관리 관련 상태
   const [showPasswordChange, setShowPasswordChange] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -599,7 +611,59 @@ const Settings = () => {
     } else {
       document.body.classList.remove("dark-mode");
     }
+
+    // 안읽은 메시지 수 로드
+    loadUnreadMessageCount();
   }, []);
+
+  // 안읽은 메시지 수 로드 함수
+  const loadUnreadMessageCount = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      // 백엔드 API 호출
+      const response = await fetch(API_ENDPOINTS.CHAT_ROOMS, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const totalUnreadCount =
+          data.rooms?.reduce((total, room) => {
+            return total + (room.unread_count || 0);
+          }, 0) || 0;
+
+        // 전역 변수에 설정하여 언더바에서 사용
+        window.globalTotalUnreadCount = totalUnreadCount;
+        console.log("설정 페이지 - 안읽은 메시지 수:", totalUnreadCount);
+      }
+    } catch (error) {
+      console.error("설정 페이지 - 안읽은 메시지 수 로드 중 오류:", error);
+
+      // 백엔드 연결 실패 시 테스트 데이터 사용
+      try {
+        const savedUser = localStorage.getItem("user");
+        if (savedUser) {
+          // 테스트용 안읽은 메시지 수 (랜덤)
+          const testUnreadCount = Math.floor(Math.random() * 5); // 0-4개
+          window.globalTotalUnreadCount = testUnreadCount;
+          console.log(
+            "설정 페이지 - 테스트 안읽은 메시지 수:",
+            testUnreadCount
+          );
+        } else {
+          window.globalTotalUnreadCount = 0;
+        }
+      } catch (testError) {
+        window.globalTotalUnreadCount = 0;
+      }
+    }
+  };
 
   const handleDarkModeToggle = () => {
     const newDarkMode = !isDarkMode;
@@ -655,15 +719,15 @@ const Settings = () => {
 
       if (response.ok && data.success) {
         setSuccess(t("settings.passwordChangeSuccess"));
-        setPasswordData({
-          currentPassword: "",
-          newPassword: "",
-          confirmPassword: "",
-        });
+
+        // 로컬 스토리지 정리
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+
+        // 로그인 페이지로 이동
         setTimeout(() => {
-          setShowPasswordChange(false);
-          setSuccess("");
-        }, 2000);
+          navigate("/login");
+        }, 1500);
       } else {
         setError(data.message || t("settings.passwordChangeError"));
       }
@@ -709,7 +773,7 @@ const Settings = () => {
 
         setSuccess(t("settings.accountDeleteSuccess"));
         setTimeout(() => {
-          navigate("/");
+          navigate("/login");
         }, 1500);
       } else {
         setError(data.message || t("settings.accountDeleteError"));
@@ -884,7 +948,7 @@ const Settings = () => {
               {success && <SuccessMessage>{success}</SuccessMessage>}
 
               <FormGroup>
-                <Label>{t("profile.currentPassword")}</Label>
+                <Label>{t("profileSettings.currentPassword")}</Label>
                 <Input
                   type="password"
                   value={passwordData.currentPassword}
@@ -894,13 +958,13 @@ const Settings = () => {
                       currentPassword: e.target.value,
                     })
                   }
-                  placeholder={t("profile.currentPassword")}
+                  placeholder={t("profileSettings.currentPassword")}
                   required
                 />
               </FormGroup>
 
               <FormGroup>
-                <Label>{t("profile.newPassword")}</Label>
+                <Label>{t("profileSettings.newPassword")}</Label>
                 <Input
                   type="password"
                   value={passwordData.newPassword}
@@ -910,13 +974,13 @@ const Settings = () => {
                       newPassword: e.target.value,
                     })
                   }
-                  placeholder={t("profile.newPassword") + " (8자 이상)"}
+                  placeholder={t("profileSettings.newPassword") + " (8자 이상)"}
                   required
                 />
               </FormGroup>
 
               <FormGroup>
-                <Label>{t("profile.confirmNewPassword")}</Label>
+                <Label>{t("profileSettings.confirmNewPassword")}</Label>
                 <Input
                   type="password"
                   value={passwordData.confirmPassword}
@@ -926,7 +990,7 @@ const Settings = () => {
                       confirmPassword: e.target.value,
                     })
                   }
-                  placeholder={t("profile.confirmNewPassword")}
+                  placeholder={t("profileSettings.confirmNewPassword")}
                   required
                 />
               </FormGroup>

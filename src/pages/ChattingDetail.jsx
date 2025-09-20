@@ -20,6 +20,36 @@ const slideIn = keyframes`
   }
 `;
 
+const heartAnimation = keyframes`
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+`;
+
+const heartDisappearAnimation = keyframes`
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+`;
+
 const slideInLeft = keyframes`
   from {
     opacity: 0;
@@ -179,18 +209,21 @@ const MessagesContainer = styled.div`
 const Message = styled.div`
   display: flex;
   align-items: flex-end;
-  gap: 0.5rem;
   animation: ${slideIn} 0.3s ease-out;
 
   &.me {
-    flex-direction: row-reverse;
-    justify-content: flex-start;
+    justify-content: flex-end;
   }
 
   &.partner {
-    flex-direction: row;
     justify-content: flex-start;
   }
+`;
+
+const MessageContent = styled.div`
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
 `;
 
 const MessageBubble = styled.div`
@@ -231,12 +264,29 @@ const MessageText = styled.p`
 const MessageTime = styled.span`
   font-size: 0.7rem;
   opacity: 0.7;
-  margin-top: 0.25rem;
-  display: block;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-bottom: 2px;
 
   .dark-mode & {
     opacity: 0.8;
   }
+`;
+
+const HeartReaction = styled.div`
+  position: absolute;
+  bottom: -6px;
+  right: -6px;
+  font-size: 1.2rem;
+  color: #ff6b6b;
+  pointer-events: none;
+  z-index: 1000;
+  animation: ${(props) =>
+      props.$isDisappearing ? heartDisappearAnimation : heartAnimation}
+    0.3s ease-out forwards;
+  text-shadow: 0 0 8px rgba(255, 107, 107, 0.6);
+  opacity: 1;
+  animation-fill-mode: forwards;
 `;
 
 const LoadingContainer = styled.div`
@@ -433,11 +483,14 @@ const MessageInputContainer = styled.div`
   left: 0;
   right: 0;
   z-index: 100;
-  padding: 0.75rem 0.5rem;
+  padding: 0.25rem 0.5rem;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border-top: 1px solid rgba(52, 152, 219, 0.2);
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 
   .dark-mode & {
     background: rgba(25, 25, 25, 0.95);
@@ -452,12 +505,11 @@ const MessageInputForm = styled.form`
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(52, 152, 219, 0.3);
   border-radius: 25px;
-  padding: 0.75rem;
+  padding: 0.25rem 0.25rem;
   gap: 0.5rem;
   backdrop-filter: blur(20px);
   transition: all 0.3s ease;
-  max-width: 1200px;
-  margin: 0 auto;
+  flex: 1;
 
   &:focus-within {
     border-color: #3498db;
@@ -477,7 +529,7 @@ const MessageInputForm = styled.form`
 
 const MessageInput = styled.textarea`
   flex: 1;
-  padding: 0.5rem 0.75rem;
+  padding: 0.25rem 0.5rem;
   border: none;
   background: transparent;
   color: #2c3e50;
@@ -488,6 +540,8 @@ const MessageInput = styled.textarea`
   min-height: 20px;
   max-height: 100px;
   transition: all 0.3s ease;
+  line-height: 1.4;
+  vertical-align: middle;
 
   .dark-mode & {
     color: #ffffff;
@@ -507,7 +561,7 @@ const AttachButton = styled.button`
   background: rgba(52, 152, 219, 0.1);
   border: 1px solid rgba(52, 152, 219, 0.3);
   color: #3498db;
-  padding: 0.5rem;
+  padding: 0.25rem;
   border-radius: 50%;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -515,10 +569,11 @@ const AttachButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  min-width: 40px;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
   font-size: 1.2rem;
+  vertical-align: middle;
 
   @media (min-width: 769px) {
     &:hover {
@@ -544,18 +599,20 @@ const SendButton = styled.button`
   background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
   border: none;
   color: white;
-  padding: 0.75rem;
+  padding: 0.5rem;
   border-radius: 50%;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-weight: 600;
+  font-weight: 900;
   box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
-  min-width: 48px;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  font-size: 1.2rem;
+  vertical-align: middle;
 
   @media (min-width: 769px) {
     &:hover:not(:disabled) {
@@ -740,8 +797,8 @@ const PartnerModalContent = styled.div`
   background: white;
   border-radius: 16px;
   padding: 2rem;
-  max-width: 500px;
-  width: 90%;
+  max-width: 700px;
+  width: 95%;
   max-height: 80vh;
   overflow-y: auto;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
@@ -762,6 +819,18 @@ const PartnerModalContent = styled.div`
   .dark-mode & {
     background: #2c2c2c;
     color: white;
+  }
+
+  @media (max-width: 768px) {
+    max-width: 95%;
+    width: 95%;
+    padding: 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    max-width: 98%;
+    width: 98%;
+    padding: 1rem;
   }
 `;
 
@@ -1037,6 +1106,9 @@ const ChattingDetail = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [showFilePreview, setShowFilePreview] = useState(false);
   const [showPartnerModal, setShowPartnerModal] = useState(false);
+  const [heartReactions, setHeartReactions] = useState([]);
+  const [tapCount, setTapCount] = useState(0);
+  const [tapTimeout, setTapTimeout] = useState(null);
 
   // 파트너 정보 및 메시지 로드
   useEffect(() => {
@@ -1253,27 +1325,48 @@ const ChattingDetail = () => {
           setIsTyping(false);
 
           // 새로운 메시지 알림 추가
+          console.log(
+            "Adding notification for Sarah Kim response:",
+            randomResponse
+          );
+          console.log("Partner info:", partner?.name || partner?.nickname);
+          console.log(
+            "addMessageNotification function exists:",
+            !!window.addMessageNotification
+          );
 
           if (window.addMessageNotification) {
             window.addMessageNotification(
               randomResponse,
               partner?.name || partner?.nickname
             );
+            console.log(
+              "Notification added. Global notifications:",
+              window.globalNotifications
+            );
           }
         }, 2000);
       } else {
         // 새로운 유저의 경우 백엔드 API로 메시지 전송
+        const formData = new FormData();
+        formData.append("content", message || "");
+
+        // 파일이 있는 경우 추가
+        if (selectedFiles.length > 0) {
+          selectedFiles.forEach((file, index) => {
+            formData.append(`files`, file);
+          });
+        }
+
         const response = await fetch(
           API_ENDPOINTS.CHAT_ROOM_MESSAGES_SEND(id),
           {
             method: "POST",
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
-              "Content-Type": "application/json",
+              // Content-Type은 FormData 사용 시 자동으로 설정되므로 제거
             },
-            body: JSON.stringify({
-              content: message,
-            }),
+            body: formData,
           }
         );
 
@@ -1351,12 +1444,24 @@ const ChattingDetail = () => {
               setMessages((prev) => [...prev, ...actualNewMessages]);
 
               // 전역 상태에 직접 알림 추가
+              console.log(
+                "Processing new messages from backend:",
+                actualNewMessages
+              );
               actualNewMessages.forEach((newMsg) => {
+                console.log(
+                  "Adding notification for backend message:",
+                  newMsg.text
+                );
                 if (window.addMessageNotification) {
                   window.addMessageNotification(
                     newMsg.text,
                     partner?.name || partner?.nickname,
                     id
+                  );
+                  console.log(
+                    "Backend notification added. Global notifications:",
+                    window.globalNotifications
                   );
                 }
               });
@@ -1390,6 +1495,65 @@ const ChattingDetail = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     navigate("/");
+  };
+
+  // 하트 반응 함수
+  const handleHeartReaction = (messageId) => {
+    // 이미 하트가 있는 메시지인지 확인
+    const existingHeart = heartReactions.find(
+      (heart) => heart.messageId === messageId
+    );
+    if (existingHeart) {
+      // 하트 제거 애니메이션을 위해 상태를 업데이트
+      setHeartReactions((prev) =>
+        prev.map((heart) =>
+          heart.messageId === messageId
+            ? { ...heart, isDisappearing: true }
+            : heart
+        )
+      );
+
+      // 애니메이션 완료 후 실제로 제거
+      setTimeout(() => {
+        setHeartReactions((prev) =>
+          prev.filter((heart) => heart.messageId !== messageId)
+        );
+      }, 300); // 애니메이션 시간과 동일
+      return;
+    }
+
+    const newHeart = {
+      id: Date.now(),
+      messageId: messageId,
+      timestamp: Date.now(),
+      isDisappearing: false,
+    };
+
+    setHeartReactions((prev) => [...prev, newHeart]);
+  };
+
+  // 모바일을 위한 탭 핸들러
+  const handleTap = (messageId, sender) => {
+    if (sender !== "partner") {
+      return;
+    }
+
+    const newTapCount = tapCount + 1;
+    setTapCount(newTapCount);
+
+    if (tapTimeout) {
+      clearTimeout(tapTimeout);
+    }
+
+    if (newTapCount === 2) {
+      handleHeartReaction(messageId);
+      setTapCount(0);
+    } else {
+      const timeout = setTimeout(() => {
+        setTapCount(0);
+      }, 300);
+      setTapTimeout(timeout);
+    }
   };
 
   // 파트너 모달 열기/닫기 함수
@@ -1468,44 +1632,96 @@ const ChattingDetail = () => {
         <MessagesContainer>
           {messages.map((msg) => (
             <Message key={msg.id} className={msg.sender}>
-              <MessageBubble className={msg.sender}>
-                <MessageText>{msg.text}</MessageText>
-                {msg.files && (
-                  <MessageFile>
-                    {msg.files.map((file, index) => (
-                      <MessageFileItem key={index}>
-                        {file.type.startsWith("image/") ? (
-                          <MessageFileImage
-                            src={file.url}
-                            alt={file.name}
-                            onClick={() => window.open(file.url, "_blank")}
-                          />
-                        ) : file.type.startsWith("video/") ? (
-                          <MessageFileVideo
-                            src={file.url}
-                            controls
-                            onClick={() => window.open(file.url, "_blank")}
-                          />
-                        ) : (
-                          <div
-                            style={{
-                              padding: "1rem",
-                              background: "rgba(255,255,255,0.1)",
-                              borderRadius: "8px",
-                            }}
-                          >
-                            <div>📄 {file.name}</div>
-                            <FileNameText>
-                              {(file.size / 1024 / 1024).toFixed(2)} MB
-                            </FileNameText>
-                          </div>
-                        )}
-                      </MessageFileItem>
+              <MessageContent>
+                <MessageBubble
+                  className={msg.sender}
+                  onDoubleClick={() => {
+                    if (msg.sender === "partner") {
+                      handleHeartReaction(msg.id);
+                    }
+                  }}
+                  onClick={() => {
+                    handleTap(msg.id, msg.sender);
+                  }}
+                  style={{ position: "relative" }}
+                >
+                  <MessageText>{msg.text}</MessageText>
+                  {msg.files && (
+                    <MessageFile>
+                      {msg.files.map((file, index) => (
+                        <MessageFileItem key={index}>
+                          {file.type.startsWith("image/") ? (
+                            <MessageFileImage
+                              src={file.url}
+                              alt={file.name}
+                              onClick={() => window.open(file.url, "_blank")}
+                            />
+                          ) : file.type.startsWith("video/") ? (
+                            <MessageFileVideo
+                              src={file.url}
+                              controls
+                              onClick={() => window.open(file.url, "_blank")}
+                            />
+                          ) : (
+                            <div
+                              style={{
+                                padding: "1rem",
+                                background: "rgba(255,255,255,0.1)",
+                                borderRadius: "8px",
+                                cursor: "pointer",
+                                transition: "background 0.3s ease",
+                              }}
+                              onClick={() => {
+                                // 파일 다운로드
+                                const link = document.createElement("a");
+                                link.href = file.url;
+                                link.download = file.name;
+                                link.target = "_blank";
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                              }}
+                              onMouseEnter={(e) => {
+                                e.target.style.background =
+                                  "rgba(255,255,255,0.2)";
+                              }}
+                              onMouseLeave={(e) => {
+                                e.target.style.background =
+                                  "rgba(255,255,255,0.1)";
+                              }}
+                            >
+                              <div>
+                                {file.type === "application/pdf"
+                                  ? "📄"
+                                  : file.type.startsWith("text/")
+                                  ? "📝"
+                                  : "📎"}{" "}
+                                {file.name}
+                              </div>
+                              <FileNameText>
+                                {(file.size / 1024 / 1024).toFixed(2)} MB
+                              </FileNameText>
+                            </div>
+                          )}
+                        </MessageFileItem>
+                      ))}
+                    </MessageFile>
+                  )}
+
+                  {/* 하트 반응 표시 */}
+                  {heartReactions
+                    .filter((heart) => heart.messageId === msg.id)
+                    .map((heart) => (
+                      <HeartReaction
+                        key={heart.id}
+                        $isDisappearing={heart.isDisappearing}
+                      >
+                        ❤️
+                      </HeartReaction>
                     ))}
-                  </MessageFile>
-                )}
+                </MessageBubble>
                 <MessageTime>{formatTime(new Date(msg.timestamp))}</MessageTime>
-              </MessageBubble>
+              </MessageContent>
             </Message>
           ))}
 
@@ -1524,21 +1740,21 @@ const ChattingDetail = () => {
         </MessagesContainer>
 
         <MessageInputContainer>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileSelect}
+            multiple
+            accept="image/*,video/*"
+            style={{ display: "none" }}
+          />
+          <AttachButton
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            +
+          </AttachButton>
           <MessageInputForm onSubmit={handleSendMessage}>
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileSelect}
-              multiple
-              accept="image/*,video/*"
-              style={{ display: "none" }}
-            />
-            <AttachButton
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              +
-            </AttachButton>
             <MessageInput
               value={message}
               onChange={(e) => setMessage(e.target.value)}
@@ -1569,8 +1785,14 @@ const ChattingDetail = () => {
                       src={URL.createObjectURL(file)}
                       alt={file.name}
                     />
-                  ) : (
+                  ) : file.type.startsWith("video/") ? (
                     <FileIcon>🎥</FileIcon>
+                  ) : file.type === "application/pdf" ? (
+                    <FileIcon>📄</FileIcon>
+                  ) : file.type.startsWith("text/") ? (
+                    <FileIcon>📝</FileIcon>
+                  ) : (
+                    <FileIcon>📎</FileIcon>
                   )}
                   <FileInfo>
                     <FileName>{file.name}</FileName>
