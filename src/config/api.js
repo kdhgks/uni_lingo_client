@@ -1,6 +1,6 @@
 // API Configuration
 const API_BASE_URL =
-  process.env.REACT_APP_API_URL || "http://localhost:8000/api";
+  process.env.REACT_APP_API_URL || "http://localhost:8001/api";
 
 export const API_ENDPOINTS = {
   // Authentication
@@ -34,6 +34,11 @@ export const API_ENDPOINTS = {
     `${API_BASE_URL}/chat/rooms/${roomId}/messages/read/`,
   CHAT_ROOM_MESSAGES_SEND: (roomId) =>
     `${API_BASE_URL}/chat/rooms/${roomId}/messages/send/`,
+  CHAT_ROOM_HEART_REACTIONS: (roomId) =>
+    `${API_BASE_URL}/chat/rooms/${roomId}/heart-reactions/`,
+  CHAT_ROOM_REPORT: (roomId) => `${API_BASE_URL}/chat/rooms/${roomId}/report/`,
+  CHAT_ROOM_LEAVE: (roomId) => `${API_BASE_URL}/chat/rooms/${roomId}/leave/`,
+  ADMIN_REPORTS: `${API_BASE_URL}/admin/reports/`,
 
   // Notifications
   NOTIFICATIONS: `${API_BASE_URL}/notifications/`,

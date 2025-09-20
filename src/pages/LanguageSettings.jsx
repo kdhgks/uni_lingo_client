@@ -180,7 +180,6 @@ const LanguageSettings = () => {
         navigate(-1);
       }, 500);
     } catch (error) {
-      console.error("언어 변경 실패:", error);
       setIsChanging(false);
     }
   };

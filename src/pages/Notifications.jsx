@@ -242,12 +242,10 @@ const Notifications = () => {
         const data = await response.json();
         setNotifications(data.notifications || []);
       } else {
-        console.error("알림 로드 실패:", response.status);
         // 백엔드 실패 시 빈 배열 설정
         setNotifications([]);
       }
     } catch (error) {
-      console.error("알림 로드 오류:", error);
       // 오류 시 빈 배열 설정
       setNotifications([]);
     }
@@ -264,7 +262,6 @@ const Notifications = () => {
 
       // Invalid Date 체크
       if (isNaN(notificationTime.getTime())) {
-        console.error("Invalid date:", timeString);
         return "시간 정보 없음";
       }
 
@@ -276,7 +273,6 @@ const Notifications = () => {
         return `${Math.floor(diffInMinutes / 60)}시간 전`;
       return notificationTime.toLocaleDateString();
     } catch (error) {
-      console.error("formatTime error:", error, timeString);
       return "시간 정보 없음";
     }
   };
@@ -300,9 +296,7 @@ const Notifications = () => {
           "Content-Type": "application/json",
         },
       });
-    } catch (error) {
-      console.error("알림 읽음 처리 실패:", error);
-    }
+    } catch (error) {}
 
     navigate(-1);
   };

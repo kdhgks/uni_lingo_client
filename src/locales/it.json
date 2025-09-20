@@ -303,5 +303,44 @@
     "gyeongsangArea": "Regione di Gyeongsang",
     "jejuArea": "Regione di Jeju",
     "anywhere": "Ovunque"
+  },
+  "reportModal": {
+    "title": "Segnala Utente",
+    "description": "Si prega di fornire una ragione dettagliata per la segnalazione. Le segnalazioni false possono comportare sanzioni.",
+    "reportedUser": "Utente Segnalato",
+    "reasonRequired": "Si prega di inserire la ragione della segnalazione.",
+    "placeholder": "es., Linguaggio inappropriato, messaggi spam, molestie, ecc.",
+    "submit": "Segnala",
+    "submitting": "Segnalazione...",
+    "cancel": "Annulla",
+    "submitError": "Si è verificato un errore durante l'invio della segnalazione.",
+    "submitSuccess": "La segnalazione è stata inviata.",
+    "thisUser": "questo utente"
+  },
+  "chatActions": {
+    "moreMenu": "Menu Altro",
+    "report": "Segnala",
+    "leaveRoom": "Esci dalla Chat",
+    "leaveConfirm": "Sei sicuro di voler uscire da questa chat?",
+    "leaveSuccess": "Sei uscito dalla chat.",
+    "leaveError": "Si è verificato un errore durante l'uscita dalla chat.",
+    "reportSuccess": "La segnalazione è stata inviata.",
+    "reportError": "Errore nell'invio della segnalazione."
+  },
+  "admin": {
+    "menu": "Menu Amministratore",
+    "reports": "Segnalazioni",
+    "showReports": "Mostra Segnalazioni",
+    "hideReports": "Nascondi Segnalazioni",
+    "loadingReports": "Caricamento segnalazioni...",
+    "noReports": "Nessuna segnalazione è stata ancora inviata.",
+    "reportReason": "Motivo della Segnalazione",
+    "adminNotes": "Note dell'Amministratore",
+    "reportStatus": {
+      "pending": "In Attesa",
+      "reviewing": "In Revisione",
+      "resolved": "Risolto",
+      "rejected": "Rifiutato"
+    }
   }
 }

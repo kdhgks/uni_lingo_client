@@ -641,8 +641,6 @@ const Settings = () => {
         window.globalTotalUnreadCount = totalUnreadCount;
       }
     } catch (error) {
-      console.error("설정 페이지 - 안읽은 메시지 수 로드 중 오류:", error);
-
       // 백엔드 연결 실패 시 테스트 데이터 사용
       try {
         const savedUser = localStorage.getItem("user");
@@ -650,10 +648,6 @@ const Settings = () => {
           // 테스트용 안읽은 메시지 수 (랜덤)
           const testUnreadCount = Math.floor(Math.random() * 5); // 0-4개
           window.globalTotalUnreadCount = testUnreadCount;
-          console.log(
-            "설정 페이지 - 테스트 안읽은 메시지 수:",
-            testUnreadCount
-          );
         } else {
           window.globalTotalUnreadCount = 0;
         }
@@ -730,7 +724,6 @@ const Settings = () => {
         setError(data.message || t("settings.passwordChangeError"));
       }
     } catch (error) {
-      console.error("비밀번호 변경 오류:", error);
       setError(t("settings.passwordChangeError"));
     } finally {
       setIsChangingPassword(false);
@@ -758,7 +751,6 @@ const Settings = () => {
       try {
         data = await response.json();
       } catch (err) {
-        console.error("JSON 파싱 오류:", err);
         setError("서버 응답을 처리하는 중 오류가 발생했습니다.");
         return;
       }

@@ -780,21 +780,15 @@ const Chatting = () => {
             window.globalTotalUnreadCount = totalUnreadCount;
             setTotalUnreadCount(totalUnreadCount);
           } else {
-            console.error("채팅방 데이터 형식이 올바르지 않습니다:", chatsData);
             setChats([]);
           }
         } else {
-          console.error(
-            "채팅방 목록을 불러오는데 실패했습니다. 상태:",
-            response.status
-          );
           setChats([]);
           window.globalTotalUnreadCount = 0;
           setTotalUnreadCount(0);
         }
       }
     } catch (error) {
-      console.error("채팅방 목록 로딩 중 오류가 발생했습니다:", error);
       setChats([]);
       window.globalTotalUnreadCount = 0;
       setTotalUnreadCount(0);
@@ -817,9 +811,7 @@ const Chatting = () => {
         const hasUnread = (data.unread_count || 0) > 0;
         setHasNewNotification(hasUnread);
       }
-    } catch (error) {
-      console.error("알림 확인 중 오류:", error);
-    }
+    } catch (error) {}
   };
 
   // 초기 로드
@@ -863,9 +855,6 @@ const Chatting = () => {
 
             // 읽지 않은 메시지가 있는 채팅방 확인
             data.rooms.forEach((room) => {
-              console.log(
-                `📱 채팅방 ${room.id}: unreadCount = ${room.unread_count}`
-              );
               if (room.unread_count > 0) {
                 // 전역 변수에 직접 알림 추가
 
@@ -892,9 +881,7 @@ const Chatting = () => {
             });
           }
         }
-      } catch (error) {
-        console.error("메시지 확인 중 오류:", error);
-      }
+      } catch (error) {}
     };
 
     // 5초마다 새로운 메시지 확인

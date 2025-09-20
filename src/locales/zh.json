@@ -335,6 +335,45 @@
     "newMessage": "新消息",
     "matchComplete": "匹配完成"
   },
+  "reportModal": {
+    "title": "用户举报",
+    "description": "请详细输入举报原因。虚假举报可能会受到处罚。",
+    "reportedUser": "举报对象",
+    "reasonRequired": "请输入举报原因。",
+    "placeholder": "例如：不当语言使用、垃圾信息、骚扰等",
+    "submit": "举报",
+    "submitting": "举报中...",
+    "cancel": "取消",
+    "submitError": "提交举报时发生错误。",
+    "submitSuccess": "举报已受理。",
+    "thisUser": "该用户"
+  },
+  "chatActions": {
+    "moreMenu": "更多菜单",
+    "report": "举报",
+    "leaveRoom": "退出聊天室",
+    "leaveConfirm": "您确定要退出这个聊天室吗？",
+    "leaveSuccess": "您已退出聊天室。",
+    "leaveError": "退出聊天室时发生错误。",
+    "reportSuccess": "举报已受理。",
+    "reportError": "举报提交失败。"
+  },
+  "admin": {
+    "menu": "管理员菜单",
+    "reports": "举报记录",
+    "showReports": "显示举报记录",
+    "hideReports": "隐藏举报记录",
+    "loadingReports": "正在加载举报记录...",
+    "noReports": "还没有举报记录。",
+    "reportReason": "举报原因",
+    "adminNotes": "管理员备注",
+    "reportStatus": {
+      "pending": "待处理",
+      "reviewing": "审核中",
+      "resolved": "已解决",
+      "rejected": "已拒绝"
+    }
+  },
   "modal": {
     "success": "成功！",
     "warning": "警告",

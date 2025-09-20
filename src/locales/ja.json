@@ -335,6 +335,45 @@
     "newMessage": "新しいメッセージ",
     "matchComplete": "マッチング完了"
   },
+  "reportModal": {
+    "title": "ユーザー報告",
+    "description": "報告理由を詳しく入力してください。虚偽の報告は制裁の対象となる場合があります。",
+    "reportedUser": "報告対象",
+    "reasonRequired": "報告理由を入力してください。",
+    "placeholder": "例：不適切な言語使用、スパムメッセージ、ハラスメントなど",
+    "submit": "報告する",
+    "submitting": "報告中...",
+    "cancel": "キャンセル",
+    "submitError": "報告送信中にエラーが発生しました。",
+    "submitSuccess": "報告が受理されました。",
+    "thisUser": "このユーザー"
+  },
+  "chatActions": {
+    "moreMenu": "その他メニュー",
+    "report": "報告",
+    "leaveRoom": "チャットルームを退出",
+    "leaveConfirm": "このチャットルームを退出してもよろしいですか？",
+    "leaveSuccess": "チャットルームを退出しました。",
+    "leaveError": "チャットルーム退出中にエラーが発生しました。",
+    "reportSuccess": "報告が受理されました。",
+    "reportError": "報告の送信に失敗しました。"
+  },
+  "admin": {
+    "menu": "管理者メニュー",
+    "reports": "報告履歴",
+    "showReports": "報告履歴を表示",
+    "hideReports": "報告履歴を非表示",
+    "loadingReports": "報告履歴を読み込み中...",
+    "noReports": "まだ報告された履歴がありません。",
+    "reportReason": "報告理由",
+    "adminNotes": "管理者メモ",
+    "reportStatus": {
+      "pending": "待機中",
+      "reviewing": "検討中",
+      "resolved": "解決済み",
+      "rejected": "却下"
+    }
+  },
   "modal": {
     "success": "成功！",
     "warning": "警告",

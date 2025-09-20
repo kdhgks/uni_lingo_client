@@ -303,5 +303,44 @@
     "gyeongsangArea": "Gyeongsang mintaqasi",
     "jejuArea": "Jeju mintaqasi",
     "anywhere": "Istalgan joy"
+  },
+  "reportModal": {
+    "title": "Foydalanuvchini Shikoyat Qilish",
+    "description": "Iltimos, shikoyat uchun batafsil sababni ko'rsating. Yolg'on shikoyatlar jazo bilan og'irlashtirilishi mumkin.",
+    "reportedUser": "Shikoyat Qilingan Foydalanuvchi",
+    "reasonRequired": "Iltimos, shikoyat sababini kiriting.",
+    "placeholder": "masalan, Noo'rin til ishlatish, spam xabarlar, bezovtalik va h.k.",
+    "submit": "Shikoyat Qilish",
+    "submitting": "Shikoyat qilinmoqda...",
+    "cancel": "Bekor Qilish",
+    "submitError": "Shikoyat yuborishda xatolik yuz berdi.",
+    "submitSuccess": "Shikoyat yuborildi.",
+    "thisUser": "bu foydalanuvchi"
+  },
+  "chatActions": {
+    "moreMenu": "Ko'proq Menyu",
+    "report": "Shikoyat Qilish",
+    "leaveRoom": "Chatdan Chiqish",
+    "leaveConfirm": "Bu chatdan chiqishni xohlaysizmi?",
+    "leaveSuccess": "Siz chatdan chiqdingiz.",
+    "leaveError": "Chatdan chiqishda xatolik yuz berdi.",
+    "reportSuccess": "Shikoyat yuborildi.",
+    "reportError": "Shikoyat yuborishda xatolik."
+  },
+  "admin": {
+    "menu": "Admin Menyu",
+    "reports": "Hisobotlar",
+    "showReports": "Hisobotlarni Ko'rsatish",
+    "hideReports": "Hisobotlarni Yashirish",
+    "loadingReports": "Hisobotlar yuklanmoqda...",
+    "noReports": "Hali hech qanday hisobot yuborilmagan.",
+    "reportReason": "Hisobot Sababi",
+    "adminNotes": "Admin Eslatmalari",
+    "reportStatus": {
+      "pending": "Kutilmoqda",
+      "reviewing": "Ko'rib Chiqilmoqda",
+      "resolved": "Hal Qilingan",
+      "rejected": "Rad Etilgan"
+    }
   }
 }

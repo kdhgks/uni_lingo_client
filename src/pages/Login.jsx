@@ -315,8 +315,6 @@ const Login = () => {
         }
       }
     } catch (err) {
-      console.error("로그인 오류:", err);
-
       // 네트워크 오류 시 안내 메시지
       if (err.name === "TypeError" && err.message.includes("fetch")) {
         setError("서버에 연결할 수 없습니다. 인터넷 연결을 확인해주세요.");

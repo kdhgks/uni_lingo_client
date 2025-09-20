@@ -794,8 +794,6 @@ const Signup = () => {
         setError(errorMessage);
       }
     } catch (err) {
-      console.error("회원가입 오류:", err);
-
       // 네트워크 오류 시 테스트 계정으로 fallback
       const testUser = {
         id: Date.now(),

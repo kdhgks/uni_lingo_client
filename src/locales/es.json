@@ -303,5 +303,44 @@
     "gyeongsangArea": "Región de Gyeongsang",
     "jejuArea": "Región de Jeju",
     "anywhere": "Cualquier lugar"
+  },
+  "reportModal": {
+    "title": "Reportar Usuario",
+    "description": "Por favor, proporciona una razón detallada para el reporte. Los reportes falsos pueden resultar en sanciones.",
+    "reportedUser": "Usuario Reportado",
+    "reasonRequired": "Por favor, ingresa la razón del reporte.",
+    "placeholder": "ej., Lenguaje inapropiado, mensajes spam, acoso, etc.",
+    "submit": "Reportar",
+    "submitting": "Reportando...",
+    "cancel": "Cancelar",
+    "submitError": "Ocurrió un error al enviar el reporte.",
+    "submitSuccess": "El reporte ha sido enviado.",
+    "thisUser": "este usuario"
+  },
+  "chatActions": {
+    "moreMenu": "Menú Más",
+    "report": "Reportar",
+    "leaveRoom": "Salir del Chat",
+    "leaveConfirm": "¿Estás seguro de que quieres salir de este chat?",
+    "leaveSuccess": "Has salido del chat.",
+    "leaveError": "Ocurrió un error al salir del chat.",
+    "reportSuccess": "El reporte ha sido enviado.",
+    "reportError": "Error al enviar el reporte."
+  },
+  "admin": {
+    "menu": "Menú de Administrador",
+    "reports": "Reportes",
+    "showReports": "Mostrar Reportes",
+    "hideReports": "Ocultar Reportes",
+    "loadingReports": "Cargando reportes...",
+    "noReports": "No se han enviado reportes aún.",
+    "reportReason": "Razón del Reporte",
+    "adminNotes": "Notas del Administrador",
+    "reportStatus": {
+      "pending": "Pendiente",
+      "reviewing": "Revisando",
+      "resolved": "Resuelto",
+      "rejected": "Rechazado"
+    }
   }
 }

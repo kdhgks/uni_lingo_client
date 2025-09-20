@@ -104,7 +104,6 @@ export const LanguageProvider = ({ children }) => {
       const translationModule = await import(`../locales/${lang}.json`);
       setTranslations(translationModule.default);
     } catch (error) {
-      console.error(`Failed to load translations for ${lang}:`, error);
       // 기본값으로 한국어 로드
       if (lang !== "ko") {
         const koModule = await import("../locales/ko.json");
@@ -132,7 +131,6 @@ export const LanguageProvider = ({ children }) => {
       if (value && typeof value === "object" && k in value) {
         value = value[k];
       } else {
-        console.warn(`Translation key not found: ${key}`);
         return fallback || key;
       }
     }

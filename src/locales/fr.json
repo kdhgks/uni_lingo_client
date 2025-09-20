@@ -303,5 +303,44 @@
     "gyeongsangArea": "Région de Gyeongsang",
     "jejuArea": "Région de Jeju",
     "anywhere": "N'importe où"
+  },
+  "reportModal": {
+    "title": "Signaler un Utilisateur",
+    "description": "Veuillez fournir une raison détaillée pour le signalement. Les faux signalements peuvent entraîner des sanctions.",
+    "reportedUser": "Utilisateur Signalé",
+    "reasonRequired": "Veuillez entrer la raison du signalement.",
+    "placeholder": "ex., Langage inapproprié, messages spam, harcèlement, etc.",
+    "submit": "Signaler",
+    "submitting": "Signalement...",
+    "cancel": "Annuler",
+    "submitError": "Une erreur s'est produite lors de l'envoi du signalement.",
+    "submitSuccess": "Le signalement a été envoyé.",
+    "thisUser": "cet utilisateur"
+  },
+  "chatActions": {
+    "moreMenu": "Menu Plus",
+    "report": "Signaler",
+    "leaveRoom": "Quitter le Chat",
+    "leaveConfirm": "Êtes-vous sûr de vouloir quitter ce chat?",
+    "leaveSuccess": "Vous avez quitté le chat.",
+    "leaveError": "Une erreur s'est produite lors de la sortie du chat.",
+    "reportSuccess": "Le signalement a été envoyé.",
+    "reportError": "Échec de l'envoi du signalement."
+  },
+  "admin": {
+    "menu": "Menu Administrateur",
+    "reports": "Signalements",
+    "showReports": "Afficher les Signalements",
+    "hideReports": "Masquer les Signalements",
+    "loadingReports": "Chargement des signalements...",
+    "noReports": "Aucun signalement n'a encore été soumis.",
+    "reportReason": "Raison du Signalement",
+    "adminNotes": "Notes de l'Administrateur",
+    "reportStatus": {
+      "pending": "En Attente",
+      "reviewing": "En Révision",
+      "resolved": "Résolu",
+      "rejected": "Rejeté"
+    }
   }
 }

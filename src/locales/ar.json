@@ -303,5 +303,44 @@
     "gyeongsangArea": "إقليم جيونغ سانغ",
     "jejuArea": "إقليم جيجو",
     "anywhere": "أي مكان"
+  },
+  "reportModal": {
+    "title": "الإبلاغ عن مستخدم",
+    "description": "يرجى تقديم سبب مفصل للإبلاغ. قد تؤدي التقارير الكاذبة إلى عقوبات.",
+    "reportedUser": "المستخدم المُبلغ عنه",
+    "reasonRequired": "يرجى إدخال سبب الإبلاغ.",
+    "placeholder": "مثلاً، استخدام لغة غير مناسبة، رسائل مزعجة، مضايقة، إلخ.",
+    "submit": "إبلاغ",
+    "submitting": "جاري الإبلاغ...",
+    "cancel": "إلغاء",
+    "submitError": "حدث خطأ أثناء إرسال التقرير.",
+    "submitSuccess": "تم إرسال التقرير.",
+    "thisUser": "هذا المستخدم"
+  },
+  "chatActions": {
+    "moreMenu": "قائمة المزيد",
+    "report": "إبلاغ",
+    "leaveRoom": "مغادرة المحادثة",
+    "leaveConfirm": "هل أنت متأكد من أنك تريد مغادرة هذه المحادثة؟",
+    "leaveSuccess": "لقد غادرت المحادثة.",
+    "leaveError": "حدث خطأ أثناء مغادرة المحادثة.",
+    "reportSuccess": "تم إرسال التقرير.",
+    "reportError": "فشل في إرسال التقرير."
+  },
+  "admin": {
+    "menu": "قائمة الإدارة",
+    "reports": "التقارير",
+    "showReports": "إظهار التقارير",
+    "hideReports": "إخفاء التقارير",
+    "loadingReports": "جاري تحميل التقارير...",
+    "noReports": "لم يتم إرسال أي تقارير بعد.",
+    "reportReason": "سبب التقرير",
+    "adminNotes": "ملاحظات الإدارة",
+    "reportStatus": {
+      "pending": "في الانتظار",
+      "reviewing": "قيد المراجعة",
+      "resolved": "تم الحل",
+      "rejected": "مرفوض"
+    }
   }
 }

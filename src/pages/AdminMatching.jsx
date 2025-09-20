@@ -642,7 +642,6 @@ const AdminMatching = () => {
         });
       }
     } catch (error) {
-      console.error("요청 로드 실패:", error);
     } finally {
       setLoading(false);
     }
@@ -672,9 +671,7 @@ const AdminMatching = () => {
         const data = await response.json();
         setAvailablePartners(data.partners || []);
       }
-    } catch (error) {
-      console.error("파트너 로드 실패:", error);
-    }
+    } catch (error) {}
   };
 
   const handlePartnerSelect = (partner) => {
@@ -706,9 +703,7 @@ const AdminMatching = () => {
         setSelectedPartner(null);
         await loadRequests();
       }
-    } catch (error) {
-      console.error("매칭 승인 실패:", error);
-    }
+    } catch (error) {}
   };
 
   const handleReject = async (requestId) => {
@@ -725,9 +720,7 @@ const AdminMatching = () => {
         if (response.ok) {
           await loadRequests();
         }
-      } catch (error) {
-        console.error("매칭 거부 실패:", error);
-      }
+      } catch (error) {}
     }
   };
 

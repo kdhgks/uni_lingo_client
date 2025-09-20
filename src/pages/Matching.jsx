@@ -805,6 +805,169 @@ const MatchingIcon = styled.div`
   margin-bottom: 1rem;
 `;
 
+// 관리자 신고 내역 관련 styled components
+const AdminSection = styled.div`
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 2px solid #e74c3c;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 8px 32px rgba(231, 76, 60, 0.2);
+  transition: all 0.3s ease;
+
+  .dark-mode & {
+    background: rgba(45, 45, 45, 0.95);
+    border: 2px solid #e74c3c;
+  }
+`;
+
+const AdminTitle = styled.h3`
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #e74c3c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  .dark-mode & {
+    color: #ff6b6b;
+  }
+`;
+
+const AdminButton = styled.button`
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+  margin: 0.5rem;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+`;
+
+const ReportsContainer = styled.div`
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-top: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+
+  .dark-mode & {
+    background: rgba(60, 60, 60, 0.9);
+  }
+`;
+
+const ReportItem = styled.div`
+  background: white;
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 0.8rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+  }
+
+  .dark-mode & {
+    background: #3d3d3d;
+    border-color: #555;
+  }
+`;
+
+const ReportHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+`;
+
+const ReportUser = styled.span`
+  font-weight: 600;
+  color: #2c3e50;
+
+  .dark-mode & {
+    color: #ffffff;
+  }
+`;
+
+const ReportDate = styled.span`
+  font-size: 0.85rem;
+  color: #7f8c8d;
+
+  .dark-mode & {
+    color: #b0b0b0;
+  }
+`;
+
+const ReportReason = styled.p`
+  margin: 0.5rem 0;
+  color: #34495e;
+  line-height: 1.4;
+
+  .dark-mode & {
+    color: #e0e0e0;
+  }
+`;
+
+const ReportStatus = styled.span`
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+
+  &.pending {
+    background: #fff3cd;
+    color: #856404;
+  }
+
+  &.reviewing {
+    background: #d1ecf1;
+    color: #0c5460;
+  }
+
+  &.resolved {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  &.rejected {
+    background: #f8d7da;
+    color: #721c24;
+  }
+`;
+
+const EmptyReports = styled.div`
+  text-align: center;
+  padding: 2rem;
+  color: #7f8c8d;
+  font-style: italic;
+
+  .dark-mode & {
+    color: #b0b0b0;
+  }
+`;
+
 const Countdown = styled.div`
   font-size: 3rem;
   font-weight: 700;
@@ -1167,6 +1330,14 @@ const Matching = () => {
       navigate("/login");
       return;
     }
+
+    // 관리자 권한 확인
+    try {
+      const userData = JSON.parse(user);
+      setIsAdmin(userData.is_staff || userData.is_superuser || false);
+    } catch (error) {
+      setIsAdmin(false);
+    }
   }, [navigate]);
   const [isRequesting, setIsRequesting] = useState(false);
   const [countdown, setCountdown] = useState(3);
@@ -1175,6 +1346,12 @@ const Matching = () => {
   const [modalType, setModalType] = useState("info"); // "info", "success", "warning"
   const [hasNewNotification, setHasNewNotification] = useState(false);
   const [totalUnreadCount, setTotalUnreadCount] = useState(0);
+
+  // 관리자 관련 상태
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [showReports, setShowReports] = useState(false);
+  const [reports, setReports] = useState([]);
+  const [isLoadingReports, setIsLoadingReports] = useState(false);
 
   // 모달 닫기 함수
   const closeModal = () => {
@@ -1265,7 +1442,6 @@ const Matching = () => {
 
           setPotentialPartners(mockPartners);
           setIsLoadingPartners(false);
-          console.log("테스트 파트너 데이터 로드 완료:", mockPartners);
           return;
         }
 
@@ -1282,11 +1458,9 @@ const Matching = () => {
           const partnersData = await response.json();
           setPotentialPartners(partnersData);
         } else {
-          console.error("파트너 목록을 불러오는데 실패했습니다.");
           setPotentialPartners([]);
         }
       } catch (error) {
-        console.error("파트너 목록 로딩 중 오류가 발생했습니다:", error);
         setPotentialPartners([]);
       } finally {
         setIsLoadingPartners(false);
@@ -1340,7 +1514,6 @@ const Matching = () => {
             interests: normalizedInterests,
           });
           setIsProfileLoaded(true);
-          console.log("테스트 계정 프로필 로드 완료:", userData);
           return;
         }
 
@@ -1371,7 +1544,6 @@ const Matching = () => {
           });
           setIsProfileLoaded(true);
         } else {
-          console.error("프로필 데이터를 불러오는데 실패했습니다.");
           // 에러 시 기본값 설정
           setUserProfile({
             nickname: "",
@@ -1385,7 +1557,6 @@ const Matching = () => {
           setIsProfileLoaded(true);
         }
       } catch (error) {
-        console.error("프로필 로딩 중 오류가 발생했습니다:", error);
         // 에러 시 기본값 설정
         setUserProfile({
           nickname: "",
@@ -1489,10 +1660,6 @@ const Matching = () => {
 
     const handleProfileLearningLanguageSelected = (event) => {
       const languageName = event.detail;
-      console.log(
-        "Main page: Profile learning language selected:",
-        languageName
-      );
 
       // localStorage 업데이트
       localStorage.setItem("selectedLearningLanguageName", languageName);
@@ -1509,20 +1676,9 @@ const Matching = () => {
 
     const handleTeachingLanguageChanged = (event) => {
       const languageName = event.detail;
-      console.log("🎯 Teaching language changed to:", languageName);
-      console.log(
-        "🎯 Current userProfile.teachingLanguage:",
-        userProfile.teachingLanguage
-      );
 
       // 사용자 프로필의 teaching language 업데이트
       setUserProfile((prev) => {
-        console.log(
-          "🎯 Updating teachingLanguage from",
-          prev.teachingLanguage,
-          "to",
-          languageName
-        );
         return {
           ...prev,
           teachingLanguage: languageName,
@@ -1544,8 +1700,6 @@ const Matching = () => {
       "teachingLanguageChanged",
       handleTeachingLanguageChanged
     );
-
-    console.log("🎯 Event listener for teachingLanguageChanged registered");
 
     return () => {
       window.removeEventListener("genderSelected", handleGenderSelected);
@@ -1628,7 +1782,6 @@ const Matching = () => {
       }
       return true;
     } catch (error) {
-      console.error("매칭 상태 확인 중 오류:", error);
       return true;
     }
   };
@@ -1692,13 +1845,11 @@ const Matching = () => {
         setShowStatusModal(true);
       } else {
         const errorData = await response.json();
-        console.error("매칭 신청 실패:", errorData);
         setModalMessage(errorData.message || t("modal.requestFailed"));
         setModalType("warning");
         setShowStatusModal(true);
       }
     } catch (error) {
-      console.error("매칭 신청 중 오류:", error);
       setModalMessage(t("modal.requestError"));
       setModalType("warning");
       setShowStatusModal(true);
@@ -1788,9 +1939,7 @@ const Matching = () => {
                   }
                 }
               }
-            } catch (error) {
-              console.error("파트너 정보 가져오기 실패:", error);
-            }
+            } catch (error) {}
           }
 
           // 상태 업데이트
@@ -1798,9 +1947,7 @@ const Matching = () => {
           setIsPending(currentStatus === "pending");
         }
       }
-    } catch (error) {
-      console.error("매칭 상태 확인 중 오류:", error);
-    }
+    } catch (error) {}
   };
 
   // 안읽은 메시지 수 로드 함수
@@ -1827,11 +1974,8 @@ const Matching = () => {
         // 전역 변수에 설정하여 언더바에서 사용
         window.globalTotalUnreadCount = totalUnreadCount;
         setTotalUnreadCount(totalUnreadCount);
-        console.log("안읽은 메시지 수:", totalUnreadCount);
       }
     } catch (error) {
-      console.error("안읽은 메시지 수 로드 중 오류:", error);
-
       // 백엔드 연결 실패 시 테스트 데이터 사용
       try {
         const savedUser = localStorage.getItem("user");
@@ -1840,7 +1984,6 @@ const Matching = () => {
           const testUnreadCount = Math.floor(Math.random() * 5); // 0-4개
           window.globalTotalUnreadCount = testUnreadCount;
           setTotalUnreadCount(testUnreadCount);
-          console.log("테스트 안읽은 메시지 수:", testUnreadCount);
         } else {
           window.globalTotalUnreadCount = 0;
           setTotalUnreadCount(0);
@@ -1849,6 +1992,36 @@ const Matching = () => {
         window.globalTotalUnreadCount = 0;
         setTotalUnreadCount(0);
       }
+    }
+  };
+
+  // 신고 내역 가져오기 함수
+  const loadReports = async () => {
+    if (!token || !isAdmin) return;
+
+    setIsLoadingReports(true);
+    try {
+      const response = await fetch(API_ENDPOINTS.ADMIN_REPORTS, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || t("admin.loadingReports"));
+      }
+
+      if (data.success && data.reports) {
+        setReports(data.reports);
+      }
+    } catch (error) {
+      alert(t("admin.loadingReports"));
+    } finally {
+      setIsLoadingReports(false);
     }
   };
 
@@ -1868,9 +2041,7 @@ const Matching = () => {
         const hasUnread = (data.unread_count || 0) > 0;
         setHasNewNotification(hasUnread);
       }
-    } catch (error) {
-      console.error("알림 확인 중 오류:", error);
-    }
+    } catch (error) {}
   };
 
   // 페이지 로드 시 매칭 상태 확인 및 안읽은 메시지 수 로드
@@ -1909,6 +2080,13 @@ const Matching = () => {
       );
   }, []);
 
+  // 신고 내역 로드 (관리자인 경우)
+  useEffect(() => {
+    if (isAdmin && showReports) {
+      loadReports();
+    }
+  }, [isAdmin, showReports]);
+
   const handleNavigation = (path) => {
     navigate(path);
   };
@@ -1943,6 +2121,83 @@ const Matching = () => {
           </LoadingSpinner>
         ) : (
           <>
+            {/* 관리자 섹션 */}
+            {isAdmin && (
+              <AdminSection>
+                <AdminTitle>🛡️ {t("admin.menu")}</AdminTitle>
+                <div style={{ textAlign: "center" }}>
+                  <AdminButton
+                    onClick={() => setShowReports(!showReports)}
+                    style={{
+                      background: showReports
+                        ? "linear-gradient(135deg, #27ae60 0%, #229954 100%)"
+                        : "linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)",
+                    }}
+                  >
+                    {showReports
+                      ? t("admin.hideReports")
+                      : t("admin.showReports")}
+                  </AdminButton>
+                </div>
+
+                {showReports && (
+                  <ReportsContainer>
+                    {isLoadingReports ? (
+                      <div style={{ textAlign: "center", padding: "2rem" }}>
+                        <div
+                          className="spinner"
+                          style={{
+                            width: "30px",
+                            height: "30px",
+                            border: "3px solid #f3f3f3",
+                            borderTop: "3px solid #e74c3c",
+                            borderRadius: "50%",
+                            animation: "spin 1s linear infinite",
+                            margin: "0 auto",
+                          }}
+                        ></div>
+                        <p>{t("admin.loadingReports")}</p>
+                      </div>
+                    ) : reports.length > 0 ? (
+                      reports.map((report) => (
+                        <ReportItem key={report.id}>
+                          <ReportHeader>
+                            <ReportUser>
+                              {report.reporter?.nickname ||
+                                report.reporter?.username}{" "}
+                              →{" "}
+                              {report.reported_user?.nickname ||
+                                report.reported_user?.username}
+                            </ReportUser>
+                            <ReportStatus className={report.status}>
+                              {t(`admin.reportStatus.${report.status}`)}
+                            </ReportStatus>
+                          </ReportHeader>
+                          <ReportDate>
+                            {new Date(report.created_at).toLocaleString(
+                              "ko-KR"
+                            )}
+                          </ReportDate>
+                          <ReportReason>
+                            <strong>{t("admin.reportReason")}:</strong>{" "}
+                            {report.reason}
+                          </ReportReason>
+                          {report.admin_notes && (
+                            <ReportReason>
+                              <strong>{t("admin.adminNotes")}:</strong>{" "}
+                              {report.admin_notes}
+                            </ReportReason>
+                          )}
+                        </ReportItem>
+                      ))
+                    ) : (
+                      <EmptyReports>{t("admin.noReports")}</EmptyReports>
+                    )}
+                  </ReportsContainer>
+                )}
+              </AdminSection>
+            )}
+
             {/* 사용자 프로필 카드 */}
             <UserProfileCard>
               <ProfileHeader>

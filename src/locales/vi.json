@@ -303,5 +303,44 @@
     "gyeongsangArea": "Vùng Gyeongsang",
     "jejuArea": "Vùng Jeju",
     "anywhere": "Ở đâu cũng được"
+  },
+  "reportModal": {
+    "title": "Báo Cáo Người Dùng",
+    "description": "Vui lòng cung cấp lý do chi tiết cho báo cáo. Báo cáo sai có thể dẫn đến hình phạt.",
+    "reportedUser": "Người Dùng Bị Báo Cáo",
+    "reasonRequired": "Vui lòng nhập lý do báo cáo.",
+    "placeholder": "ví dụ, Ngôn ngữ không phù hợp, tin nhắn spam, quấy rối, v.v.",
+    "submit": "Báo Cáo",
+    "submitting": "Đang báo cáo...",
+    "cancel": "Hủy",
+    "submitError": "Đã xảy ra lỗi khi gửi báo cáo.",
+    "submitSuccess": "Báo cáo đã được gửi.",
+    "thisUser": "người dùng này"
+  },
+  "chatActions": {
+    "moreMenu": "Menu Thêm",
+    "report": "Báo Cáo",
+    "leaveRoom": "Rời Khỏi Trò Chuyện",
+    "leaveConfirm": "Bạn có chắc chắn muốn rời khỏi cuộc trò chuyện này?",
+    "leaveSuccess": "Bạn đã rời khỏi cuộc trò chuyện.",
+    "leaveError": "Đã xảy ra lỗi khi rời khỏi cuộc trò chuyện.",
+    "reportSuccess": "Báo cáo đã được gửi.",
+    "reportError": "Không thể gửi báo cáo."
+  },
+  "admin": {
+    "menu": "Menu Quản Trị",
+    "reports": "Báo Cáo",
+    "showReports": "Hiển Thị Báo Cáo",
+    "hideReports": "Ẩn Báo Cáo",
+    "loadingReports": "Đang tải báo cáo...",
+    "noReports": "Chưa có báo cáo nào được gửi.",
+    "reportReason": "Lý Do Báo Cáo",
+    "adminNotes": "Ghi Chú Quản Trị",
+    "reportStatus": {
+      "pending": "Chờ Xử Lý",
+      "reviewing": "Đang Xem Xét",
+      "resolved": "Đã Giải Quyết",
+      "rejected": "Đã Từ Chối"
+    }
   }
 }

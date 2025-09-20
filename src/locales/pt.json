@@ -303,5 +303,44 @@
     "gyeongsangArea": "Região de Gyeongsang",
     "jejuArea": "Região de Jeju",
     "anywhere": "Qualquer lugar"
+  },
+  "reportModal": {
+    "title": "Denunciar Usuário",
+    "description": "Por favor, forneça uma razão detalhada para a denúncia. Denúncias falsas podem resultar em penalidades.",
+    "reportedUser": "Usuário Denunciado",
+    "reasonRequired": "Por favor, insira a razão da denúncia.",
+    "placeholder": "ex., Linguagem inadequada, mensagens de spam, assédio, etc.",
+    "submit": "Denunciar",
+    "submitting": "Denunciando...",
+    "cancel": "Cancelar",
+    "submitError": "Ocorreu um erro ao enviar a denúncia.",
+    "submitSuccess": "A denúncia foi enviada.",
+    "thisUser": "este usuário"
+  },
+  "chatActions": {
+    "moreMenu": "Menu Mais",
+    "report": "Denunciar",
+    "leaveRoom": "Sair do Chat",
+    "leaveConfirm": "Tem certeza de que deseja sair deste chat?",
+    "leaveSuccess": "Você saiu do chat.",
+    "leaveError": "Ocorreu um erro ao sair do chat.",
+    "reportSuccess": "A denúncia foi enviada.",
+    "reportError": "Erro ao enviar a denúncia."
+  },
+  "admin": {
+    "menu": "Menu do Administrador",
+    "reports": "Denúncias",
+    "showReports": "Mostrar Denúncias",
+    "hideReports": "Ocultar Denúncias",
+    "loadingReports": "Carregando denúncias...",
+    "noReports": "Nenhuma denúncia foi enviada ainda.",
+    "reportReason": "Motivo da Denúncia",
+    "adminNotes": "Notas do Administrador",
+    "reportStatus": {
+      "pending": "Pendente",
+      "reviewing": "Revisando",
+      "resolved": "Resolvido",
+      "rejected": "Rejeitado"
+    }
   }
 }

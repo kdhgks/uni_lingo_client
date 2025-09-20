@@ -303,5 +303,44 @@
     "gyeongsangArea": "Gyeongsang-Region",
     "jejuArea": "Jeju-Region",
     "anywhere": "Überall"
+  },
+  "reportModal": {
+    "title": "Benutzer Melden",
+    "description": "Bitte geben Sie einen detaillierten Grund für die Meldung an. Falsche Meldungen können zu Sanktionen führen.",
+    "reportedUser": "Gemeldeter Benutzer",
+    "reasonRequired": "Bitte geben Sie den Grund für die Meldung ein.",
+    "placeholder": "z.B., Unangemessene Sprache, Spam-Nachrichten, Belästigung, etc.",
+    "submit": "Melden",
+    "submitting": "Melden...",
+    "cancel": "Abbrechen",
+    "submitError": "Beim Senden der Meldung ist ein Fehler aufgetreten.",
+    "submitSuccess": "Die Meldung wurde gesendet.",
+    "thisUser": "dieser Benutzer"
+  },
+  "chatActions": {
+    "moreMenu": "Mehr Menü",
+    "report": "Melden",
+    "leaveRoom": "Chat Verlassen",
+    "leaveConfirm": "Sind Sie sicher, dass Sie diesen Chat verlassen möchten?",
+    "leaveSuccess": "Sie haben den Chat verlassen.",
+    "leaveError": "Beim Verlassen des Chats ist ein Fehler aufgetreten.",
+    "reportSuccess": "Die Meldung wurde gesendet.",
+    "reportError": "Fehler beim Senden der Meldung."
+  },
+  "admin": {
+    "menu": "Admin-Menü",
+    "reports": "Meldungen",
+    "showReports": "Meldungen Anzeigen",
+    "hideReports": "Meldungen Ausblenden",
+    "loadingReports": "Lade Meldungen...",
+    "noReports": "Es wurden noch keine Meldungen eingereicht.",
+    "reportReason": "Meldungsgrund",
+    "adminNotes": "Admin-Notizen",
+    "reportStatus": {
+      "pending": "Ausstehend",
+      "reviewing": "Überprüfung",
+      "resolved": "Gelöst",
+      "rejected": "Abgelehnt"
+    }
   }
 }

@@ -335,6 +335,45 @@
     "newMessage": "New Message",
     "matchComplete": "Match Complete"
   },
+  "reportModal": {
+    "title": "Report User",
+    "description": "Please provide detailed reason for the report. False reports may result in penalties.",
+    "reportedUser": "Reported User",
+    "reasonRequired": "Please enter the reason for reporting.",
+    "placeholder": "e.g., Inappropriate language, spam messages, harassment, etc.",
+    "submit": "Report",
+    "submitting": "Reporting...",
+    "cancel": "Cancel",
+    "submitError": "An error occurred while submitting the report.",
+    "submitSuccess": "Report has been submitted.",
+    "thisUser": "this user"
+  },
+  "chatActions": {
+    "moreMenu": "More Menu",
+    "report": "Report",
+    "leaveRoom": "Leave Chat Room",
+    "leaveConfirm": "Are you sure you want to leave this chat room?",
+    "leaveSuccess": "You have left the chat room.",
+    "leaveError": "An error occurred while leaving the chat room.",
+    "reportSuccess": "Report has been submitted.",
+    "reportError": "Failed to submit the report."
+  },
+  "admin": {
+    "menu": "Admin Menu",
+    "reports": "Reports",
+    "showReports": "Show Reports",
+    "hideReports": "Hide Reports",
+    "loadingReports": "Loading reports...",
+    "noReports": "No reports have been submitted yet.",
+    "reportReason": "Report Reason",
+    "adminNotes": "Admin Notes",
+    "reportStatus": {
+      "pending": "Pending",
+      "reviewing": "Reviewing",
+      "resolved": "Resolved",
+      "rejected": "Rejected"
+    }
+  },
   "modal": {
     "success": "Success!",
     "warning": "Warning",

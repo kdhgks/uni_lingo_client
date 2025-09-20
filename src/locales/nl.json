@@ -303,5 +303,44 @@
     "gyeongsangArea": "Gyeongsang regio",
     "jejuArea": "Jeju regio",
     "anywhere": "Overal"
+  },
+  "reportModal": {
+    "title": "Gebruiker Rapporteren",
+    "description": "Gelieve een gedetailleerde reden voor de rapportage te geven. Valse rapportages kunnen tot sancties leiden.",
+    "reportedUser": "Gerapporteerde Gebruiker",
+    "reasonRequired": "Gelieve de reden voor de rapportage in te voeren.",
+    "placeholder": "bijv., Ongepaste taal, spam berichten, intimidatie, etc.",
+    "submit": "Rapporteren",
+    "submitting": "Rapporteren...",
+    "cancel": "Annuleren",
+    "submitError": "Er is een fout opgetreden bij het verzenden van de rapportage.",
+    "submitSuccess": "De rapportage is verzonden.",
+    "thisUser": "deze gebruiker"
+  },
+  "chatActions": {
+    "moreMenu": "Meer Menu",
+    "report": "Rapporteren",
+    "leaveRoom": "Chat Verlaten",
+    "leaveConfirm": "Weet je zeker dat je deze chat wilt verlaten?",
+    "leaveSuccess": "Je hebt de chat verlaten.",
+    "leaveError": "Er is een fout opgetreden bij het verlaten van de chat.",
+    "reportSuccess": "De rapportage is verzonden.",
+    "reportError": "Rapportage verzenden mislukt."
+  },
+  "admin": {
+    "menu": "Admin Menu",
+    "reports": "Rapportages",
+    "showReports": "Rapportages Tonen",
+    "hideReports": "Rapportages Verbergen",
+    "loadingReports": "Rapportages laden...",
+    "noReports": "Er zijn nog geen rapportages ingediend.",
+    "reportReason": "Rapportage Reden",
+    "adminNotes": "Admin Notities",
+    "reportStatus": {
+      "pending": "In Afwachting",
+      "reviewing": "In Beoordeling",
+      "resolved": "Opgelost",
+      "rejected": "Afgewezen"
+    }
   }
 }

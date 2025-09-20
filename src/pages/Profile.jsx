@@ -926,9 +926,7 @@ const Profile = () => {
               },
               body: formDataToSend,
             });
-          } catch (error) {
-            console.error("기본 언어 정보 저장 실패:", error);
-          }
+          } catch (error) {}
         }
 
         const normalizedInterests = normalizeInterests(userData.interests);
@@ -956,10 +954,8 @@ const Profile = () => {
         localStorage.setItem("currentLearningLanguage", learningLanguage);
         localStorage.setItem("currentTeachingLanguage", teachingLanguage);
       } else {
-        console.error("프로필 데이터를 불러오는데 실패했습니다.");
       }
     } catch (error) {
-      console.error("프로필 로딩 중 오류가 발생했습니다:", error);
     } finally {
       setIsDataLoading(false);
     }
@@ -1004,8 +1000,6 @@ const Profile = () => {
         window.globalTotalUnreadCount = totalUnreadCount;
       }
     } catch (error) {
-      console.error("프로필 페이지 - 안읽은 메시지 수 로드 중 오류:", error);
-
       // 백엔드 연결 실패 시 테스트 데이터 사용
       try {
         const savedUser = localStorage.getItem("user");
@@ -1013,10 +1007,6 @@ const Profile = () => {
           // 테스트용 안읽은 메시지 수 (랜덤)
           const testUnreadCount = Math.floor(Math.random() * 5); // 0-4개
           window.globalTotalUnreadCount = testUnreadCount;
-          console.log(
-            "프로필 페이지 - 테스트 안읽은 메시지 수:",
-            testUnreadCount
-          );
         } else {
           window.globalTotalUnreadCount = 0;
         }
@@ -1030,31 +1020,26 @@ const Profile = () => {
   useEffect(() => {
     const handleTeachingLanguageSelected = (event) => {
       const languageName = event.detail;
-      console.log("Teaching language selected:", languageName);
       setFormData((prev) => {
         const newData = {
           ...prev,
           teachingLanguage: languageName,
         };
-        console.log("Updated formData:", newData);
         return newData;
       });
     };
 
     const handleProfileLearningLanguageSelected = (event) => {
       const languageName = event.detail;
-      console.log("Learning language selected:", languageName);
       setFormData((prev) => {
         const newData = {
           ...prev,
           learningLanguage: languageName,
         };
-        console.log("Updated formData:", newData);
         return newData;
       });
     };
 
-    console.log("Registering event listeners...");
     window.addEventListener(
       "teachingLanguageSelected",
       handleTeachingLanguageSelected
@@ -1063,10 +1048,8 @@ const Profile = () => {
       "profileLearningLanguageSelected",
       handleProfileLearningLanguageSelected
     );
-    console.log("Event listeners registered successfully");
 
     return () => {
-      console.log("Removing event listeners...");
       window.removeEventListener(
         "teachingLanguageSelected",
         handleTeachingLanguageSelected
@@ -1075,7 +1058,6 @@ const Profile = () => {
         "profileLearningLanguageSelected",
         handleProfileLearningLanguageSelected
       );
-      console.log("Event listeners removed");
     };
   }, []);
 
@@ -1093,10 +1075,6 @@ const Profile = () => {
         currentLearningLanguage &&
         currentLearningLanguage !== formData.learningLanguage
       ) {
-        console.log(
-          "Learning language changed in localStorage:",
-          currentLearningLanguage
-        );
         setFormData((prev) => ({
           ...prev,
           learningLanguage: currentLearningLanguage,
@@ -1107,10 +1085,6 @@ const Profile = () => {
         currentTeachingLanguage &&
         currentTeachingLanguage !== formData.teachingLanguage
       ) {
-        console.log(
-          "Teaching language changed in localStorage:",
-          currentTeachingLanguage
-        );
         setFormData((prev) => ({
           ...prev,
           teachingLanguage: currentTeachingLanguage,
@@ -1227,7 +1201,6 @@ const Profile = () => {
       if (formData.profileImage) {
         if (typeof formData.profileImage === "string") {
           // 문자열인 경우 (이모지나 URL) - 무시
-          console.log("프로필 이미지가 문자열입니다. 파일을 선택해주세요.");
         } else {
           // 파일 객체인 경우
           formDataToSend.append("profile_image", formData.profileImage);
@@ -1245,8 +1218,6 @@ const Profile = () => {
       formDataToSend.append("interests", JSON.stringify(formData.interests));
 
       // 디버깅: 전송할 언어 정보 확인
-      console.log("Sending teaching language:", formData.teachingLanguage);
-      console.log("Sending learning language:", formData.learningLanguage);
 
       const response = await fetch(API_ENDPOINTS.PROFILE, {
         method: "PUT",
@@ -1260,32 +1231,22 @@ const Profile = () => {
       try {
         data = await response.json();
       } catch (err) {
-        console.error("JSON 파싱 오류:", err);
         setError("서버 응답을 처리하는 중 오류가 발생했습니다.");
         return;
       }
 
       // 에러 상세 정보 로깅
       if (!response.ok) {
-        console.error("Profile 업데이트 실패:", {
-          status: response.status,
-          statusText: response.statusText,
-          data: data,
-        });
       }
 
       if (response.ok && data.success) {
         // 백엔드에서 받은 업데이트된 사용자 정보를 localStorage에 저장
         if (data.user) {
-          console.log("Backend response user data:", data.user);
-          console.log("User teaching languages:", data.user.teaching_languages);
-          console.log("User learning languages:", data.user.learning_languages);
           localStorage.setItem("user", JSON.stringify(data.user));
           window.dispatchEvent(new Event("storage"));
         }
 
         // 프로필 저장 성공 후 최신 데이터 다시 로드
-        console.log("Profile saved successfully, reloading user data...");
         await loadUserProfile();
 
         setSuccess(t("profile.profileUpdateSuccess"));
@@ -1494,11 +1455,6 @@ const Profile = () => {
               >
                 <LanguageDisplay>
                   {formData.learningLanguage || "선택하세요"}
-                  {/* 디버깅용 - 나중에 제거 */}
-                  {console.log(
-                    "Current learningLanguage:",
-                    formData.learningLanguage
-                  )}
                 </LanguageDisplay>
                 <ArrowIcon>→</ArrowIcon>
               </LanguageButton>
@@ -1513,11 +1469,6 @@ const Profile = () => {
               >
                 <LanguageDisplay>
                   {formData.teachingLanguage || "선택하세요"}
-                  {/* 디버깅용 - 나중에 제거 */}
-                  {console.log(
-                    "Current teachingLanguage:",
-                    formData.teachingLanguage
-                  )}
                 </LanguageDisplay>
                 <ArrowIcon>→</ArrowIcon>
               </LanguageButton>

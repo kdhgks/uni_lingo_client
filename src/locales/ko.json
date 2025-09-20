@@ -335,6 +335,45 @@
     "newMessage": "새로운 메시지",
     "matchComplete": "매칭 완료"
   },
+  "reportModal": {
+    "title": "사용자 신고",
+    "description": "신고 사유를 자세히 입력해주세요. 허위 신고 시 제재를 받을 수 있습니다.",
+    "reportedUser": "신고 대상",
+    "reasonRequired": "신고 사유를 입력해주세요.",
+    "placeholder": "예: 부적절한 언어 사용, 스팸 메시지, 괴롭힘 등",
+    "submit": "신고하기",
+    "submitting": "신고 중...",
+    "cancel": "취소",
+    "submitError": "신고 접수 중 오류가 발생했습니다.",
+    "submitSuccess": "신고가 접수되었습니다.",
+    "thisUser": "이 사용자"
+  },
+  "chatActions": {
+    "moreMenu": "더보기 메뉴",
+    "report": "신고하기",
+    "leaveRoom": "채팅방 나가기",
+    "leaveConfirm": "정말로 이 채팅방을 나가시겠습니까?",
+    "leaveSuccess": "채팅방을 나갔습니다.",
+    "leaveError": "채팅방 나가기 중 오류가 발생했습니다.",
+    "reportSuccess": "신고가 접수되었습니다.",
+    "reportError": "신고 접수에 실패했습니다."
+  },
+  "admin": {
+    "menu": "관리자 메뉴",
+    "reports": "신고 내역",
+    "showReports": "신고 내역 보기",
+    "hideReports": "신고 내역 숨기기",
+    "loadingReports": "신고 내역을 불러오는 중...",
+    "noReports": "아직 신고된 내역이 없습니다.",
+    "reportReason": "신고 사유",
+    "adminNotes": "관리자 메모",
+    "reportStatus": {
+      "pending": "대기중",
+      "reviewing": "검토중",
+      "resolved": "해결됨",
+      "rejected": "거부됨"
+    }
+  },
   "modal": {
     "success": "성공!",
     "warning": "알림",

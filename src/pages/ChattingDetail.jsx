@@ -7,6 +7,8 @@ import {
   normalizeInterests,
 } from "../utils/languageUtils";
 import { API_ENDPOINTS } from "../config/api";
+import { useWebSocketSimple as useWebSocket } from "../hooks/useWebSocketSimple";
+import ReportModal from "../components/ReportModal";
 
 // Keyframes
 const slideIn = keyframes`
@@ -250,8 +252,120 @@ const MessageTime = styled.span`
   flex-shrink: 0;
   margin-bottom: 2px;
 
+  /* 내 메시지일 때 왼쪽 정렬 */
+  ${(props) =>
+    props.$isMe &&
+    `
+    order: -1;
+    margin-right: 4px;
+  `}
+
   .dark-mode & {
     opacity: 0.8;
+  }
+`;
+
+const MoreMenuContainer = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+`;
+
+const MoreButton = styled.button`
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #2c3e50;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: rgba(52, 152, 219, 0.1);
+  }
+
+  .dark-mode & {
+    color: #ecf0f1;
+  }
+`;
+
+const DropdownMenu = styled.div`
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 150px;
+  overflow: hidden;
+  animation: ${slideIn} 0.2s ease-out;
+
+  .dark-mode & {
+    background: #2d2d2d;
+    border-color: #444;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+`;
+
+const DropdownItem = styled.button`
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #2c3e50;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #f8f9fa;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &.danger {
+    color: #e74c3c;
+  }
+
+  .dark-mode & {
+    color: #ecf0f1;
+
+    &:hover {
+      background-color: #3d3d3d;
+    }
+
+    &.danger {
+      color: #ff6b6b;
+    }
+  }
+`;
+
+const SystemMessage = styled.div`
+  display: flex;
+  justify-content: center;
+  margin: 0.5rem 0;
+`;
+
+const SystemMessageContent = styled.div`
+  background: rgba(108, 117, 125, 0.1);
+  color: #6c757d;
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-style: italic;
+  text-align: center;
+  max-width: 80%;
+
+  .dark-mode & {
+    background: rgba(108, 117, 125, 0.2);
+    color: #adb5bd;
   }
 `;
 
@@ -1037,6 +1151,7 @@ const ChattingDetail = () => {
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
   const [partner, setPartner] = useState(null);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
   const [hasNewNotification, setHasNewNotification] = useState(
     window.globalHasNewNotification || false
@@ -1044,9 +1159,406 @@ const ChattingDetail = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [showFilePreview, setShowFilePreview] = useState(false);
   const [showPartnerModal, setShowPartnerModal] = useState(false);
-  const [heartReactions, setHeartReactions] = useState([]);
+  const [heartReactions, setHeartReactions] = useState([
+    // 테스트용 하트 반응 (실제 테스트 시 제거)
+    // { id: 1, messageId: "test", timestamp: Date.now(), isDisappearing: false }
+  ]);
+
+  // 신고 모달 상태
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
+  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
+  const [isLeaving, setIsLeaving] = useState(false);
   const [tapCount, setTapCount] = useState(0);
   const [tapTimeout, setTapTimeout] = useState(null);
+
+  // 메시지 ID 관리 시스템
+  const genId = () =>
+    crypto?.randomUUID?.() ||
+    `cid_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+  const processed = useRef(new Set()); // 'm:<serverId>' 또는 'c:<clientId>'
+  const pending = useRef(new Map()); // clientId -> temporary UI id
+  const lastServerId = useRef(null);
+
+  // processed 크기 제한 (메모리 관리)
+  const capProcessed = () => {
+    const MAX = 5000;
+    if (processed.current.size > MAX) {
+      // 간단히 전부 초기화(또는 큐로 일부만 유지하는 방식으로 변경)
+      processed.current = new Set([...processed.current].slice(-MAX));
+    }
+  };
+
+  // 룸 변경 시 상태 리셋
+  useEffect(() => {
+    // 방이 바뀌면 중복 추적/대기 맵 초기화
+    processed.current.clear();
+    pending.current.clear();
+    lastServerId.current = null;
+    setIsInitialLoad(true); // 새로운 방 진입 시 초기 로드 상태 리셋
+    setMessages([]); // 메시지 초기화
+  }, [id]);
+
+  // 웹소켓 연결
+  const token = localStorage.getItem("token");
+  const wsBaseUrl =
+    process.env.NODE_ENV === "production"
+      ? "wss://your-domain.com/ws"
+      : "ws://localhost:8001/ws";
+  // 테스트용 Echo Consumer URL (토큰 없이)
+  const wsTestUrl = id ? `${wsBaseUrl}/test/${id}/` : null;
+
+  const wsUrl =
+    token && id
+      ? `${wsBaseUrl}/chat/${id}/?token=${encodeURIComponent(token)}`
+      : wsTestUrl; // 토큰이 없으면 테스트 URL 사용
+
+  const { isConnected, lastMessage, sendMessage, error } = useWebSocket(wsUrl, {
+    onOpen: () => {
+      // 웹소켓 연결됨
+    },
+    onMessage: (message) => {
+      // 하트 반응 메시지 특별 처리
+      if (message.type === "heart_reaction") {
+        // 하트 반응 메시지 처리
+      }
+    },
+    onClose: () => {
+      // 웹소켓 연결 종료
+    },
+    onError: (error) => {
+      // 웹소켓 오류 처리
+    },
+    maxReconnectAttempts: 5,
+    reconnectInterval: 3000,
+  });
+
+  // 웹소켓 메시지 처리 - 완전한 ACK/중복 방지 시스템
+  useEffect(() => {
+    if (!lastMessage) return;
+
+    // 현재 사용자
+    const userData = localStorage.getItem("user");
+    const me =
+      userData && userData !== "undefined" && userData !== "null"
+        ? JSON.parse(userData)
+        : null;
+
+    switch (lastMessage.type) {
+      case "message_ack": {
+        const { client_id, message_id, server_ts } = lastMessage;
+        if (!client_id || !message_id) return;
+
+        // 이미 처리했으면 무시
+        if (processed.current.has(`c:${client_id}`)) return;
+        processed.current.add(`c:${client_id}`);
+        processed.current.add(`m:${message_id}`);
+        capProcessed();
+
+        // 임시 메시지를 서버 id로 치환 (중복 방지)
+        const tempUiId = pending.current.get(client_id);
+        setMessages((prev) => {
+          const updated = prev.map((m) => {
+            if (m.clientId === client_id || m.id === tempUiId) {
+              return {
+                ...m,
+                id: message_id, // ✅ 서버 ID로 교체
+                status: "delivered",
+                timestamp: server_ts
+                  ? new Date(server_ts * 1000).toISOString()
+                  : m.timestamp,
+              };
+            }
+            return m;
+          });
+
+          // 중복 제거: 같은 message_id가 있으면 제거
+          const seen = new Set();
+          const filtered = updated.filter((m) => {
+            if (seen.has(m.id)) {
+              return false;
+            }
+            seen.add(m.id);
+            return true;
+          });
+
+          // 새로운 메시지가 추가되었으므로 스크롤 트리거
+          setTimeout(() => {
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+          }, 50);
+
+          return filtered;
+        });
+        pending.current.delete(client_id);
+        break;
+      }
+
+      case "chat_message": {
+        const {
+          id: serverId,
+          message: text,
+          timestamp,
+          user_id: senderId,
+          client_id: clientIdFromPeer,
+        } = lastMessage;
+
+        // 내가 보낸 메시지 echo면 무시
+        if (senderId && me?.id && senderId === me.id) {
+          if (clientIdFromPeer) processed.current.add(`c:${clientIdFromPeer}`);
+          if (serverId) processed.current.add(`m:${serverId}`);
+          return;
+        }
+
+        // 중복 방지: serverId/ clientId 기준
+        if (
+          (serverId && processed.current.has(`m:${serverId}`)) ||
+          (clientIdFromPeer && processed.current.has(`c:${clientIdFromPeer}`))
+        ) {
+          return;
+        }
+
+        // 중복 방지 마킹
+        if (serverId) processed.current.add(`m:${serverId}`);
+        if (clientIdFromPeer) processed.current.add(`c:${clientIdFromPeer}`);
+        capProcessed();
+
+        const newMessage = {
+          id: serverId || `ws_${Date.now()}`,
+          text,
+          sender: "partner",
+          timestamp: timestamp || new Date().toISOString(),
+          files: null,
+          status: "delivered",
+          message_type: lastMessage.message_type || "text",
+        };
+
+        setMessages((prev) => {
+          // 중복 체크: 같은 ID가 이미 있으면 무시
+          if (prev.some((m) => m.id === newMessage.id)) {
+            return prev;
+          }
+
+          // 새로운 메시지 추가 후 스크롤
+          setTimeout(() => {
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+          }, 50);
+
+          return [...prev, newMessage];
+        });
+        break;
+      }
+
+      case "typing":
+        setIsTyping(!!lastMessage.is_typing);
+        break;
+
+      case "heart_reaction": {
+        const { action, messageId, timestamp } = lastMessage;
+
+        if (action === "add") {
+          // 하트 추가
+          const newHeart = {
+            id: Date.now(),
+            messageId,
+            timestamp: Date.now(),
+            isDisappearing: false,
+          };
+          setHeartReactions((prev) => [...prev, newHeart]);
+        } else if (action === "remove") {
+          // 하트 제거
+          setHeartReactions((prev) =>
+            prev.map((heart) =>
+              heart.messageId === messageId
+                ? { ...heart, isDisappearing: true }
+                : heart
+            )
+          );
+
+          setTimeout(() => {
+            setHeartReactions((prev) =>
+              prev.filter((heart) => heart.messageId !== messageId)
+            );
+          }, 300);
+        }
+        break;
+      }
+
+      case "room_event": {
+        const { event_type, user_id, username } = lastMessage;
+
+        if (event_type === "left") {
+          const systemMessage = {
+            id: `system_${Date.now()}`,
+            text: `${username}님이 채팅방을 나갔습니다.`,
+            sender: "system",
+            timestamp: new Date().toISOString(),
+            files: null,
+            message_type: "system_leave",
+          };
+
+          setMessages((prev) => {
+            // 중복 체크
+            if (prev.some((m) => m.id === systemMessage.id)) {
+              return prev;
+            }
+            return [...prev, systemMessage];
+          });
+
+          // 스크롤을 맨 아래로
+          setTimeout(() => {
+            if (messagesEndRef.current) {
+              messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+            }
+          }, 50);
+        }
+        break;
+      }
+
+      case "system_message": {
+        const { content, message_type, timestamp } = lastMessage;
+
+        const systemMessage = {
+          id: `system_${Date.now()}`,
+          text: content,
+          sender: "system",
+          timestamp: timestamp || new Date().toISOString(),
+          files: null,
+          message_type: message_type || "system_leave",
+        };
+
+        setMessages((prev) => {
+          // 중복 체크
+          if (prev.some((m) => m.id === systemMessage.id)) {
+            return prev;
+          }
+          return [...prev, systemMessage];
+        });
+
+        // 스크롤을 맨 아래로
+        setTimeout(() => {
+          if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+          }
+        }, 50);
+
+        break;
+      }
+
+      default:
+    }
+  }, [lastMessage]);
+
+  // 신고 함수
+  const handleReport = async (reason) => {
+    try {
+      const response = await fetch(API_ENDPOINTS.CHAT_ROOM_REPORT(id), {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ reason }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || t("chatActions.reportError"));
+      }
+
+      alert(data.message || t("chatActions.reportSuccess"));
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // 채팅방 나가기 함수
+  const handleLeaveRoom = async () => {
+    if (!window.confirm(t("chatActions.leaveConfirm"))) {
+      return;
+    }
+
+    setIsLeaving(true);
+    try {
+      const url = API_ENDPOINTS.CHAT_ROOM_LEAVE(id);
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || t("chatActions.leaveError"));
+      }
+
+      // 로컬에서 시스템 메시지 추가
+      const systemMessage = {
+        id: `system_${Date.now()}`,
+        text: "채팅방을 나갔습니다.",
+        sender: "system",
+        timestamp: new Date().toISOString(),
+        files: null,
+        message_type: "system_leave",
+      };
+
+      setMessages((prev) => [...prev, systemMessage]);
+
+      alert(t("chatActions.leaveSuccess"));
+      // 채팅방 목록으로 이동
+      navigate("/chatting");
+    } catch (error) {
+      alert(`${t("chatActions.leaveError")}: ${error.message}`);
+    } finally {
+      setIsLeaving(false);
+      setIsLeaveModalOpen(false);
+    }
+  };
+
+  // 하트 반응 로드 함수
+  const loadHeartReactions = async () => {
+    try {
+      const response = await fetch(
+        API_ENDPOINTS.CHAT_ROOM_HEART_REACTIONS(id),
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("하트 반응 로드 실패");
+      }
+
+      const data = await response.json();
+      if (data.success && data.heart_reactions) {
+        // 하트 반응 데이터를 프론트엔드 상태 형식으로 변환
+        const heartReactionsArray = [];
+        Object.entries(data.heart_reactions).forEach(
+          ([messageId, reactions]) => {
+            reactions.forEach((reaction) => {
+              heartReactionsArray.push({
+                id: reaction.id,
+                messageId: parseInt(messageId),
+                timestamp: reaction.timestamp,
+                isDisappearing: false,
+              });
+            });
+          }
+        );
+        setHeartReactions(heartReactionsArray);
+      }
+    } catch (error) {}
+  };
 
   // 파트너 정보 및 메시지 로드
   useEffect(() => {
@@ -1060,6 +1572,8 @@ const ChattingDetail = () => {
             : {};
 
         // 백엔드에서 채팅 데이터 불러오기
+        setIsLoadingMessages(true); // 로딩 시작
+
         const [partnerResponse, messagesResponse] = await Promise.all([
           fetch(API_ENDPOINTS.CHAT_ROOM_PARTNER(id), {
             method: "GET",
@@ -1084,10 +1598,6 @@ const ChattingDetail = () => {
           if (partnerData.success && partnerData.partner) {
             setPartner(partnerData.partner);
           } else {
-            console.error(
-              "파트너 데이터 형식이 올바르지 않습니다:",
-              partnerData
-            );
             setPartner(null);
           }
 
@@ -1099,13 +1609,11 @@ const ChattingDetail = () => {
               sender: msg.is_from_me ? "me" : "partner",
               timestamp: msg.timestamp,
               files: msg.files || null,
+              message_type: msg.message_type || "text",
             }));
+
             setMessages(transformedMessages);
           } else {
-            console.error(
-              "메시지 데이터 형식이 올바르지 않습니다:",
-              messagesData
-            );
             setMessages([]);
           }
 
@@ -1118,16 +1626,12 @@ const ChattingDetail = () => {
                 "Content-Type": "application/json",
               },
             });
-          } catch (error) {
-            console.error("메시지 읽음 처리 중 오류:", error);
-          }
+          } catch (error) {}
         } else {
-          console.error("채팅 데이터를 불러오는데 실패했습니다.");
           setPartner(null);
           setMessages([]);
         }
       } catch (error) {
-        console.error("채팅 데이터 로딩 중 오류가 발생했습니다:", error);
         setPartner(null);
         setMessages([]);
       } finally {
@@ -1136,6 +1640,7 @@ const ChattingDetail = () => {
     };
 
     loadChatData();
+    loadHeartReactions(); // 하트 반응도 함께 로드
   }, [id]);
 
   // 파일 선택 처리
@@ -1179,11 +1684,17 @@ const ChattingDetail = () => {
     e.preventDefault();
     if (!message.trim() && selectedFiles.length === 0) return;
 
-    const newMessage = {
-      id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    const clientId = genId(); // ✅ 임시ID 생성
+    const tempUiId = `tmp_${clientId}`; // UI key (리액트 key용)
+    pending.current.set(clientId, tempUiId);
+
+    const nowIso = new Date().toISOString(); // ✅ ISO 문자열로 통일
+    const optimistic = {
+      id: tempUiId, // UI에서 쓸 키
+      clientId, // ✅ 임시ID 저장
       text: message,
       sender: "me",
-      timestamp: new Date(),
+      timestamp: nowIso, // ✅ ISO 문자열
       files:
         selectedFiles.length > 0
           ? selectedFiles.map((file) => ({
@@ -1193,15 +1704,32 @@ const ChattingDetail = () => {
               url: URL.createObjectURL(file),
             }))
           : null,
+      status: "sending",
     };
 
     // 로컬 상태에 즉시 추가 (낙관적 업데이트)
-    setMessages((prev) => [...prev, newMessage]);
+    setMessages((prev) => [...prev, optimistic]);
+
+    // 메시지 전송 후 스크롤
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 50);
+
     setMessage("");
     setSelectedFiles([]);
     setShowFilePreview(false);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
+    }
+
+    // 웹소켓으로 메시지 전송
+    if (isConnected) {
+      sendMessage({
+        type: "chat_message",
+        message: message,
+        timestamp: optimistic.timestamp, // ✅ 이미 ISO 문자열
+        client_id: clientId, // ✅ 꼭 보냄
+      });
     }
 
     try {
@@ -1256,9 +1784,15 @@ const ChattingDetail = () => {
           }
         }, 2000);
       } else {
-        // 새로운 유저의 경우 백엔드 API로 메시지 전송
+        // ✅ WebSocket이 연결되어 있으면 REST API 전송 건너뛰기
+        if (isConnected) {
+          return;
+        }
+
+        // ✅ WebSocket이 끊어진 경우에만 REST API로 메시지 전송
         const formData = new FormData();
         formData.append("content", message || "");
+        formData.append("client_id", clientId); // ✅ client_id 추가
 
         // 파일이 있는 경우 추가
         if (selectedFiles.length > 0) {
@@ -1286,23 +1820,24 @@ const ChattingDetail = () => {
 
         const sentMessage = await response.json();
         if (sentMessage.success && sentMessage.message) {
-          // 백엔드 응답을 프론트엔드 형식으로 변환
-          const transformedMessage = {
-            id: sentMessage.message.id,
-            text: sentMessage.message.content,
-            sender: "me",
-            timestamp: sentMessage.message.timestamp,
-            files: null,
-          };
-          // 기존 낙관적 업데이트를 실제 서버 응답으로 교체
-          setMessages((prev) => {
-            const withoutLast = prev.slice(0, -1);
-            return [...withoutLast, transformedMessage];
-          });
+          // ✅ REST 응답으로 임시 메시지 치환
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.clientId === clientId || m.id === tempUiId
+                ? {
+                    ...m,
+                    id: sentMessage.message.id,
+                    status: "delivered",
+                    timestamp: sentMessage.message.timestamp, // ISO 문자열
+                  }
+                : m
+            )
+          );
+          processed.current.add(`m:${sentMessage.message.id}`);
+          pending.current.delete(clientId);
         }
       }
     } catch (error) {
-      console.error("메시지 전송 중 오류가 발생했습니다:", error);
       // 에러 시 메시지를 다시 제거 (낙관적 업데이트 롤백)
       setMessages((prev) => prev.slice(0, -1));
       alert("메시지 전송에 실패했습니다. 다시 시도해주세요.");
@@ -1311,70 +1846,122 @@ const ChattingDetail = () => {
 
   // 스크롤을 맨 아래로
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isTyping]);
+    // 메시지가 있을 때만 스크롤
+    if (messages.length > 0) {
+      // 초기 로드이거나 새로운 메시지가 추가된 경우 스크롤
+      const shouldScroll = isInitialLoad || !isLoadingMessages;
 
-  // 실시간 메시지 수신 (실제 사용자와의 채팅)
+      if (shouldScroll) {
+        // DOM 렌더링 완료 후 스크롤
+        setTimeout(
+          () => {
+            messagesEndRef.current?.scrollIntoView({
+              behavior: isInitialLoad ? "auto" : "smooth", // 초기 로드는 즉시, 그 외는 부드럽게
+            });
+            setIsInitialLoad(false); // 초기 로드 완료 표시
+          },
+          isInitialLoad ? 200 : 100
+        ); // 초기 로드는 조금 더 기다림
+      }
+    }
+  }, [messages, isTyping, isInitialLoad, isLoadingMessages]);
+
+  // 마지막 서버 message_id 추적 업데이트
+  useEffect(() => {
+    const maxId = messages
+      .map((m) => (Number.isFinite(+m.id) ? +m.id : -1))
+      .reduce((a, b) => Math.max(a, b), lastServerId.current ?? -1);
+    if (maxId >= 0) lastServerId.current = maxId;
+  }, [messages]);
+
+  // 실시간 메시지 수신 - WebSocket 연결 상태에 따라 폴링 제어
   useEffect(() => {
     if (!id || !partner) return;
 
     const checkNewMessages = async () => {
       try {
-        const response = await fetch(API_ENDPOINTS.CHAT_ROOM_MESSAGES(id), {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-          },
+        const after = lastServerId.current ?? 0;
+        const url = API_ENDPOINTS.CHAT_ROOM_MESSAGES(id) + `?after=${after}`;
+        const response = await fetch(url, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success && data.messages) {
-            // 백엔드 데이터를 프론트엔드 형식으로 변환
-            const transformedMessages = data.messages.map((msg) => ({
-              id: msg.id,
-              text: msg.content,
-              sender: msg.is_from_me ? "me" : "partner",
-              timestamp: msg.timestamp,
-              files: msg.files || null,
-            }));
+        if (!response.ok) return;
+        const data = await response.json();
+        if (!data.success || !data.messages) return;
 
-            const currentMessageIds = messages.map((msg) => msg.id);
+        const incoming = data.messages
+          .map((msg) => ({
+            id: msg.id,
+            text: msg.content,
+            sender: msg.is_from_me ? "me" : "partner",
+            timestamp: msg.timestamp,
+            files: msg.files || null,
+            status: "delivered",
+          }))
+          .filter(
+            (m) => !processed.current.has(`m:${m.id}`) && m.sender !== "me"
+          );
 
-            // 새로운 메시지가 있는지 확인
-            const actualNewMessages = transformedMessages.filter(
-              (newMsg) =>
-                !currentMessageIds.includes(newMsg.id) && newMsg.sender !== "me"
+        if (incoming.length) {
+          incoming.forEach((m) => processed.current.add(`m:${m.id}`));
+          capProcessed();
+          setMessages((prev) => {
+            // 기존 메시지와 중복되지 않는 새 메시지만 추가
+            const existingIds = new Set(prev.map((m) => m.id));
+            const newUniqueMessages = incoming.filter(
+              (m) => !existingIds.has(m.id)
             );
 
-            if (actualNewMessages.length > 0) {
-              // 새로운 메시지를 상태에 추가
-              setMessages((prev) => [...prev, ...actualNewMessages]);
-
-              // 전역 상태에 직접 알림 추가
-              actualNewMessages.forEach((newMsg) => {
-                if (window.addMessageNotification) {
-                  window.addMessageNotification(
-                    newMsg.text,
-                    partner?.name || partner?.nickname,
-                    id
-                  );
-                }
-              });
+            if (newUniqueMessages.length > 0) {
+              return [...prev, ...newUniqueMessages];
             }
-          }
+            return prev;
+          });
+
+          // 알림 추가
+          incoming.forEach((newMsg) => {
+            if (window.addMessageNotification) {
+              window.addMessageNotification(
+                newMsg.text,
+                partner?.name || partner?.nickname,
+                id
+              );
+            }
+          });
         }
-      } catch (error) {
-        console.error("메시지 확인 중 오류:", error);
+      } catch (error) {}
+    };
+
+    let interval;
+
+    if (!isConnected) {
+      // ✅ WS 끊겼을 때만 폴링
+      interval = setInterval(checkNewMessages, 3000);
+    }
+    // ✅ WS 연결이면 폴링 중지 (즉시 동기화도 제거)
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [id, partner, isConnected]);
+
+  // 더보기 메뉴 외부 클릭 시 닫기
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isMoreMenuOpen && !event.target.closest(".more-menu-container")) {
+        setIsMoreMenuOpen(false);
       }
     };
 
-    // 3초마다 새로운 메시지 확인
-    const interval = setInterval(checkNewMessages, 3000);
+    if (isMoreMenuOpen) {
+      document.addEventListener("click", handleClickOutside);
+    }
 
-    return () => clearInterval(interval);
-  }, [id, partner, messages]);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [isMoreMenuOpen]);
 
   const formatTime = (timestamp) => {
     return timestamp.toLocaleTimeString("ko-KR", {
@@ -1415,6 +2002,17 @@ const ChattingDetail = () => {
           prev.filter((heart) => heart.messageId !== messageId)
         );
       }, 300);
+
+      // WebSocket으로 하트 제거 알림
+      if (isConnected) {
+        const heartRemoveMessage = {
+          type: "heart_reaction",
+          action: "remove",
+          messageId: messageId,
+          timestamp: new Date().toISOString(),
+        };
+        sendMessage(heartRemoveMessage);
+      }
       return;
     }
 
@@ -1427,11 +2025,22 @@ const ChattingDetail = () => {
     };
 
     setHeartReactions((prev) => [...prev, newHeart]);
+
+    // WebSocket으로 하트 추가 알림
+    if (isConnected) {
+      const heartAddMessage = {
+        type: "heart_reaction",
+        action: "add",
+        messageId: messageId,
+        timestamp: new Date().toISOString(),
+      };
+      sendMessage(heartAddMessage);
+    }
   };
 
   // 모바일 더블탭 핸들러
   const handleTap = (messageId, sender) => {
-    if (sender !== "partner") return;
+    // 모든 메시지에 하트 반응 허용 (자신의 메시지도 포함)
 
     const newTapCount = tapCount + 1;
     setTapCount(newTapCount);
@@ -1516,107 +2125,150 @@ const ChattingDetail = () => {
         >
           {partner?.nickname}
         </PartnerName>
-        <ReportButton onClick={() => alert("신고 기능은 준비 중입니다.")}>
-          🚨
-        </ReportButton>
+        <MoreMenuContainer className="more-menu-container">
+          <MoreButton
+            onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}
+            title={t("chatActions.moreMenu")}
+            aria-label={t("chatActions.moreMenu")}
+          >
+            ⋯
+          </MoreButton>
+          {isMoreMenuOpen && (
+            <DropdownMenu>
+              <DropdownItem
+                onClick={() => {
+                  setIsReportModalOpen(true);
+                  setIsMoreMenuOpen(false);
+                }}
+                title={t("chatActions.report")}
+              >
+                {t("chatActions.report")}
+              </DropdownItem>
+              <DropdownItem
+                className="danger"
+                onClick={() => {
+                  handleLeaveRoom();
+                  setIsMoreMenuOpen(false);
+                }}
+                disabled={isLeaving}
+                title={t("chatActions.leaveRoom")}
+              >
+                {isLeaving ? "..." : t("chatActions.leaveRoom")}
+              </DropdownItem>
+            </DropdownMenu>
+          )}
+        </MoreMenuContainer>
       </ChattingHeader>
 
       <ChattingMain>
         <MessagesContainer>
-          {messages.map((msg) => (
-            <Message key={msg.id} className={msg.sender}>
-              <MessageContent>
-                <MessageBubble
-                  className={msg.sender}
-                  onDoubleClick={() => {
-                    if (msg.sender === "partner") {
-                      handleHeartReaction(msg.id);
-                    }
-                  }}
-                  onClick={() => {
-                    handleTap(msg.id, msg.sender);
-                  }}
-                  style={{ position: "relative" }}
-                >
-                  <MessageText>{msg.text}</MessageText>
-                  {msg.files && (
-                    <MessageFile>
-                      {msg.files.map((file, index) => (
-                        <MessageFileItem key={index}>
-                          {file.type.startsWith("image/") ? (
-                            <MessageFileImage
-                              src={file.url}
-                              alt={file.name}
-                              onClick={() => window.open(file.url, "_blank")}
-                            />
-                          ) : file.type.startsWith("video/") ? (
-                            <MessageFileVideo
-                              src={file.url}
-                              controls
-                              onClick={() => window.open(file.url, "_blank")}
-                            />
-                          ) : (
-                            <div
-                              style={{
-                                padding: "1rem",
-                                background: "rgba(255,255,255,0.1)",
-                                borderRadius: "8px",
-                                cursor: "pointer",
-                                transition: "background 0.3s ease",
-                              }}
-                              onClick={() => {
-                                // 파일 다운로드
-                                const link = document.createElement("a");
-                                link.href = file.url;
-                                link.download = file.name;
-                                link.target = "_blank";
-                                document.body.appendChild(link);
-                                link.click();
-                                document.body.removeChild(link);
-                              }}
-                              onMouseEnter={(e) => {
-                                e.target.style.background =
-                                  "rgba(255,255,255,0.2)";
-                              }}
-                              onMouseLeave={(e) => {
-                                e.target.style.background =
-                                  "rgba(255,255,255,0.1)";
-                              }}
-                            >
-                              <div>
-                                {file.type === "application/pdf"
-                                  ? "📄"
-                                  : file.type.startsWith("text/")
-                                  ? "📝"
-                                  : "📎"}{" "}
-                                {file.name}
-                              </div>
-                              <FileNameText>
-                                {(file.size / 1024 / 1024).toFixed(2)} MB
-                              </FileNameText>
-                            </div>
-                          )}
-                        </MessageFileItem>
-                      ))}
-                    </MessageFile>
-                  )}
+          {messages.map((msg, index) => {
+            // 시스템 메시지인 경우 다른 렌더링
+            if (msg.message_type && msg.message_type !== "text") {
+              return (
+                <SystemMessage key={String(msg.id)}>
+                  <SystemMessageContent>{msg.text}</SystemMessageContent>
+                </SystemMessage>
+              );
+            }
 
-                  {/* 하트 반응 */}
-                  {heartReactions
-                    .filter((heart) => heart.messageId === msg.id)
-                    .map((heart) => (
-                      <HeartReaction
-                        key={heart.id}
-                        $isDisappearing={heart.isDisappearing}
-                      >
-                        ❤️
-                      </HeartReaction>
-                    ))}
-                </MessageBubble>
-                <MessageTime>{formatTime(new Date(msg.timestamp))}</MessageTime>
-              </MessageContent>
-            </Message>
-          ))}
+            // 일반 메시지 렌더링
+            return (
+              <Message key={String(msg.id)} className={msg.sender}>
+                <MessageContent>
+                  <MessageBubble
+                    className={msg.sender}
+                    onDoubleClick={() => {
+                      // 모든 메시지에 하트 반응 허용 (자신의 메시지도 포함)
+                      handleHeartReaction(msg.id);
+                    }}
+                    onClick={() => {
+                      handleTap(msg.id, msg.sender);
+                    }}
+                    style={{ position: "relative" }}
+                  >
+                    <MessageText>{msg.text}</MessageText>
+                    {msg.files && (
+                      <MessageFile>
+                        {msg.files.map((file, index) => (
+                          <MessageFileItem key={index}>
+                            {file.type.startsWith("image/") ? (
+                              <MessageFileImage
+                                src={file.url}
+                                alt={file.name}
+                                onClick={() => window.open(file.url, "_blank")}
+                              />
+                            ) : file.type.startsWith("video/") ? (
+                              <MessageFileVideo
+                                src={file.url}
+                                controls
+                                onClick={() => window.open(file.url, "_blank")}
+                              />
+                            ) : (
+                              <div
+                                style={{
+                                  padding: "1rem",
+                                  background: "rgba(255,255,255,0.1)",
+                                  borderRadius: "8px",
+                                  cursor: "pointer",
+                                  transition: "background 0.3s ease",
+                                }}
+                                onClick={() => {
+                                  // 파일 다운로드
+                                  const link = document.createElement("a");
+                                  link.href = file.url;
+                                  link.download = file.name;
+                                  link.target = "_blank";
+                                  document.body.appendChild(link);
+                                  link.click();
+                                  document.body.removeChild(link);
+                                }}
+                                onMouseEnter={(e) => {
+                                  e.target.style.background =
+                                    "rgba(255,255,255,0.2)";
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.target.style.background =
+                                    "rgba(255,255,255,0.1)";
+                                }}
+                              >
+                                <div>
+                                  {file.type === "application/pdf"
+                                    ? "📄"
+                                    : file.type.startsWith("text/")
+                                    ? "📝"
+                                    : "📎"}{" "}
+                                  {file.name}
+                                </div>
+                                <FileNameText>
+                                  {(file.size / 1024 / 1024).toFixed(2)} MB
+                                </FileNameText>
+                              </div>
+                            )}
+                          </MessageFileItem>
+                        ))}
+                      </MessageFile>
+                    )}
+
+                    {/* 하트 반응 - 모든 메시지에 표시 */}
+                    {heartReactions
+                      .filter((heart) => heart.messageId === msg.id)
+                      .map((heart) => (
+                        <HeartReaction
+                          key={heart.id}
+                          $isDisappearing={heart.isDisappearing}
+                        >
+                          ❤️
+                        </HeartReaction>
+                      ))}
+                  </MessageBubble>
+                  <MessageTime $isMe={msg.sender === "me"}>
+                    {formatTime(new Date(msg.timestamp))}
+                  </MessageTime>
+                </MessageContent>
+              </Message>
+            );
+          })}
 
           {isTyping && partner && (
             <Message className="partner">
@@ -1895,6 +2547,14 @@ const ChattingDetail = () => {
           </PartnerModalContent>
         </PartnerModalOverlay>
       )}
+
+      {/* 신고 모달 */}
+      <ReportModal
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        onReport={handleReport}
+        reportedUser={partner}
+      />
     </ChattingDetailContainer>
   );
 };

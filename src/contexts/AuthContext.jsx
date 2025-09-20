@@ -38,7 +38,6 @@ export const AuthProvider = ({ children }) => {
           setToken(null);
         }
       } catch (error) {
-        console.error("Error checking auth status:", error);
         // 에러 발생 시 모든 인증 정보 초기화
         localStorage.removeItem("isLoggedIn");
         localStorage.removeItem("user");
@@ -64,7 +63,6 @@ export const AuthProvider = ({ children }) => {
       setUser(userData);
       setToken(authToken);
     } catch (error) {
-      console.error("Error during login:", error);
       throw error;
     }
   };
@@ -85,9 +83,7 @@ export const AuthProvider = ({ children }) => {
       setIsLoggedIn(false);
       setUser(null);
       setToken(null);
-    } catch (error) {
-      console.error("Error during logout:", error);
-    }
+    } catch (error) {}
   };
 
   const updateUser = (updatedUserData) => {
@@ -95,7 +91,6 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("user", JSON.stringify(updatedUserData));
       setUser(updatedUserData);
     } catch (error) {
-      console.error("Error updating user:", error);
       throw error;
     }
   };
