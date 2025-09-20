@@ -1,14 +1,8 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "build"
-      }
-    }
-  ],
+  "buildCommand": "npm run build",
+  "outputDirectory": "build",
+  "installCommand": "npm install --legacy-peer-deps",
   "routes": [
     {
       "src": "/static/(.*)",
@@ -22,10 +16,5 @@
   "env": {
     "REACT_APP_API_BASE_URL": "https://your-backend-domain.com",
     "REACT_APP_WS_BASE_URL": "wss://your-backend-domain.com"
-  },
-  "functions": {
-    "src/pages/api/**/*.js": {
-      "runtime": "nodejs18.x"
-    }
   }
 }
