@@ -8,8 +8,8 @@ export const API_CONFIG = {
 
   // 개발 환경
   development: {
-    API_BASE_URL: "http://localhost:8000/api",
-    WS_BASE_URL: "ws://localhost:8000/ws",
+    API_BASE_URL: "http://localhost:8001/api",
+    WS_BASE_URL: "ws://localhost:8001/ws",
   },
 };
 

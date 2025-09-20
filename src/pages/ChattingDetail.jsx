@@ -1204,7 +1204,7 @@ const ChattingDetail = () => {
   const wsBaseUrl =
     process.env.NODE_ENV === "production"
       ? "wss://uni-lingo-client.vercel.app/ws"
-      : "ws://localhost:8000/ws";
+      : "ws://localhost:8001/ws";
   // 테스트용 Echo Consumer URL (토큰 없이)
   const wsTestUrl = id ? `${wsBaseUrl}/test/${id}/` : null;
 
