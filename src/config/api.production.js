@@ -2,8 +2,8 @@
 export const API_CONFIG = {
   // 프로덕션 환경
   production: {
-    API_BASE_URL: "https://your-domain.com/api",
-    WS_BASE_URL: "wss://your-domain.com/ws",
+    API_BASE_URL: "https://uni-lingo-client.vercel.app/api",
+    WS_BASE_URL: "wss://uni-lingo-client.vercel.app/ws",
   },
 
   // 개발 환경
@@ -48,6 +48,3 @@ export const API_ENDPOINTS = {
 export const getWebSocketURL = (roomId) => {
   return `${WS_BASE_URL}/chat/${roomId}/`;
 };
-
-
-

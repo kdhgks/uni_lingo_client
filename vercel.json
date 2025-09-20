@@ -14,7 +14,7 @@
     }
   ],
   "env": {
-    "REACT_APP_API_BASE_URL": "https://your-backend-domain.com",
-    "REACT_APP_WS_BASE_URL": "wss://your-backend-domain.com"
+    "REACT_APP_API_BASE_URL": "https://uni-lingo-client.vercel.app",
+    "REACT_APP_WS_BASE_URL": "wss://uni-lingo-client.vercel.app"
   }
 }

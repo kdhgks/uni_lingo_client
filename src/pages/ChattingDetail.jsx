@@ -1203,8 +1203,8 @@ const ChattingDetail = () => {
   const token = localStorage.getItem("token");
   const wsBaseUrl =
     process.env.NODE_ENV === "production"
-      ? "wss://your-domain.com/ws"
-      : "ws://localhost:8001/ws";
+      ? "wss://uni-lingo-client.vercel.app/ws"
+      : "ws://localhost:8000/ws";
   // 테스트용 Echo Consumer URL (토큰 없이)
   const wsTestUrl = id ? `${wsBaseUrl}/test/${id}/` : null;
 
