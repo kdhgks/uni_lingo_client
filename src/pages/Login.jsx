@@ -158,17 +158,6 @@ const ErrorMessage = styled.div`
   border: 1px solid #feb2b2;
 `;
 
-const InfoMessage = styled.div`
-  background: #f0f9ff;
-  color: #0369a1;
-  padding: 0.75rem;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  text-align: center;
-  border: 1px solid #bae6fd;
-  margin-bottom: 1rem;
-`;
-
 const Login = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
@@ -213,106 +202,37 @@ const Login = () => {
         return;
       }
 
-      // 테스트 계정 우선 처리 (백엔드 연결 실패 시 fallback)
-      if (
-        formData.email === "test@example.com" &&
-        formData.password === "test123456"
-      ) {
-        const testUser = {
-          id: 1,
-          email: "test@example.com",
-          nickname: "테스트유저",
-          phone: "01012345678",
-          gender: "male",
-          birth_date: "1995-06-15",
-          student_name: "홍길동",
-          school: "서강대학교",
-          department: "컴퓨터공학과",
-          student_id: "20240001",
-          university: "seoul_area",
-          learning_languages: ["영어", "일본어", "중국어"],
-          teaching_languages: ["한국어", "영어"],
-          interests: ["K-pop", "드라마", "여행"],
-          avatar: "👤",
-          is_student_verified: true,
-          profile_image: null,
-          created_at: "2024-01-01T00:00:00.000Z",
-          updated_at: "2024-01-01T00:00:00.000Z",
-          // 추가 프로필 정보
-          bio: "안녕하세요! 언어 교환을 통해 새로운 친구들과 소통하고 싶습니다. K-pop과 드라마를 좋아해요!",
-          location: "서울시 서대문구",
-          nationality: "한국",
-          level: {
-            english: "intermediate",
-            japanese: "beginner",
-            chinese: "beginner",
-          },
-          // 매칭 관련 정보
-          matching_preferences: {
-            gender_preference: "both",
-            age_range: {
-              min: 20,
-              max: 30,
-            },
-            university_preference: "same_university",
-          },
-          // 활동 상태
-          is_online: false,
-          last_active: new Date().toISOString(),
-          // 알림 설정
-          notification_settings: {
-            email_notifications: true,
-            push_notifications: true,
-            chat_notifications: true,
-            matching_notifications: true,
-          },
-        };
+      // 백엔드 API 호출
+      const response = await fetch(API_ENDPOINTS.LOGIN, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
 
-        const testToken = "test_token_" + Date.now();
+      const data = await response.json();
 
-        // localStorage에 테스트 계정 저장
-        localStorage.setItem("user", JSON.stringify(testUser));
+      if (response.ok) {
+        // 로그인 성공
+        const { user, token } = data;
+
+        // localStorage에 저장
+        localStorage.setItem("user", JSON.stringify(user));
         localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("token", testToken);
+        localStorage.setItem("token", token);
 
         // AuthContext를 통해 로그인 처리
-        login(testUser, testToken);
+        login(user, token);
 
         // Navigate to home page
         navigate("/");
       } else {
-        // 백엔드 API 호출
-        const response = await fetch(API_ENDPOINTS.LOGIN, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: formData.email,
-            password: formData.password,
-          }),
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          // 로그인 성공
-          const { user, token } = data;
-
-          // localStorage에 저장
-          localStorage.setItem("user", JSON.stringify(user));
-          localStorage.setItem("isLoggedIn", "true");
-          localStorage.setItem("token", token);
-
-          // AuthContext를 통해 로그인 처리
-          login(user, token);
-
-          // Navigate to home page
-          navigate("/");
-        } else {
-          // 로그인 실패
-          setError(data.message || t("auth.loginError"));
-        }
+        // 로그인 실패
+        setError(data.message || t("auth.loginError"));
       }
     } catch (err) {
       // 네트워크 오류 시 안내 메시지
@@ -332,13 +252,6 @@ const Login = () => {
         <LoginForm>
           <Title>{t("auth.login")}</Title>
           <Form onSubmit={handleSubmit}>
-            <InfoMessage>
-              <strong>테스트 계정:</strong>
-              <br />
-              이메일: test@example.com
-              <br />
-              비밀번호: test123456
-            </InfoMessage>
             {error && <ErrorMessage>{error}</ErrorMessage>}
             <FormGroup>
               <Label htmlFor="email">{t("auth.email")}</Label>

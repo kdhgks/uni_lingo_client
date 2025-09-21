@@ -14,7 +14,7 @@
     }
   ],
   "env": {
-    "REACT_APP_API_BASE_URL": "https://uni-lingo-client.vercel.app",
-    "REACT_APP_WS_BASE_URL": "wss://uni-lingo-client.vercel.app"
+    "REACT_APP_API_URL": "https://unilingo.duckdns.org/api",
+    "REACT_APP_WS_BASE_URL": "wss://unilingo.duckdns.org/ws"
   }
 }
