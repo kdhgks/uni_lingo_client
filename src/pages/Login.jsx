@@ -16,15 +16,6 @@ const slideInLeft = keyframes`
   }
 `;
 
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-`;
-
 const LoginContainer = styled.div`
   min-height: 100vh;
   background: #ffffff;
@@ -158,17 +149,6 @@ const ErrorMessage = styled.div`
   border: 1px solid #feb2b2;
 `;
 
-const InfoMessage = styled.div`
-  background: #f0f9ff;
-  color: #0369a1;
-  padding: 0.75rem;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  text-align: center;
-  border: 1px solid #bae6fd;
-  margin-bottom: 1rem;
-`;
-
 const Login = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
@@ -251,13 +231,6 @@ const Login = () => {
         <LoginForm>
           <Title>{t("auth.login")}</Title>
           <Form onSubmit={handleSubmit}>
-            <InfoMessage>
-              <strong>{t("auth.testAccount")}:</strong>
-              <br />
-              {t("auth.email")}: sarah@unilingo.com
-              <br />
-              {t("auth.password")}: 123456
-            </InfoMessage>
             {error && <ErrorMessage>{error}</ErrorMessage>}
             <FormGroup>
               <Label htmlFor="email">{t("auth.email")}</Label>

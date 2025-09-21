@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Capacitor } from "@capacitor/core";
+import { SplashScreen } from "@capacitor/splash-screen";
+import { StatusBar, Style } from "@capacitor/status-bar";
 import ScrollToTop from "./components/ScrollToTop";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -61,6 +64,21 @@ window.addMatchingNotification = (partnerName) => {
 };
 
 function App() {
+  useEffect(() => {
+    const initializeApp = async () => {
+      if (Capacitor.isNativePlatform()) {
+        // 스플래시 스크린 설정
+        await SplashScreen.hide();
+
+        // 상태바 설정
+        await StatusBar.setStyle({ style: Style.Default });
+        await StatusBar.setBackgroundColor({ color: "#ffffff" });
+      }
+    };
+
+    initializeApp();
+  }, []);
+
   return (
     <AuthProvider>
       <LanguageProvider>

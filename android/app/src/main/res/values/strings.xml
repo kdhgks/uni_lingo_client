@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">UniLingo</string>
+    <string name="title_activity_main">UniLingo</string>
+    <string name="package_name">com.unilingo.app</string>
+    <string name="custom_url_scheme">com.unilingo.app</string>
+</resources>
