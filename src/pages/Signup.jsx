@@ -511,6 +511,9 @@ const Signup = () => {
 
   // 컴포넌트 마운트 시 저장된 폼 데이터 복원
   useEffect(() => {
+    // 회원가입 페이지 진입 시 이전 폼 데이터 초기화
+    localStorage.removeItem("signupFormData");
+
     const savedFormData = localStorage.getItem("signupFormData");
     if (savedFormData) {
       try {
@@ -662,9 +665,6 @@ const Signup = () => {
     setSuccess("");
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
       // Validation
       if (
         !formData.nickname ||
