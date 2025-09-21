@@ -1,6 +1,6 @@
 // API Configuration
 const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:8001/api";
+  process.env.REACT_APP_API_URL || "https://unilingo.duckdns.org/api";
 
 export const API_ENDPOINTS = {
   // Authentication
@@ -11,6 +11,7 @@ export const API_ENDPOINTS = {
 
   // Profile
   PROFILE: `${API_BASE_URL}/users/profile/`,
+  PROFILE_UPDATE: `${API_BASE_URL}/users/profile/`,
 
   // Matching
   MATCHING_PARTNERS: `${API_BASE_URL}/matching/partners/`,

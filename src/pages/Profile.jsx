@@ -906,28 +906,12 @@ const Profile = () => {
         if (!teachingLanguage || teachingLanguage === "")
           teachingLanguage = "한국어";
 
-        // 기본값을 백엔드에 자동 저장
-        if (learningLanguage === "English" || teachingLanguage === "한국어") {
-          try {
-            const formDataToSend = new FormData();
-            formDataToSend.append(
-              "learning_languages",
-              JSON.stringify([learningLanguage])
-            );
-            formDataToSend.append(
-              "teaching_languages",
-              JSON.stringify([teachingLanguage])
-            );
-
-            await fetch(API_ENDPOINTS.PROFILE, {
-              method: "PUT",
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-              body: formDataToSend,
-            });
-          } catch (error) {}
-        }
+        // 기본값을 로컬에서만 설정 (백엔드 업데이트는 사용자가 명시적으로 저장할 때만)
+        // 백엔드 API가 아직 완전히 구현되지 않았을 수 있으므로 임시로 비활성화
+        console.log("Setting default languages locally:", {
+          learningLanguage,
+          teachingLanguage,
+        });
 
         const normalizedInterests = normalizeInterests(userData.interests);
 
