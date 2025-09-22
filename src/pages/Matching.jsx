@@ -12,6 +12,13 @@ import { useAuth } from "../contexts/AuthContext";
 import { API_ENDPOINTS } from "../config/api";
 import { FiBell } from "react-icons/fi";
 
+// 서버 기본 URL 추출 (API_BASE_URL에서 /api 제거)
+const getServerBaseUrl = () => {
+  const apiUrl =
+    process.env.REACT_APP_API_URL || "https://unilingo.duckdns.org/api";
+  return apiUrl.replace("/api", "");
+};
+
 // Keyframes
 const slideInLeft = keyframes`
   from {
@@ -297,6 +304,7 @@ const NotificationIcon = styled.span`
   display: block;
   color: #6c757d;
   transition: color 0.3s ease;
+  margin-top: 0.2rem;
 
   .dark-mode & {
     color: #b0b0b0;
@@ -399,6 +407,7 @@ const ProfileImage = styled.div`
   justify-content: center;
   overflow: hidden;
   background: #f8f9fa;
+  position: relative;
 
   img {
     width: 100%;
@@ -409,6 +418,11 @@ const ProfileImage = styled.div`
   .placeholder {
     font-size: 2rem;
     color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
   }
 `;
 
@@ -1503,14 +1517,20 @@ const Matching = () => {
 
           const normalizedInterests = normalizeInterests(userData.interests);
 
+          // 프로필 이미지 처리 - 다양한 필드명 확인
+          let profileImage = null;
+          if (userData.profile_image_url) {
+            profileImage = userData.profile_image_url;
+          } else if (userData.profile_image) {
+            profileImage = userData.profile_image;
+          } else if (userData.profileImage) {
+            profileImage = userData.profileImage;
+          }
+
           setUserProfile({
             nickname: userData.nickname || "",
             gender: userData.gender || "",
-            profileImage:
-              userData.profile_image_url ||
-              userData.profile_image ||
-              userData.profileImage ||
-              null,
+            profileImage: profileImage,
             teachingLanguage,
             learningLanguage,
             school: userData.school || "",
@@ -1536,14 +1556,20 @@ const Matching = () => {
 
           const normalizedInterests = normalizeInterests(userData.interests);
 
+          // 프로필 이미지 처리 - 다양한 필드명 확인
+          let profileImage = null;
+          if (userData.profile_image_url) {
+            profileImage = userData.profile_image_url;
+          } else if (userData.profile_image) {
+            profileImage = userData.profile_image;
+          } else if (userData.profileImage) {
+            profileImage = userData.profileImage;
+          }
+
           setUserProfile({
             nickname: userData.nickname || "",
             gender: userData.gender || "",
-            profileImage:
-              userData.profile_image_url ||
-              userData.profile_image ||
-              userData.profileImage ||
-              null,
+            profileImage: profileImage,
             teachingLanguage,
             learningLanguage,
             school: userData.school || "",
@@ -1739,9 +1765,12 @@ const Matching = () => {
         learningLanguage,
         // teachingLanguage는 이미 업데이트되었다면 덮어쓰지 않음
         teachingLanguage: prev.teachingLanguage || teachingLanguage,
-        // 프로필 이미지도 업데이트
+        // 프로필 이미지도 업데이트 - 다양한 필드명 확인
         profileImage:
-          user.profile_image || user.profileImage || prev.profileImage,
+          user.profile_image_url ||
+          user.profile_image ||
+          user.profileImage ||
+          prev.profileImage,
       }));
 
       // 필터도 업데이트
@@ -2263,8 +2292,23 @@ const Matching = () => {
                     typeof userProfile.profileImage === "string" ? (
                       // 문자열인 경우 (이모지나 URL)
                       userProfile.profileImage.startsWith("http") ||
-                      userProfile.profileImage.startsWith("data:image/") ? (
-                        <img src={userProfile.profileImage} alt="프로필" />
+                      userProfile.profileImage.startsWith("data:image/") ||
+                      userProfile.profileImage.startsWith("/media/") ? (
+                        <img
+                          src={
+                            userProfile.profileImage.startsWith("/media/")
+                              ? `${getServerBaseUrl()}${
+                                  userProfile.profileImage
+                                }`
+                              : userProfile.profileImage
+                          }
+                          alt="프로필"
+                          onError={(e) => {
+                            // 이미지 로드 실패 시 이모지로 대체
+                            e.target.style.display = "none";
+                            e.target.nextSibling.style.display = "flex";
+                          }}
+                        />
                       ) : (
                         <div className="placeholder">
                           {userProfile.profileImage}
@@ -2275,11 +2319,20 @@ const Matching = () => {
                       <img
                         src={URL.createObjectURL(userProfile.profileImage)}
                         alt="프로필"
+                        onError={(e) => {
+                          // 이미지 로드 실패 시 이모지로 대체
+                          e.target.style.display = "none";
+                          e.target.nextSibling.style.display = "flex";
+                        }}
                       />
                     )
                   ) : (
                     <div className="placeholder">👤</div>
                   )}
+                  {/* 이미지 로드 실패 시 표시될 대체 요소 */}
+                  <div className="placeholder" style={{ display: "none" }}>
+                    👤
+                  </div>
                 </ProfileImage>
                 <ProfileInfo>
                   <div

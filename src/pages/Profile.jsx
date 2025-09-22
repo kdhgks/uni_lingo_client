@@ -1259,6 +1259,11 @@ const Profile = () => {
         setTimeout(() => {
           window.location.reload();
         }, 1500);
+
+        // 홈으로 이동하지 않고 프로필 페이지에 머물기
+        // setTimeout(() => {
+        //   navigate("/");
+        // }, 1500);
       } else {
         setError(data.message || t("profile.profileUpdateError"));
       }

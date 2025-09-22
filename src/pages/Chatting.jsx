@@ -301,6 +301,7 @@ const NotificationIcon = styled.span`
   display: block;
   color: #6c757d;
   transition: color 0.3s ease;
+  margin-top: 0.2rem;
 
   .dark-mode & {
     color: #b0b0b0;
