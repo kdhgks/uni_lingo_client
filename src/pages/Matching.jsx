@@ -1321,25 +1321,6 @@ const Matching = () => {
   const { user, token } = useAuth();
   const [isPending, setIsPending] = useState(false);
 
-  // Matching 페이지 진입 시 한 번만 새로고침
-  useEffect(() => {
-    // URL에 새로고침 파라미터가 있는지 확인
-    const urlParams = new URLSearchParams(window.location.search);
-    const hasRefreshed = urlParams.get("refreshed");
-
-    if (!hasRefreshed) {
-      // URL에 새로고침 파라미터 추가하고 새로고침
-      const newUrl = new URL(window.location);
-      newUrl.searchParams.set("refreshed", "true");
-
-      const timer = setTimeout(() => {
-        window.location.href = newUrl.toString();
-      }, 500);
-
-      return () => clearTimeout(timer);
-    }
-  }, []);
-
   // 인증 상태 확인 - 토큰이나 사용자 정보가 없으면 로그인 페이지로 리다이렉트
   useEffect(() => {
     const token = localStorage.getItem("token");

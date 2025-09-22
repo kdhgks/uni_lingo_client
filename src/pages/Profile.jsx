@@ -1255,10 +1255,10 @@ const Profile = () => {
         // 성공 메시지를 보기 위해 페이지 상단으로 스크롤
         window.scrollTo({ top: 0, behavior: "smooth" });
 
-        // 홈으로 이동하지 않고 프로필 페이지에 머물기
-        // setTimeout(() => {
-        //   navigate("/");
-        // }, 1500);
+        // 프로필 저장 성공 후 1.5초 뒤에 새로고침
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
       } else {
         setError(data.message || t("profile.profileUpdateError"));
       }
