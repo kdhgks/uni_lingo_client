@@ -1596,7 +1596,12 @@ const ChattingDetail = () => {
           const messagesData = await messagesResponse.json();
 
           if (partnerData.success && partnerData.partner) {
-            setPartner(partnerData.partner);
+            // 프로필 이미지 URL 처리
+            const partner = partnerData.partner;
+            if (partner.profile_image_url) {
+              partner.profile_image = partner.profile_image_url;
+            }
+            setPartner(partner);
           } else {
             setPartner(null);
           }
@@ -2370,12 +2375,35 @@ const ChattingDetail = () => {
               <PartnerHeader>
                 <PartnerImage>
                   {partner.profile_image && partner.profile_image !== "👤" ? (
-                    <img
-                      src={partner.profile_image}
-                      alt={`${partner.nickname} ${t(
-                        "profile.partnerModal.profileImage"
-                      )}`}
-                    />
+                    typeof partner.profile_image === "string" ? (
+                      // 문자열인 경우 (이모지나 URL)
+                      partner.profile_image.startsWith("http") ? (
+                        <img
+                          src={partner.profile_image}
+                          alt={`${partner.nickname} ${t(
+                            "profile.partnerModal.profileImage"
+                          )}`}
+                        />
+                      ) : (
+                        <div
+                          className="placeholder"
+                          role="img"
+                          aria-label={t(
+                            "profile.partnerModal.defaultProfileImage"
+                          )}
+                        >
+                          {partner.profile_image}
+                        </div>
+                      )
+                    ) : (
+                      // 파일 객체인 경우
+                      <img
+                        src={URL.createObjectURL(partner.profile_image)}
+                        alt={`${partner.nickname} ${t(
+                          "profile.partnerModal.profileImage"
+                        )}`}
+                      />
+                    )
                   ) : (
                     <div
                       className="placeholder"

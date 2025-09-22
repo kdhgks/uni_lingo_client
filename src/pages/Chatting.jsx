@@ -419,6 +419,14 @@ const PartnerAvatar = styled.div`
   border-radius: 50%;
   border: 2px solid rgba(52, 152, 219, 0.2);
   transition: all 0.3s ease;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
 
   .dark-mode & {
     background: linear-gradient(
@@ -759,7 +767,10 @@ const Chatting = () => {
               id: room.id,
               partner: {
                 name: room.partner?.nickname || "Unknown",
-                avatar: room.partner?.profile_image ? "👤" : "👤",
+                avatar:
+                  room.partner?.profile_image_url ||
+                  room.partner?.profile_image ||
+                  "👤",
               },
               lastMessage: room.last_message?.content || "메시지가 없습니다",
               timestamp: room.last_message?.timestamp
@@ -941,7 +952,14 @@ const Chatting = () => {
           <ChatList>
             {chats.map((chat) => (
               <ChatItem key={chat.id} onClick={() => handleChatClick(chat.id)}>
-                <PartnerAvatar>{chat.partner.avatar}</PartnerAvatar>
+                <PartnerAvatar>
+                  {chat.partner.avatar &&
+                  chat.partner.avatar.startsWith("http") ? (
+                    <img src={chat.partner.avatar} alt={chat.partner.name} />
+                  ) : (
+                    chat.partner.avatar || "👤"
+                  )}
+                </PartnerAvatar>
                 <ChatInfo>
                   <PartnerName>{chat.partner.name}</PartnerName>
                   <LastMessage>{chat.lastMessage}</LastMessage>

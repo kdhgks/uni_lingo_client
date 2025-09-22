@@ -69,13 +69,6 @@ const LanguageCard = styled.button`
   text-align: left;
   animation: ${slideInUp} 0.3s ease-out;
 
-  &:hover {
-    border-color: #3498db;
-    background: rgba(52, 152, 219, 0.05);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
-  }
-
   &.selected {
     border-color: #3498db;
     background: linear-gradient(

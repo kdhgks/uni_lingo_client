@@ -921,7 +921,11 @@ const Profile = () => {
             phone: userData.phone || "",
             gender: userData.gender || "",
             birthDate: userData.birth_date || userData.birthDate || "",
-            profileImage: userData.profile_image || userData.profileImage || "",
+            profileImage:
+              userData.profile_image_url ||
+              userData.profile_image ||
+              userData.profileImage ||
+              "",
             studentName: userData.student_name || userData.studentName || "",
             school: userData.school || "",
             department: userData.department || "",
@@ -1184,7 +1188,8 @@ const Profile = () => {
       // 프로필 이미지 처리
       if (formData.profileImage) {
         if (typeof formData.profileImage === "string") {
-          // 문자열인 경우 (이모지나 URL) - 무시
+          // 문자열인 경우 (이모지나 URL) - 직접 profile_image 필드로 전송
+          formDataToSend.append("profile_image", formData.profileImage);
         } else {
           // 파일 객체인 경우
           formDataToSend.append("profile_image", formData.profileImage);
@@ -1201,7 +1206,12 @@ const Profile = () => {
       );
       formDataToSend.append("interests", JSON.stringify(formData.interests));
 
-      // 디버깅: 전송할 언어 정보 확인
+      // 디버깅: 전송할 데이터 확인
+      console.log("전송할 프로필 이미지:", formData.profileImage);
+      console.log("FormData 내용:");
+      for (let [key, value] of formDataToSend.entries()) {
+        console.log(key, value);
+      }
 
       const response = await fetch(API_ENDPOINTS.PROFILE, {
         method: "PUT",
@@ -1228,6 +1238,8 @@ const Profile = () => {
         if (data.user) {
           localStorage.setItem("user", JSON.stringify(data.user));
           window.dispatchEvent(new Event("storage"));
+          // 커스텀 프로필 업데이트 이벤트 발생
+          window.dispatchEvent(new Event("profileUpdated"));
         }
 
         // 프로필 저장 성공 후 최신 데이터 다시 로드

@@ -1507,7 +1507,11 @@ const Matching = () => {
           setUserProfile({
             nickname: userData.nickname || "",
             gender: userData.gender || "",
-            profileImage: userData.profile_image || null,
+            profileImage:
+              userData.profile_image_url ||
+              userData.profile_image ||
+              userData.profileImage ||
+              null,
             teachingLanguage,
             learningLanguage,
             school: userData.school || "",
@@ -1536,7 +1540,11 @@ const Matching = () => {
           setUserProfile({
             nickname: userData.nickname || "",
             gender: userData.gender || "",
-            profileImage: userData.profileImage || null,
+            profileImage:
+              userData.profile_image_url ||
+              userData.profile_image ||
+              userData.profileImage ||
+              null,
             teachingLanguage,
             learningLanguage,
             school: userData.school || "",
@@ -1732,6 +1740,9 @@ const Matching = () => {
         learningLanguage,
         // teachingLanguage는 이미 업데이트되었다면 덮어쓰지 않음
         teachingLanguage: prev.teachingLanguage || teachingLanguage,
+        // 프로필 이미지도 업데이트
+        profileImage:
+          user.profile_image || user.profileImage || prev.profileImage,
       }));
 
       // 필터도 업데이트
@@ -1743,6 +1754,53 @@ const Matching = () => {
       }
     }
   }, [user]);
+
+  // 프로필 업데이트 이벤트 감지
+  useEffect(() => {
+    const handleProfileUpdate = () => {
+      // localStorage에서 최신 사용자 정보 로드
+      const savedUser = localStorage.getItem("user");
+      if (savedUser) {
+        try {
+          const userData = JSON.parse(savedUser);
+          const { learningLanguage, teachingLanguage } =
+            extractLanguageData(userData);
+          const normalizedInterests = normalizeInterests(userData.interests);
+
+          setUserProfile((prev) => ({
+            ...prev,
+            nickname: userData.nickname || prev.nickname,
+            gender: userData.gender || prev.gender,
+            profileImage:
+              userData.profile_image_url ||
+              userData.profile_image ||
+              userData.profileImage ||
+              prev.profileImage,
+            teachingLanguage: teachingLanguage || prev.teachingLanguage,
+            learningLanguage: learningLanguage || prev.learningLanguage,
+            school: userData.school || prev.school,
+            interests:
+              normalizedInterests.length > 0
+                ? normalizedInterests
+                : prev.interests,
+          }));
+        } catch (error) {
+          console.error("프로필 업데이트 처리 중 오류:", error);
+        }
+      }
+    };
+
+    // storage 이벤트 리스너 등록
+    window.addEventListener("storage", handleProfileUpdate);
+
+    // 커스텀 프로필 업데이트 이벤트 리스너 등록
+    window.addEventListener("profileUpdated", handleProfileUpdate);
+
+    return () => {
+      window.removeEventListener("storage", handleProfileUpdate);
+      window.removeEventListener("profileUpdated", handleProfileUpdate);
+    };
+  }, []);
 
   const handleInterestAdd = (interest) => {
     if (
@@ -2203,10 +2261,22 @@ const Matching = () => {
               <ProfileHeader>
                 <ProfileImage>
                   {userProfile.profileImage ? (
-                    <img
-                      src={URL.createObjectURL(userProfile.profileImage)}
-                      alt="프로필"
-                    />
+                    typeof userProfile.profileImage === "string" ? (
+                      // 문자열인 경우 (이모지나 URL)
+                      userProfile.profileImage.startsWith("http") ? (
+                        <img src={userProfile.profileImage} alt="프로필" />
+                      ) : (
+                        <div className="placeholder">
+                          {userProfile.profileImage}
+                        </div>
+                      )
+                    ) : (
+                      // 파일 객체인 경우
+                      <img
+                        src={URL.createObjectURL(userProfile.profileImage)}
+                        alt="프로필"
+                      />
+                    )
                   ) : (
                     <div className="placeholder">👤</div>
                   )}
