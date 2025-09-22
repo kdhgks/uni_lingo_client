@@ -1321,6 +1321,25 @@ const Matching = () => {
   const { user, token } = useAuth();
   const [isPending, setIsPending] = useState(false);
 
+  // Matching 페이지 진입 시 한 번만 새로고침
+  useEffect(() => {
+    // URL에 새로고침 파라미터가 있는지 확인
+    const urlParams = new URLSearchParams(window.location.search);
+    const hasRefreshed = urlParams.get("refreshed");
+
+    if (!hasRefreshed) {
+      // URL에 새로고침 파라미터 추가하고 새로고침
+      const newUrl = new URL(window.location);
+      newUrl.searchParams.set("refreshed", "true");
+
+      const timer = setTimeout(() => {
+        window.location.href = newUrl.toString();
+      }, 500);
+
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   // 인증 상태 확인 - 토큰이나 사용자 정보가 없으면 로그인 페이지로 리다이렉트
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -1365,13 +1384,12 @@ const Matching = () => {
   const [userProfile, setUserProfile] = useState({
     nickname: "",
     gender: "",
-    profile_image: null,
+    profileImage: null,
     teachingLanguage: "",
     learningLanguage: "",
     school: "",
     interests: [],
   });
-
   const [isProfileLoaded, setIsProfileLoaded] = useState(false);
   const [filterSettings, setFilterSettings] = useState({
     gender: "",
@@ -1507,8 +1525,11 @@ const Matching = () => {
           setUserProfile({
             nickname: userData.nickname || "",
             gender: userData.gender || "",
-            profile_image:
-              userData.profile_image_url || userData.profile_image || null,
+            profileImage:
+              userData.profile_image_url ||
+              userData.profile_image ||
+              userData.profileImage ||
+              null,
             teachingLanguage,
             learningLanguage,
             school: userData.school || "",
@@ -1537,8 +1558,11 @@ const Matching = () => {
           setUserProfile({
             nickname: userData.nickname || "",
             gender: userData.gender || "",
-            profile_image:
-              userData.profile_image_url || userData.profile_image || null,
+            profileImage:
+              userData.profile_image_url ||
+              userData.profile_image ||
+              userData.profileImage ||
+              null,
             teachingLanguage,
             learningLanguage,
             school: userData.school || "",
@@ -1550,7 +1574,7 @@ const Matching = () => {
           setUserProfile({
             nickname: "",
             gender: "",
-            profile_image: null,
+            profileImage: null,
             teachingLanguage: "",
             learningLanguage: "",
             school: "",
@@ -1563,7 +1587,7 @@ const Matching = () => {
         setUserProfile({
           nickname: "",
           gender: "",
-          profile_image: null,
+          profileImage: null,
           teachingLanguage: "",
           learningLanguage: "",
           school: "",
@@ -1735,7 +1759,8 @@ const Matching = () => {
         // teachingLanguage는 이미 업데이트되었다면 덮어쓰지 않음
         teachingLanguage: prev.teachingLanguage || teachingLanguage,
         // 프로필 이미지도 업데이트
-        profile_image: user.profile_image || prev.profile_image,
+        profileImage:
+          user.profile_image || user.profileImage || prev.profileImage,
       }));
 
       // 필터도 업데이트
@@ -1764,10 +1789,11 @@ const Matching = () => {
             ...prev,
             nickname: userData.nickname || prev.nickname,
             gender: userData.gender || prev.gender,
-            profile_image:
+            profileImage:
               userData.profile_image_url ||
               userData.profile_image ||
-              prev.profile_image,
+              userData.profileImage ||
+              prev.profileImage,
             teachingLanguage: teachingLanguage || prev.teachingLanguage,
             learningLanguage: learningLanguage || prev.learningLanguage,
             school: userData.school || prev.school,
@@ -1777,7 +1803,7 @@ const Matching = () => {
                 : prev.interests,
           }));
         } catch (error) {
-          console.error("프로필 업데이트 처리 중 오류:", error);
+          // 프로필 업데이트 처리 중 오류 발생
         }
       }
     };
@@ -2252,20 +2278,21 @@ const Matching = () => {
             <UserProfileCard>
               <ProfileHeader>
                 <ProfileImage>
-                  {userProfile.profile_image ? (
-                    typeof userProfile.profile_image === "string" ? (
+                  {userProfile.profileImage ? (
+                    typeof userProfile.profileImage === "string" ? (
                       // 문자열인 경우 (이모지나 URL)
-                      userProfile.profile_image.startsWith("http") ? (
-                        <img src={userProfile.profile_image} alt="프로필" />
+                      userProfile.profileImage.startsWith("http") ||
+                      userProfile.profileImage.startsWith("data:image/") ? (
+                        <img src={userProfile.profileImage} alt="프로필" />
                       ) : (
                         <div className="placeholder">
-                          {userProfile.profile_image}
+                          {userProfile.profileImage}
                         </div>
                       )
                     ) : (
                       // 파일 객체인 경우
                       <img
-                        src={URL.createObjectURL(userProfile.profile_image)}
+                        src={URL.createObjectURL(userProfile.profileImage)}
                         alt="프로필"
                       />
                     )

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import { useLanguage } from "../contexts/LanguageContext";
@@ -1560,93 +1560,94 @@ const ChattingDetail = () => {
     } catch (error) {}
   };
 
-  // 파트너 정보 및 메시지 로드
-  useEffect(() => {
-    const loadChatData = async () => {
-      setIsLoadingMessages(true);
-      try {
-        const userData = localStorage.getItem("user");
-        const currentUser =
-          userData && userData !== "undefined" && userData !== "null"
-            ? JSON.parse(userData)
-            : {};
+  // 파트너 정보 및 메시지 로드 함수
+  const loadChatData = useCallback(async () => {
+    setIsLoadingMessages(true);
+    try {
+      const userData = localStorage.getItem("user");
+      const currentUser =
+        userData && userData !== "undefined" && userData !== "null"
+          ? JSON.parse(userData)
+          : {};
 
-        // 백엔드에서 채팅 데이터 불러오기
-        setIsLoadingMessages(true); // 로딩 시작
+      // 백엔드에서 채팅 데이터 불러오기
+      setIsLoadingMessages(true); // 로딩 시작
 
-        const [partnerResponse, messagesResponse] = await Promise.all([
-          fetch(API_ENDPOINTS.CHAT_ROOM_PARTNER(id), {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-              "Content-Type": "application/json",
-            },
-          }),
-          fetch(API_ENDPOINTS.CHAT_ROOM_MESSAGES(id), {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-              "Content-Type": "application/json",
-            },
-          }),
-        ]);
+      const [partnerResponse, messagesResponse] = await Promise.all([
+        fetch(API_ENDPOINTS.CHAT_ROOM_PARTNER(id), {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        }),
+        fetch(API_ENDPOINTS.CHAT_ROOM_MESSAGES(id), {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        }),
+      ]);
 
-        if (partnerResponse.ok && messagesResponse.ok) {
-          const partnerData = await partnerResponse.json();
-          const messagesData = await messagesResponse.json();
+      if (partnerResponse.ok && messagesResponse.ok) {
+        const partnerData = await partnerResponse.json();
+        const messagesData = await messagesResponse.json();
 
-          if (partnerData.success && partnerData.partner) {
-            // 프로필 이미지 URL 처리
-            const partner = partnerData.partner;
-            if (partner.profile_image_url) {
-              partner.profile_image = partner.profile_image_url;
-            }
-            setPartner(partner);
-          } else {
-            setPartner(null);
+        if (partnerData.success && partnerData.partner) {
+          // 프로필 이미지 URL 처리
+          const partner = partnerData.partner;
+          if (partner.profile_image_url) {
+            partner.profile_image = partner.profile_image_url;
           }
-
-          if (messagesData.success && messagesData.messages) {
-            // 백엔드 데이터를 프론트엔드 형식으로 변환
-            const transformedMessages = messagesData.messages.map((msg) => ({
-              id: msg.id,
-              text: msg.content,
-              sender: msg.is_from_me ? "me" : "partner",
-              timestamp: msg.timestamp,
-              files: msg.files || null,
-              message_type: msg.message_type || "text",
-            }));
-
-            setMessages(transformedMessages);
-          } else {
-            setMessages([]);
-          }
-
-          // 메시지를 읽음 처리
-          try {
-            await fetch(API_ENDPOINTS.CHAT_ROOM_MESSAGES_READ(id), {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-                "Content-Type": "application/json",
-              },
-            });
-          } catch (error) {}
+          setPartner(partner);
         } else {
           setPartner(null);
+        }
+
+        if (messagesData.success && messagesData.messages) {
+          // 백엔드 데이터를 프론트엔드 형식으로 변환
+          const transformedMessages = messagesData.messages.map((msg) => ({
+            id: msg.id,
+            text: msg.content,
+            sender: msg.is_from_me ? "me" : "partner",
+            timestamp: msg.timestamp,
+            files: msg.files || null,
+            message_type: msg.message_type || "text",
+          }));
+
+          setMessages(transformedMessages);
+        } else {
           setMessages([]);
         }
-      } catch (error) {
+
+        // 메시지를 읽음 처리
+        try {
+          await fetch(API_ENDPOINTS.CHAT_ROOM_MESSAGES_READ(id), {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              "Content-Type": "application/json",
+            },
+          });
+        } catch (error) {}
+      } else {
         setPartner(null);
         setMessages([]);
-      } finally {
-        setIsLoadingMessages(false);
       }
-    };
+    } catch (error) {
+      setPartner(null);
+      setMessages([]);
+    } finally {
+      setIsLoadingMessages(false);
+    }
+  }, [id]);
 
+  // 파트너 정보 및 메시지 로드
+  useEffect(() => {
     loadChatData();
     loadHeartReactions(); // 하트 반응도 함께 로드
-  }, [id]);
+  }, [loadChatData]);
 
   // 파일 선택 처리
   const handleFileSelect = (e) => {
@@ -1967,6 +1968,20 @@ const ChattingDetail = () => {
       document.removeEventListener("click", handleClickOutside);
     };
   }, [isMoreMenuOpen]);
+
+  // 프로필 업데이트 감지 (상대방 프로필 모달에서 내 프로필 사진 반영)
+  useEffect(() => {
+    const handleProfileUpdate = () => {
+      // 상대방 프로필 정보 다시 로드
+      if (id) {
+        loadChatData();
+      }
+    };
+
+    window.addEventListener("profileUpdated", handleProfileUpdate);
+    return () =>
+      window.removeEventListener("profileUpdated", handleProfileUpdate);
+  }, [id, loadChatData]);
 
   const formatTime = (timestamp) => {
     return timestamp.toLocaleTimeString("ko-KR", {
@@ -2377,7 +2392,8 @@ const ChattingDetail = () => {
                   {partner.profile_image && partner.profile_image !== "👤" ? (
                     typeof partner.profile_image === "string" ? (
                       // 문자열인 경우 (이모지나 URL)
-                      partner.profile_image.startsWith("http") ? (
+                      partner.profile_image.startsWith("http") ||
+                      partner.profile_image.startsWith("data:image/") ? (
                         <img
                           src={partner.profile_image}
                           alt={`${partner.nickname} ${t(

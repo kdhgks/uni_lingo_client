@@ -915,6 +915,18 @@ const Chatting = () => {
       );
   }, []);
 
+  // 프로필 업데이트 감지 (채팅방 목록의 프로필 사진 반영)
+  useEffect(() => {
+    const handleProfileUpdate = () => {
+      // 채팅방 목록 다시 로드
+      loadChats();
+    };
+
+    window.addEventListener("profileUpdated", handleProfileUpdate);
+    return () =>
+      window.removeEventListener("profileUpdated", handleProfileUpdate);
+  }, []);
+
   const handleChatClick = (chatId) => {
     navigate(`/chatting/${chatId}`);
   };
@@ -954,7 +966,8 @@ const Chatting = () => {
               <ChatItem key={chat.id} onClick={() => handleChatClick(chat.id)}>
                 <PartnerAvatar>
                   {chat.partner.avatar &&
-                  chat.partner.avatar.startsWith("http") ? (
+                  (chat.partner.avatar.startsWith("http") ||
+                    chat.partner.avatar.startsWith("data:image/")) ? (
                     <img src={chat.partner.avatar} alt={chat.partner.name} />
                   ) : (
                     chat.partner.avatar || "👤"

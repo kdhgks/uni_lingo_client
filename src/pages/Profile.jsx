@@ -908,10 +908,6 @@ const Profile = () => {
 
         // 기본값을 로컬에서만 설정 (백엔드 업데이트는 사용자가 명시적으로 저장할 때만)
         // 백엔드 API가 아직 완전히 구현되지 않았을 수 있으므로 임시로 비활성화
-        console.log("Setting default languages locally:", {
-          learningLanguage,
-          teachingLanguage,
-        });
 
         const normalizedInterests = normalizeInterests(userData.interests);
 
@@ -1182,14 +1178,33 @@ const Profile = () => {
       formDataToSend.append("department", formData.department);
       formDataToSend.append("student_id", formData.studentId);
       formDataToSend.append("university", formData.university);
-      // 프로필 이미지 처리
+      // 프로필 이미지 처리 - 항상 전송
       if (formData.profile_image) {
         if (typeof formData.profile_image === "string") {
-          // 문자열인 경우 (이모지나 URL) - 직접 profile_image 필드로 전송
-          formDataToSend.append("profile_image", formData.profile_image);
+          if (formData.profile_image.startsWith("http")) {
+            // 서버 URL인 경우 - profile_image_url로 전송
+            formDataToSend.append("profile_image_url", formData.profile_image);
+          } else {
+            // 이모지/텍스트는 profile_image로 전송
+            formDataToSend.append("profile_image", formData.profile_image);
+          }
         } else {
           // 파일 객체인 경우 - 직접 전송
           formDataToSend.append("profile_image", formData.profile_image);
+        }
+      } else {
+        // 이미지가 없는 경우 - 기존 이미지 URL이 있으면 그것을 전송
+        const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+        if (currentUser.profile_image_url) {
+          formDataToSend.append(
+            "profile_image_url",
+            currentUser.profile_image_url
+          );
+        } else if (currentUser.profile_image) {
+          formDataToSend.append("profile_image", currentUser.profile_image);
+        } else {
+          // 기존 이미지도 없으면 빈 문자열 전송
+          formDataToSend.append("profile_image", "");
         }
       }
 
@@ -1202,13 +1217,6 @@ const Profile = () => {
         JSON.stringify([formData.learningLanguage])
       );
       formDataToSend.append("interests", JSON.stringify(formData.interests));
-
-      // 디버깅: 전송할 데이터 확인
-      console.log("전송할 프로필 이미지:", formData.profile_image);
-      console.log("FormData 내용:");
-      for (let [key, value] of formDataToSend.entries()) {
-        console.log(key, value);
-      }
 
       const response = await fetch(API_ENDPOINTS.PROFILE, {
         method: "PUT",
