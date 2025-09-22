@@ -326,6 +326,14 @@ const Select = styled.select`
   transition: all 0.3s ease;
   background: #ffffff;
   color: #2c3e50;
+  cursor: pointer;
+  min-height: 48px;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236c757d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  background-size: 1rem;
+  padding-right: 2.5rem;
 
   &:focus {
     outline: none;
@@ -333,70 +341,48 @@ const Select = styled.select`
     box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
   }
 
+  &:hover {
+    border-color: #3498db;
+    background: rgba(52, 152, 219, 0.02);
+  }
+
   .dark-mode & {
     background: #2d2d2d;
     color: #ffffff;
     border-color: #555;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b0b0b0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
 
     &:focus {
       border-color: #3498db;
       box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
     }
-  }
-`;
-
-const LanguageButton = styled.button`
-  padding: 0.8rem;
-  border: 2px solid #e1e8ed;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
-  background: #ffffff;
-  color: #2c3e50;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  text-align: left;
-  min-height: 48px;
-
-  &:hover {
-    border-color: #3498db;
-    background: rgba(52, 152, 219, 0.05);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
-  }
-
-  &:focus {
-    outline: none;
-    border-color: #3498db;
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-  }
-
-  .dark-mode & {
-    background: #2d2d2d;
-    color: #ffffff;
-    border-color: #555;
 
     &:hover {
       border-color: #5dade2;
-      background: rgba(93, 173, 226, 0.1);
+      background: rgba(93, 173, 226, 0.05);
     }
   }
-`;
 
-const LanguageDisplay = styled.span`
-  flex: 1;
-  text-align: left;
-`;
+  /* 모바일 최적화 */
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    padding: 0.9rem;
+    min-height: 52px;
+    padding-right: 2.8rem;
+    background-size: 1.2rem;
+    background-position: right 1rem center;
+  }
 
-const ArrowIcon = styled.span`
-  font-size: 1.2rem;
-  color: #6c757d;
-  transition: all 0.3s ease;
+  /* 옵션 스타일링 */
+  option {
+    padding: 0.5rem;
+    background: #ffffff;
+    color: #2c3e50;
 
-  .dark-mode & {
-    color: #b0b0b0;
+    .dark-mode & {
+      background: #2d2d2d;
+      color: #ffffff;
+    }
   }
 `;
 
@@ -917,51 +903,6 @@ const Profile = () => {
     loadUserProfile();
   }, [navigate]);
 
-  // 언어 선택 이벤트 처리
-  useEffect(() => {
-    const handleTeachingLanguageSelected = (event) => {
-      const languageCode = event.detail;
-      const languageName =
-        languages.find((lang) => lang.code === languageCode)?.name ||
-        languageCode;
-      setFormData((prev) => ({
-        ...prev,
-        teachingLanguage: languageName,
-      }));
-    };
-
-    const handleProfileLearningLanguageSelected = (event) => {
-      const languageCode = event.detail;
-      const languageName =
-        languages.find((lang) => lang.code === languageCode)?.name ||
-        languageCode;
-      setFormData((prev) => ({
-        ...prev,
-        learningLanguage: languageName,
-      }));
-    };
-
-    window.addEventListener(
-      "teachingLanguageSelected",
-      handleTeachingLanguageSelected
-    );
-    window.addEventListener(
-      "profileLearningLanguageSelected",
-      handleProfileLearningLanguageSelected
-    );
-
-    return () => {
-      window.removeEventListener(
-        "teachingLanguageSelected",
-        handleTeachingLanguageSelected
-      );
-      window.removeEventListener(
-        "profileLearningLanguageSelected",
-        handleProfileLearningLanguageSelected
-      );
-    };
-  }, []);
-
   // 번역이 로드되지 않았으면 로딩 표시
   if (!translations || Object.keys(translations).length === 0) {
     return (
@@ -1068,10 +1009,10 @@ const Profile = () => {
       // 프로필 이미지 처리
       if (formData.profileImage) {
         if (typeof formData.profileImage === "string") {
-          // 문자열인 경우 (이모지나 URL) - 무시
-          console.log("프로필 이미지가 문자열입니다. 파일을 선택해주세요.");
+          // 문자열인 경우 (이모지나 URL) - 기존 이미지 유지
+          console.log("기존 프로필 이미지를 유지합니다.");
         } else {
-          // 파일 객체인 경우
+          // 파일 객체인 경우 - 새 이미지 업로드
           formDataToSend.append("profile_image", formData.profileImage);
         }
       }
@@ -1196,7 +1137,9 @@ const Profile = () => {
               />
               <ProfileImageLabel htmlFor="profileImage">
                 {formData.profileImage
-                  ? t("profile.profileImageChange")
+                  ? typeof formData.profileImage === "string"
+                    ? t("profile.profileImageChange")
+                    : t("profile.profileImageChange")
                   : t("profile.profileImageSelect")}
               </ProfileImageLabel>
             </ProfileImageSection>
@@ -1350,29 +1293,41 @@ const Profile = () => {
               <Label htmlFor="learningLanguage">
                 {t("profile.learningLanguage")}
               </Label>
-              <LanguageButton
-                onClick={() => navigate("/profile-learning-language-settings")}
+              <Select
+                id="learningLanguage"
+                name="learningLanguage"
+                value={formData.learningLanguage}
+                onChange={handleChange}
                 disabled={isDataLoading || isViewMode}
+                required
               >
-                <LanguageDisplay>
-                  {formData.learningLanguage || "선택하세요"}
-                </LanguageDisplay>
-                <ArrowIcon>→</ArrowIcon>
-              </LanguageButton>
+                <option value="">{t("profile.selectLanguage")}</option>
+                {languages.map((lang) => (
+                  <option key={lang.code} value={lang.name}>
+                    {lang.name}
+                  </option>
+                ))}
+              </Select>
             </FormGroup>
             <FormGroup>
               <Label htmlFor="teachingLanguage">
                 {t("profile.teachingLanguage")}
               </Label>
-              <LanguageButton
-                onClick={() => navigate("/teaching-language-settings")}
+              <Select
+                id="teachingLanguage"
+                name="teachingLanguage"
+                value={formData.teachingLanguage}
+                onChange={handleChange}
                 disabled={isDataLoading || isViewMode}
+                required
               >
-                <LanguageDisplay>
-                  {formData.teachingLanguage || "선택하세요"}
-                </LanguageDisplay>
-                <ArrowIcon>→</ArrowIcon>
-              </LanguageButton>
+                <option value="">{t("profile.selectLanguage")}</option>
+                {languages.map((lang) => (
+                  <option key={lang.code} value={lang.name}>
+                    {lang.name}
+                  </option>
+                ))}
+              </Select>
             </FormGroup>
             <FormGroup>
               <Label>{t("profile.interests")}</Label>
