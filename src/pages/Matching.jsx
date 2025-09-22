@@ -1365,7 +1365,7 @@ const Matching = () => {
   const [userProfile, setUserProfile] = useState({
     nickname: "",
     gender: "",
-    profileImage: null,
+    profile_image: null,
     teachingLanguage: "",
     learningLanguage: "",
     school: "",
@@ -1507,11 +1507,8 @@ const Matching = () => {
           setUserProfile({
             nickname: userData.nickname || "",
             gender: userData.gender || "",
-            profileImage:
-              userData.profile_image_url ||
-              userData.profile_image ||
-              userData.profileImage ||
-              null,
+            profile_image:
+              userData.profile_image_url || userData.profile_image || null,
             teachingLanguage,
             learningLanguage,
             school: userData.school || "",
@@ -1540,11 +1537,8 @@ const Matching = () => {
           setUserProfile({
             nickname: userData.nickname || "",
             gender: userData.gender || "",
-            profileImage:
-              userData.profile_image_url ||
-              userData.profile_image ||
-              userData.profileImage ||
-              null,
+            profile_image:
+              userData.profile_image_url || userData.profile_image || null,
             teachingLanguage,
             learningLanguage,
             school: userData.school || "",
@@ -1556,7 +1550,7 @@ const Matching = () => {
           setUserProfile({
             nickname: "",
             gender: "",
-            profileImage: null,
+            profile_image: null,
             teachingLanguage: "",
             learningLanguage: "",
             school: "",
@@ -1569,7 +1563,7 @@ const Matching = () => {
         setUserProfile({
           nickname: "",
           gender: "",
-          profileImage: null,
+          profile_image: null,
           teachingLanguage: "",
           learningLanguage: "",
           school: "",
@@ -1741,8 +1735,7 @@ const Matching = () => {
         // teachingLanguage는 이미 업데이트되었다면 덮어쓰지 않음
         teachingLanguage: prev.teachingLanguage || teachingLanguage,
         // 프로필 이미지도 업데이트
-        profileImage:
-          user.profile_image || user.profileImage || prev.profileImage,
+        profile_image: user.profile_image || prev.profile_image,
       }));
 
       // 필터도 업데이트
@@ -1771,11 +1764,10 @@ const Matching = () => {
             ...prev,
             nickname: userData.nickname || prev.nickname,
             gender: userData.gender || prev.gender,
-            profileImage:
+            profile_image:
               userData.profile_image_url ||
               userData.profile_image ||
-              userData.profileImage ||
-              prev.profileImage,
+              prev.profile_image,
             teachingLanguage: teachingLanguage || prev.teachingLanguage,
             learningLanguage: learningLanguage || prev.learningLanguage,
             school: userData.school || prev.school,
@@ -2260,20 +2252,20 @@ const Matching = () => {
             <UserProfileCard>
               <ProfileHeader>
                 <ProfileImage>
-                  {userProfile.profileImage ? (
-                    typeof userProfile.profileImage === "string" ? (
+                  {userProfile.profile_image ? (
+                    typeof userProfile.profile_image === "string" ? (
                       // 문자열인 경우 (이모지나 URL)
-                      userProfile.profileImage.startsWith("http") ? (
-                        <img src={userProfile.profileImage} alt="프로필" />
+                      userProfile.profile_image.startsWith("http") ? (
+                        <img src={userProfile.profile_image} alt="프로필" />
                       ) : (
                         <div className="placeholder">
-                          {userProfile.profileImage}
+                          {userProfile.profile_image}
                         </div>
                       )
                     ) : (
                       // 파일 객체인 경우
                       <img
-                        src={URL.createObjectURL(userProfile.profileImage)}
+                        src={URL.createObjectURL(userProfile.profile_image)}
                         alt="프로필"
                       />
                     )

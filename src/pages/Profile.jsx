@@ -805,7 +805,7 @@ const Profile = () => {
   const [formData, setFormData] = useState({
     // 기본 인적사항
     nickname: "",
-    profileImage: null,
+    profile_image: null,
     phone: "",
     gender: "",
     birthDate: "",
@@ -921,11 +921,8 @@ const Profile = () => {
             phone: userData.phone || "",
             gender: userData.gender || "",
             birthDate: userData.birth_date || userData.birthDate || "",
-            profileImage:
-              userData.profile_image_url ||
-              userData.profile_image ||
-              userData.profileImage ||
-              "",
+            profile_image:
+              userData.profile_image_url || userData.profile_image || "",
             studentName: userData.student_name || userData.studentName || "",
             school: userData.school || "",
             department: userData.department || "",
@@ -1186,13 +1183,13 @@ const Profile = () => {
       formDataToSend.append("student_id", formData.studentId);
       formDataToSend.append("university", formData.university);
       // 프로필 이미지 처리
-      if (formData.profileImage) {
-        if (typeof formData.profileImage === "string") {
+      if (formData.profile_image) {
+        if (typeof formData.profile_image === "string") {
           // 문자열인 경우 (이모지나 URL) - 직접 profile_image 필드로 전송
-          formDataToSend.append("profile_image", formData.profileImage);
+          formDataToSend.append("profile_image", formData.profile_image);
         } else {
           // 파일 객체인 경우
-          formDataToSend.append("profile_image", formData.profileImage);
+          formDataToSend.append("profile_image", formData.profile_image);
         }
       }
 
@@ -1207,7 +1204,7 @@ const Profile = () => {
       formDataToSend.append("interests", JSON.stringify(formData.interests));
 
       // 디버깅: 전송할 데이터 확인
-      console.log("전송할 프로필 이미지:", formData.profileImage);
+      console.log("전송할 프로필 이미지:", formData.profile_image);
       console.log("FormData 내용:");
       for (let [key, value] of formDataToSend.entries()) {
         console.log(key, value);
@@ -1282,21 +1279,23 @@ const Profile = () => {
             <ProfileImageSection>
               <Label>{t("profile.profileImage")}</Label>
               <ProfileImagePreview>
-                {formData.profileImage ? (
-                  typeof formData.profileImage === "string" ? (
+                {formData.profile_image ? (
+                  typeof formData.profile_image === "string" ? (
                     // 이모지나 URL인 경우
-                    formData.profileImage.startsWith("http") ? (
+                    formData.profile_image.startsWith("http") ? (
                       <img
-                        src={formData.profileImage}
+                        src={formData.profile_image}
                         alt={t("profile.profileImagePreview")}
                       />
                     ) : (
-                      <div className="placeholder">{formData.profileImage}</div>
+                      <div className="placeholder">
+                        {formData.profile_image}
+                      </div>
                     )
                   ) : (
                     // 파일 객체인 경우
                     <img
-                      src={URL.createObjectURL(formData.profileImage)}
+                      src={URL.createObjectURL(formData.profile_image)}
                       alt={t("profile.profileImagePreview")}
                     />
                   )
@@ -1307,12 +1306,12 @@ const Profile = () => {
               <FileInput
                 type="file"
                 id="profileImage"
-                name="profileImage"
+                name="profile_image"
                 onChange={handleChange}
                 accept="image/*"
               />
               <ProfileImageLabel htmlFor="profileImage">
-                {formData.profileImage
+                {formData.profile_image
                   ? t("profile.profileImageChange")
                   : t("profile.profileImageSelect")}
               </ProfileImageLabel>
