@@ -348,11 +348,18 @@ const Select = styled.select`
   transition: all 0.3s ease;
   background: #ffffff;
   color: #2c3e50;
+  cursor: pointer;
+  min-height: 48px;
 
   &:focus {
     outline: none;
     border-color: #3498db;
     box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+  }
+
+  &:hover {
+    border-color: #3498db;
+    background: rgba(52, 152, 219, 0.02);
   }
 
   .dark-mode & {
@@ -364,61 +371,31 @@ const Select = styled.select`
       border-color: #3498db;
       box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
     }
-  }
-`;
-
-const LanguageButton = styled.button`
-  padding: 0.8rem;
-  border: 2px solid #e1e8ed;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
-  background: #ffffff;
-  color: #2c3e50;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  text-align: left;
-  min-height: 48px;
-
-  &:hover {
-    border-color: #3498db;
-    background: rgba(52, 152, 219, 0.05);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
-  }
-
-  &:focus {
-    outline: none;
-    border-color: #3498db;
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-  }
-
-  .dark-mode & {
-    background: #2d2d2d;
-    color: #ffffff;
-    border-color: #555;
 
     &:hover {
       border-color: #5dade2;
-      background: rgba(93, 173, 226, 0.1);
+      background: rgba(93, 173, 226, 0.05);
     }
   }
-`;
 
-const LanguageDisplay = styled.span`
-  flex: 1;
-  text-align: left;
-`;
+  /* 모바일에서 더 큰 터치 영역 */
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    padding: 0.9rem;
+    min-height: 52px;
+  }
 
-const ArrowIcon = styled.span`
-  font-size: 1.2rem;
-  color: #6c757d;
-  transition: all 0.3s ease;
+  /* select 옵션 스타일링 */
+  option {
+    padding: 0.5rem;
+    background: #ffffff;
+    color: #2c3e50;
+    font-size: 0.95rem;
 
-  .dark-mode & {
-    color: #b0b0b0;
+    .dark-mode & {
+      background: #2d2d2d;
+      color: #ffffff;
+    }
   }
 `;
 
@@ -848,26 +825,58 @@ const Profile = () => {
     "사진",
   ];
 
+  // 백엔드 연결 테스트
+  const testBackendConnection = async () => {
+    try {
+      const response = await fetch(API_ENDPOINTS.PROFILE, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      return response.ok;
+    } catch (error) {
+      return false;
+    }
+  };
+
   // 프로필 데이터 로드
   // 백엔드에서 최신 사용자 데이터 로드
   const loadUserProfile = useCallback(async () => {
     try {
       setIsDataLoading(true);
 
+      // 백엔드 연결 테스트
+      const isBackendConnected = await testBackendConnection();
+      if (!isBackendConnected) {
+        // 백엔드 연결 실패 시 로컬 스토리지 데이터 사용
+        const savedUser = JSON.parse(localStorage.getItem("user") || "{}");
+        if (savedUser) {
+          setFormData((prev) => ({
+            ...prev,
+            ...savedUser,
+            learningLanguage: savedUser.learning_languages?.[0] || "English",
+            teachingLanguage: savedUser.teaching_languages?.[0] || "한국어",
+          }));
+        }
+        return;
+      }
+
       // URL 파라미터가 있으면 다른 사용자 프로필 보기 모드
       if (id) {
         setIsViewMode(true);
       }
 
-      const response = await fetch(
-        id ? `${API_ENDPOINTS.PROFILE}${id}/` : API_ENDPOINTS.PROFILE,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const profileUrl = id
+        ? `${API_ENDPOINTS.PROFILE}${id}/`
+        : API_ENDPOINTS.PROFILE;
+
+      const response = await fetch(profileUrl, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
 
       if (response.ok) {
         const userData = await response.json();
@@ -924,9 +933,9 @@ const Profile = () => {
             department: userData.department || "",
             studentId: userData.student_id || userData.studentId || "",
             university: userData.university || "",
-            // 언어 정보는 현재 formData에 있으면 그것을 우선으로 사용
-            learningLanguage: prevFormData.learningLanguage || learningLanguage,
-            teachingLanguage: prevFormData.teachingLanguage || teachingLanguage,
+            // 백엔드에서 받은 언어 정보를 우선 사용
+            learningLanguage: learningLanguage || prevFormData.learningLanguage,
+            teachingLanguage: teachingLanguage || prevFormData.teachingLanguage,
             interests: normalizedInterests,
           };
         });
@@ -935,8 +944,10 @@ const Profile = () => {
         localStorage.setItem("currentLearningLanguage", learningLanguage);
         localStorage.setItem("currentTeachingLanguage", teachingLanguage);
       } else {
+        // 프로필 로드 실패 시 처리
       }
     } catch (error) {
+      // 프로필 로드 중 오류 발생
     } finally {
       setIsDataLoading(false);
     }
@@ -996,97 +1007,6 @@ const Profile = () => {
       }
     }
   };
-
-  // 언어 선택 이벤트 처리
-  useEffect(() => {
-    const handleTeachingLanguageSelected = (event) => {
-      const languageName = event.detail;
-      setFormData((prev) => {
-        const newData = {
-          ...prev,
-          teachingLanguage: languageName,
-        };
-        return newData;
-      });
-    };
-
-    const handleProfileLearningLanguageSelected = (event) => {
-      const languageName = event.detail;
-      setFormData((prev) => {
-        const newData = {
-          ...prev,
-          learningLanguage: languageName,
-        };
-        return newData;
-      });
-    };
-
-    window.addEventListener(
-      "teachingLanguageSelected",
-      handleTeachingLanguageSelected
-    );
-    window.addEventListener(
-      "profileLearningLanguageSelected",
-      handleProfileLearningLanguageSelected
-    );
-
-    return () => {
-      window.removeEventListener(
-        "teachingLanguageSelected",
-        handleTeachingLanguageSelected
-      );
-      window.removeEventListener(
-        "profileLearningLanguageSelected",
-        handleProfileLearningLanguageSelected
-      );
-    };
-  }, []);
-
-  // localStorage에서 언어 변경 감지
-  useEffect(() => {
-    const checkLanguageChanges = () => {
-      const currentLearningLanguage = localStorage.getItem(
-        "currentLearningLanguage"
-      );
-      const currentTeachingLanguage = localStorage.getItem(
-        "currentTeachingLanguage"
-      );
-
-      if (
-        currentLearningLanguage &&
-        currentLearningLanguage !== formData.learningLanguage
-      ) {
-        setFormData((prev) => ({
-          ...prev,
-          learningLanguage: currentLearningLanguage,
-        }));
-      }
-
-      if (
-        currentTeachingLanguage &&
-        currentTeachingLanguage !== formData.teachingLanguage
-      ) {
-        setFormData((prev) => ({
-          ...prev,
-          teachingLanguage: currentTeachingLanguage,
-        }));
-      }
-    };
-
-    // 페이지 포커스 시 localStorage 확인
-    const handleFocus = () => {
-      checkLanguageChanges();
-    };
-
-    window.addEventListener("focus", handleFocus);
-
-    // 컴포넌트 마운트 시에도 확인
-    checkLanguageChanges();
-
-    return () => {
-      window.removeEventListener("focus", handleFocus);
-    };
-  }, [formData.learningLanguage, formData.teachingLanguage]);
 
   // 번역이 로드되지 않았으면 로딩 표시
   if (!translations || Object.keys(translations).length === 0) {
@@ -1232,10 +1152,6 @@ const Profile = () => {
       } catch (err) {
         setError("서버 응답을 처리하는 중 오류가 발생했습니다.");
         return;
-      }
-
-      // 에러 상세 정보 로깅
-      if (!response.ok) {
       }
 
       if (response.ok && data.success) {
@@ -1452,29 +1368,39 @@ const Profile = () => {
               <Label htmlFor="learningLanguage">
                 {t("profile.learningLanguage")}
               </Label>
-              <LanguageButton
-                onClick={() => navigate("/profile-learning-language-settings")}
+              <Select
+                id="learningLanguage"
+                name="learningLanguage"
+                value={formData.learningLanguage}
+                onChange={handleChange}
                 disabled={isDataLoading || isViewMode}
               >
-                <LanguageDisplay>
-                  {formData.learningLanguage || "선택하세요"}
-                </LanguageDisplay>
-                <ArrowIcon>→</ArrowIcon>
-              </LanguageButton>
+                <option value="">{t("profile.selectLanguage")}</option>
+                {languages.map((lang) => (
+                  <option key={lang.code} value={lang.name}>
+                    {lang.name}
+                  </option>
+                ))}
+              </Select>
             </FormGroup>
             <FormGroup>
               <Label htmlFor="teachingLanguage">
                 {t("profile.teachingLanguage")}
               </Label>
-              <LanguageButton
-                onClick={() => navigate("/teaching-language-settings")}
+              <Select
+                id="teachingLanguage"
+                name="teachingLanguage"
+                value={formData.teachingLanguage}
+                onChange={handleChange}
                 disabled={isDataLoading || isViewMode}
               >
-                <LanguageDisplay>
-                  {formData.teachingLanguage || "선택하세요"}
-                </LanguageDisplay>
-                <ArrowIcon>→</ArrowIcon>
-              </LanguageButton>
+                <option value="">{t("profile.selectLanguage")}</option>
+                {languages.map((lang) => (
+                  <option key={lang.code} value={lang.name}>
+                    {lang.name}
+                  </option>
+                ))}
+              </Select>
             </FormGroup>
             <FormGroup>
               <Label>{t("profile.interests")}</Label>

@@ -119,7 +119,7 @@ export const LanguageProvider = ({ children }) => {
   };
 
   const t = (key, fallback = "") => {
-    // 번역이 아직 로드되지 않았으면 키를 그대로 반환하지 말고 로딩 표시
+    // 번역이 아직 로드되지 않았으면 로딩 표시
     if (!translations || Object.keys(translations).length === 0) {
       return "로딩 중...";
     }
@@ -131,11 +131,32 @@ export const LanguageProvider = ({ children }) => {
       if (value && typeof value === "object" && k in value) {
         value = value[k];
       } else {
-        return fallback || key;
+        // 키를 찾을 수 없을 때는 fallback이나 기본값 반환
+        return fallback || getDefaultTranslation(key);
       }
     }
 
-    return typeof value === "string" ? value : fallback || key;
+    return typeof value === "string"
+      ? value
+      : fallback || getDefaultTranslation(key);
+  };
+
+  // 기본 번역 제공 함수
+  const getDefaultTranslation = (key) => {
+    const defaultTranslations = {
+      "profile.selectLanguage": "언어를 선택하세요",
+      "profile.learningLanguage": "배우고 싶은 언어",
+      "profile.teachingLanguage": "사용 가능한 언어",
+      "profile.title": "프로필 설정",
+      "profile.basicInfo": "01. 기본 인적사항",
+      "profile.studentInfo": "02. 학생 정보",
+      "profile.languageSettings": "03. 언어 설정",
+      "profile.saveProfile": "프로필 저장",
+      "profile.saving": "저장 중...",
+      "common.loading": "로딩 중...",
+    };
+
+    return defaultTranslations[key] || key;
   };
 
   const value = {

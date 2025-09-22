@@ -133,6 +133,7 @@
     "studentCard": "Student ID Verification (Photo showing name, department, student ID)",
     "learningLanguage": "Language to Learn",
     "teachingLanguage": "Available Language",
+    "selectLanguage": "Select a language",
     "interests": "Interests (Max 3)",
     "saveProfile": "Save Profile",
     "saving": "Saving...",
