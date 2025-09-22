@@ -1188,7 +1188,7 @@ const Profile = () => {
           // 문자열인 경우 (이모지나 URL) - 직접 profile_image 필드로 전송
           formDataToSend.append("profile_image", formData.profile_image);
         } else {
-          // 파일 객체인 경우
+          // 파일 객체인 경우 - 직접 전송
           formDataToSend.append("profile_image", formData.profile_image);
         }
       }
