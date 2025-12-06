@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import UnderBar from "../components/UnderBar";
-import SideBar from "../components/SideBar";
+import Sidebar from "../components/Sidebar";
 import { useLanguage } from "../contexts/LanguageContext";
 import { API_ENDPOINTS } from "../config/api";
 
@@ -805,7 +805,7 @@ const Settings = () => {
 
   return (
     <SettingsContainer>
-      <SideBar />
+      <Sidebar />
       <Main>
         <Section>
           <SectionTitle>{t("settings.displaySettings")}</SectionTitle>

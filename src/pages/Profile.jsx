@@ -6,7 +6,7 @@ import {
   normalizeInterests,
 } from "../utils/languageUtils";
 import UnderBar from "../components/UnderBar";
-import SideBar from "../components/SideBar";
+import Sidebar from "../components/Sidebar";
 import { useLanguage } from "../contexts/LanguageContext";
 import { API_ENDPOINTS } from "../config/api";
 
@@ -1184,7 +1184,7 @@ const Profile = () => {
 
   return (
     <ProfileContainer>
-      <SideBar />
+      <Sidebar />
       <ProfileMain>
         <ProfileForm>
           <Title>

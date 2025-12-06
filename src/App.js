@@ -26,7 +26,6 @@ import LearningLanguageSettings from "./pages/LearningLanguageSettings";
 import TeachingLanguageSettings from "./pages/TeachingLanguageSettings";
 import ProfileLearningLanguageSettings from "./pages/ProfileLearningLanguageSettings";
 import Notifications from "./pages/Notifications";
-import PCNotSupported from "./pages/PCNotSupported";
 
 // 전역 변수 초기화
 if (!window.globalNotifications) {

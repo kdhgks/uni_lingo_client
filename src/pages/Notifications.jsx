@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import UnderBar from "../components/UnderBar";
-import SideBar from "../components/SideBar";
+import Sidebar from "../components/Sidebar";
 import { useLanguage } from "../contexts/LanguageContext";
 import { FiBell } from "react-icons/fi";
 import { API_ENDPOINTS } from "../config/api";
@@ -300,7 +300,7 @@ const Notifications = () => {
 
   return (
     <NotificationsContainer>
-      <SideBar />
+      <Sidebar />
       <NotificationsHeader>
         <BackBtn onClick={handleBack}>←</BackBtn>
         <Logo>{t("notifications.title")}</Logo>

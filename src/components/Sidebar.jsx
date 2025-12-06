@@ -82,7 +82,11 @@ const NavItem = styled.button`
   }
 
   &.active {
-    background: linear-gradient(90deg, rgba(52, 152, 219, 0.15) 0%, transparent 100%);
+    background: linear-gradient(
+      90deg,
+      rgba(52, 152, 219, 0.15) 0%,
+      transparent 100%
+    );
     color: #3498db;
     font-weight: 600;
 
@@ -106,7 +110,11 @@ const NavItem = styled.button`
     }
 
     &.active {
-      background: linear-gradient(90deg, rgba(52, 152, 219, 0.25) 0%, transparent 100%);
+      background: linear-gradient(
+        90deg,
+        rgba(52, 152, 219, 0.25) 0%,
+        transparent 100%
+      );
       color: #5dade2;
     }
   }
@@ -214,7 +222,7 @@ const UserEmail = styled.div`
   }
 `;
 
-const SideBar = () => {
+const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useLanguage();
@@ -333,5 +341,4 @@ const SideBar = () => {
   );
 };
 
-export default SideBar;
-
+export default Sidebar;

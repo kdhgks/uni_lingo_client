@@ -6,7 +6,7 @@ import {
   normalizeInterests,
 } from "../utils/languageUtils";
 import UnderBar from "../components/UnderBar";
-import SideBar from "../components/SideBar";
+import Sidebar from "../components/Sidebar";
 import { useLanguage } from "../contexts/LanguageContext";
 import { useAuth } from "../contexts/AuthContext";
 import { API_ENDPOINTS } from "../config/api";
@@ -2157,7 +2157,7 @@ const Matching = () => {
 
   return (
     <MatchingContainer>
-      <SideBar />
+      <Sidebar />
       <MatchingHeader>
         <Logo>UniLingo</Logo>
         <NotificationContainer onClick={handleNotificationClick}>

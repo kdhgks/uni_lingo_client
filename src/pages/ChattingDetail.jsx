@@ -9,7 +9,7 @@ import {
 import { API_ENDPOINTS } from "../config/api";
 import { useWebSocketSimple as useWebSocket } from "../hooks/useWebSocketSimple";
 import ReportModal from "../components/ReportModal";
-import SideBar from "../components/SideBar";
+import Sidebar from "../components/Sidebar";
 
 // Keyframes
 const slideIn = keyframes`
@@ -2133,7 +2133,7 @@ const ChattingDetail = () => {
 
   return (
     <ChattingDetailContainer>
-      <SideBar />
+      <Sidebar />
       <ChattingHeader>
         <BackButton onClick={() => navigate("/chatting")}>←</BackButton>
         <PartnerName
