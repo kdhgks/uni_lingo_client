@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
-import Sidebar from "../components/Sidebar";
+import UnderBar from "../components/UnderBar";
 import { useLanguage } from "../contexts/LanguageContext";
 
 const slideInUp = keyframes`
@@ -20,14 +20,6 @@ const TeachingLanguageSettingsContainer = styled.div`
   background: #ffffff;
   padding-left: 0;
   transition: background-color 0.3s ease;
-
-  @media (min-width: 769px) {
-    padding-left: 250px;
-  }
-
-  @media (min-width: 1200px) {
-    padding-left: 280px;
-  }
 
   .dark-mode & {
     background: #1a1a1a;
@@ -219,7 +211,7 @@ const TeachingLanguageSettings = () => {
           ))}
         </LanguageGrid>
       </Main>
-      <Sidebar />
+      <UnderBar />
     </TeachingLanguageSettingsContainer>
   );
 };

@@ -1,90 +1,88 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { useLanguage } from "../contexts/LanguageContext";
-import { useAuth } from "../contexts/AuthContext";
+import { FiHome, FiMessageCircle, FiUser, FiSettings } from "react-icons/fi";
 
-const SidebarContainer = styled.div`
+const SideBarContainer = styled.div`
   position: fixed;
-  top: 0;
   left: 0;
+  top: 0;
   width: 250px;
   height: 100vh;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(20px);
   border-right: 1px solid rgba(52, 152, 219, 0.2);
   z-index: 1000;
   display: none;
-  padding: 2rem;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  flex-direction: column;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
 
   @media (min-width: 769px) {
-    display: block;
+    display: flex;
   }
 
-  @media (min-width: 1200px) {
-    width: 280px;
-    padding: 2.5rem;
+  .dark-mode & {
+    background: rgba(30, 30, 30, 0.98);
+    border-right: 1px solid rgba(52, 152, 219, 0.4);
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
   }
 `;
 
-const SidebarHeader = styled.div`
+const SideBarHeader = styled.div`
+  padding: 2rem 1.5rem;
+  border-bottom: 1px solid rgba(52, 152, 219, 0.1);
   display: flex;
   align-items: center;
-  margin-bottom: 3rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid rgba(52, 152, 219, 0.2);
-  margin-left: -2rem;
-  padding-left: 0;
+  justify-content: flex-start;
 
-  h2 {
-    margin: 0;
-    font-family: "Fredoka One", cursive;
-    font-size: 1.8rem;
-    font-weight: 400;
-    background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    letter-spacing: 0.5px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-left: 3rem;
+  .dark-mode & {
+    border-bottom: 1px solid rgba(52, 152, 219, 0.3);
   }
 `;
 
-const SidebarNav = styled.nav`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+const Logo = styled.div`
+  font-family: "Fredoka One", cursive;
+  font-size: 1.8rem;
+  font-weight: 400;
+  background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.5px;
+  margin-left: 0.5rem;
 `;
 
-const SidebarNavBtn = styled.button`
+const NavList = styled.nav`
+  flex: 1;
+  padding: 1rem 0;
+  overflow-y: auto;
+`;
+
+const NavItem = styled.button`
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem 1.5rem;
   background: none;
   border: none;
-  color: #6c757d;
-  padding: 1rem;
   cursor: pointer;
-  font-weight: 500;
-  font-size: 1rem;
-  text-align: left;
-  border-radius: 8px;
   transition: all 0.3s ease;
+  color: #6c757d;
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: left;
   position: relative;
-  overflow: hidden;
 
-  @media (min-width: 769px) {
-    &:hover {
-      background: rgba(52, 152, 219, 0.1);
-      color: #3498db;
-      transform: translateX(5px);
-    }
+  &:hover {
+    background: rgba(52, 152, 219, 0.1);
+    color: #3498db;
   }
 
   &.active {
-    background: rgba(52, 152, 219, 0.15);
+    background: linear-gradient(90deg, rgba(52, 152, 219, 0.15) 0%, transparent 100%);
     color: #3498db;
     font-weight: 600;
 
@@ -95,82 +93,186 @@ const SidebarNavBtn = styled.button`
       top: 0;
       bottom: 0;
       width: 4px;
-      background: #3498db;
-      border-radius: 0 2px 2px 0;
+      background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
+    }
+  }
+
+  .dark-mode & {
+    color: #b0b0b0;
+
+    &:hover {
+      background: rgba(52, 152, 219, 0.2);
+      color: #5dade2;
+    }
+
+    &.active {
+      background: linear-gradient(90deg, rgba(52, 152, 219, 0.25) 0%, transparent 100%);
+      color: #5dade2;
     }
   }
 `;
 
-const SidebarIcon = styled.span`
-  font-size: 1.2rem;
+const NavIcon = styled.div`
+  font-size: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 24px;
-  height: 24px;
 `;
 
-const SidebarLabel = styled.span`
+const NavLabel = styled.span`
   flex: 1;
 `;
 
-const LogoutButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  background: none;
-  border: none;
-  color: #e74c3c;
-  padding: 1rem;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 1rem;
-  text-align: left;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  margin-top: 2rem;
-  position: relative;
-  overflow: hidden;
-
-  @media (min-width: 769px) {
-    &:hover {
-      background: rgba(231, 76, 60, 0.1);
-      color: #c0392b;
-      transform: translateX(5px);
-    }
-  }
-`;
-
-const NotificationBadge = styled.div`
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  background: #e74c3c;
+const UnreadBadge = styled.span`
+  background: linear-gradient(135deg, #e74c3c 0%, #f39c12 100%);
   color: white;
-  border-radius: 50%;
-  width: 18px;
-  height: 18px;
+  border-radius: 12px;
+  min-width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.7rem;
-  font-weight: bold;
+  font-weight: 700;
+  padding: 0 6px;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
 `;
 
-const Sidebar = () => {
+const SideBarFooter = styled.div`
+  padding: 1.5rem;
+  border-top: 1px solid rgba(52, 152, 219, 0.1);
+
+  .dark-mode & {
+    border-top: 1px solid rgba(52, 152, 219, 0.3);
+  }
+`;
+
+const UserInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  background: rgba(52, 152, 219, 0.05);
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(52, 152, 219, 0.1);
+  }
+
+  .dark-mode & {
+    background: rgba(52, 152, 219, 0.15);
+  }
+`;
+
+const UserAvatar = styled.div`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`;
+
+const UserDetails = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
+
+const UserName = styled.div`
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #2c3e50;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  .dark-mode & {
+    color: #ffffff;
+  }
+`;
+
+const UserEmail = styled.div`
+  font-size: 0.75rem;
+  color: #6c757d;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  .dark-mode & {
+    color: #b0b0b0;
+  }
+`;
+
+const SideBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useLanguage();
-  const { isLoggedIn, logout } = useAuth();
+  const [totalUnreadCount, setTotalUnreadCount] = useState(0);
+  const [user, setUser] = useState(null);
 
-  const handleNavigation = (path) => {
-    navigate(path);
-  };
+  // 사용자 정보 로드
+  useEffect(() => {
+    const savedUser = localStorage.getItem("user");
+    if (savedUser) {
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (error) {
+        setUser(null);
+      }
+    }
+  }, []);
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
+  // 전역 unread count 변경 감지
+  useEffect(() => {
+    const updateUnreadCount = () => {
+      const newCount = window.globalTotalUnreadCount || 0;
+      setTotalUnreadCount((prevCount) => {
+        return prevCount !== newCount ? newCount : prevCount;
+      });
+    };
+
+    updateUnreadCount();
+    const interval = setInterval(updateUnreadCount, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const tabs = [
+    {
+      id: "home",
+      label: t("common.home"),
+      icon: <FiHome />,
+      path: "/",
+    },
+    {
+      id: "chatting",
+      label: t("common.chat"),
+      icon: <FiMessageCircle />,
+      path: "/chatting",
+    },
+    {
+      id: "profile",
+      label: t("common.profile"),
+      icon: <FiUser />,
+      path: "/profile",
+    },
+    {
+      id: "settings",
+      label: t("common.settings"),
+      icon: <FiSettings />,
+      path: "/settings",
+    },
+  ];
 
   const isActive = (path) => {
     if (path === "/") {
@@ -179,79 +281,57 @@ const Sidebar = () => {
     return location.pathname.startsWith(path);
   };
 
-  const hasNotification = window.globalHasNewNotification || false;
-
-  const navItems = [
-    {
-      id: "home",
-      label: t("common.home"),
-      icon: "🏠",
-      path: "/",
-    },
-    {
-      id: "chatting",
-      label: t("common.chat"),
-      icon: "💬",
-      path: "/chatting",
-    },
-    {
-      id: "profile",
-      label: t("common.profile"),
-      icon: "👤",
-      path: "/profile",
-    },
-    {
-      id: "settings",
-      label: t("common.settings"),
-      icon: "⚙️",
-      path: "/settings",
-    },
-  ];
-
   return (
-    <SidebarContainer>
-      <SidebarHeader>
-        <h2>UniLingo</h2>
-      </SidebarHeader>
+    <SideBarContainer>
+      <SideBarHeader>
+        <Logo>UniLingo</Logo>
+      </SideBarHeader>
 
-      <SidebarNav>
-        {isLoggedIn ? (
-          <>
-            {navItems.map((item) => (
-              <SidebarNavBtn
-                key={item.id}
-                className={isActive(item.path) ? "active" : ""}
-                onClick={() => handleNavigation(item.path)}
-              >
-                <SidebarIcon>
-                  {item.icon}
-                  {item.id === "chatting" && hasNotification && (
-                    <NotificationBadge>!</NotificationBadge>
-                  )}
-                </SidebarIcon>
-                <SidebarLabel>{item.label}</SidebarLabel>
-              </SidebarNavBtn>
-            ))}
-            <LogoutButton onClick={handleLogout}>
-              <SidebarIcon>🚪</SidebarIcon>
-              <SidebarLabel>{t("auth.logout")}</SidebarLabel>
-            </LogoutButton>
-          </>
-        ) : (
-          <>
-            <SidebarNavBtn onClick={() => handleNavigation("/login")}>
-              <SidebarIcon>🔑</SidebarIcon>
-              <SidebarLabel>{t("auth.login")}</SidebarLabel>
-            </SidebarNavBtn>
-            <SidebarNavBtn onClick={() => handleNavigation("/signup")}>
-              <SidebarIcon>📝</SidebarIcon>
-              <SidebarLabel>{t("auth.signup")}</SidebarLabel>
-            </SidebarNavBtn>
-          </>
+      <NavList>
+        {tabs.map((tab) => (
+          <NavItem
+            key={tab.id}
+            className={isActive(tab.path) ? "active" : ""}
+            onClick={() => navigate(tab.path)}
+          >
+            <NavIcon>{tab.icon}</NavIcon>
+            <NavLabel>{tab.label}</NavLabel>
+            {tab.id === "chatting" && totalUnreadCount > 0 && (
+              <UnreadBadge>{totalUnreadCount}</UnreadBadge>
+            )}
+          </NavItem>
+        ))}
+      </NavList>
+
+      <SideBarFooter>
+        {user && (
+          <UserInfo onClick={() => navigate("/profile")}>
+            <UserAvatar>
+              {user.profile_image_url ||
+              user.profile_image ||
+              user.profileImage ? (
+                <img
+                  src={
+                    user.profile_image_url ||
+                    user.profile_image ||
+                    user.profileImage
+                  }
+                  alt={user.nickname || user.username}
+                />
+              ) : (
+                "👤"
+              )}
+            </UserAvatar>
+            <UserDetails>
+              <UserName>{user.nickname || user.username || "User"}</UserName>
+              <UserEmail>{user.school || ""}</UserEmail>
+            </UserDetails>
+          </UserInfo>
         )}
-      </SidebarNav>
-    </SidebarContainer>
+      </SideBarFooter>
+    </SideBarContainer>
   );
 };
 
-export default Sidebar;
+export default SideBar;
+

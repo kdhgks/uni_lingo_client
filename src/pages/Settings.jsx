@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import UnderBar from "../components/UnderBar";
-import Sidebar from "../components/Sidebar";
+import SideBar from "../components/SideBar";
 import { useLanguage } from "../contexts/LanguageContext";
 import { API_ENDPOINTS } from "../config/api";
 
@@ -25,12 +25,9 @@ const SettingsContainer = styled.div`
   padding-left: 0;
   transition: background-color 0.3s ease;
 
+  /* PC에서 사이드바 공간 확보 */
   @media (min-width: 769px) {
     padding-left: 250px;
-  }
-
-  @media (min-width: 1200px) {
-    padding-left: 280px;
   }
 
   .dark-mode & {
@@ -808,6 +805,7 @@ const Settings = () => {
 
   return (
     <SettingsContainer>
+      <SideBar />
       <Main>
         <Section>
           <SectionTitle>{t("settings.displaySettings")}</SectionTitle>
@@ -1047,7 +1045,6 @@ const Settings = () => {
         </Modal>
       )}
 
-      <Sidebar />
       <UnderBar />
     </SettingsContainer>
   );

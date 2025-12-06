@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import UnderBar from "../components/UnderBar";
-import Sidebar from "../components/Sidebar";
+import SideBar from "../components/SideBar";
 import { useLanguage } from "../contexts/LanguageContext";
 import { API_ENDPOINTS } from "../config/api";
 import { FiBell } from "react-icons/fi";
@@ -89,17 +89,14 @@ const ChattingContainer = styled.div`
   padding-left: 0;
   transition: background-color 0.3s ease, color 0.3s ease;
 
-  /* 모바일에서 언더바 공간 확보 */
-  @media (max-width: 768px) {
-    padding-bottom: 80px;
-  }
-
+  /* PC에서 사이드바 공간 확보 */
   @media (min-width: 769px) {
     padding-left: 250px;
   }
 
-  @media (min-width: 1200px) {
-    padding-left: 280px;
+  /* 모바일에서 언더바 공간 확보 */
+  @media (max-width: 768px) {
+    padding-bottom: 80px;
   }
 
   .dark-mode & {
@@ -531,6 +528,11 @@ const EmptyState = styled.div`
   position: relative;
   transition: all 0.3s ease;
 
+  /* PC에서 상단 여백 추가 */
+  @media (min-width: 769px) {
+    padding-top: 6rem;
+  }
+
   h2 {
     font-size: 1.8rem;
     margin-bottom: 0.5rem;
@@ -948,6 +950,7 @@ const Chatting = () => {
 
   return (
     <ChattingContainer>
+      <SideBar />
       <ChattingHeader>
         <Logo>UniLingo</Logo>
         <NotificationContainer onClick={handleNotificationClick}>
@@ -958,7 +961,6 @@ const Chatting = () => {
         </NotificationContainer>
       </ChattingHeader>
 
-      <Sidebar />
       <ChattingMain>
         {chats.length > 0 ? (
           <ChatList>

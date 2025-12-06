@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import UnderBar from "../components/UnderBar";
-import Sidebar from "../components/Sidebar";
 import { useLanguage } from "../contexts/LanguageContext";
 
 const slideInUp = keyframes`
@@ -21,14 +20,6 @@ const GenderSettingsContainer = styled.div`
   background: #ffffff;
   padding-left: 0;
   transition: background-color 0.3s ease;
-
-  @media (min-width: 769px) {
-    padding-left: 250px;
-  }
-
-  @media (min-width: 1200px) {
-    padding-left: 280px;
-  }
 
   .dark-mode & {
     background: #1a1a1a;
@@ -150,7 +141,6 @@ const GenderSettings = () => {
           ))}
         </GenderGrid>
       </Main>
-      <Sidebar />
       <UnderBar />
     </GenderSettingsContainer>
   );

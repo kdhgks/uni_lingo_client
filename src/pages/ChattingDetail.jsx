@@ -9,6 +9,7 @@ import {
 import { API_ENDPOINTS } from "../config/api";
 import { useWebSocketSimple as useWebSocket } from "../hooks/useWebSocketSimple";
 import ReportModal from "../components/ReportModal";
+import SideBar from "../components/SideBar";
 
 // Keyframes
 const slideIn = keyframes`
@@ -116,6 +117,11 @@ const ChattingDetailContainer = styled.div`
   overflow: hidden;
   padding-left: 0;
   transition: background-color 0.3s ease, color 0.3s ease;
+
+  /* PC에서 사이드바 공간 확보 */
+  @media (min-width: 769px) {
+    padding-left: 250px;
+  }
 
   .dark-mode & {
     background: #1a1a1a;
@@ -2127,6 +2133,7 @@ const ChattingDetail = () => {
 
   return (
     <ChattingDetailContainer>
+      <SideBar />
       <ChattingHeader>
         <BackButton onClick={() => navigate("/chatting")}>←</BackButton>
         <PartnerName

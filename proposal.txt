@@ -1,0 +1,83 @@
+Product Proposal: UniLingo Language Exchange Platform
+
+1. Purpose and Problem Statement
+UniLingo is a cross-platform language exchange platform that connects international students and local mentors for structured cultural conversations. The current React application already implements protected authentication flows, nuanced profile onboarding, AI-friendly matching logic, and in-app chat backed by a REST + WebSocket API. The platform supports both mobile and desktop browsers with responsive layouts optimized for each device type. This proposal documents the product so stakeholders understand what the shipped code delivers today and which guarantees the experience must keep as the service scales.
+
+2. Target Users and Primary Scenarios
+- University students studying abroad who need safe, fast matching with peers that can teach or learn complementary languages.
+- Campus language program coordinators who monitor requests via the admin matching panel.
+- Users on mobile browsers (iOS/Android) who expect a native-feeling bottom navigation, live notifications, and localized UI text.
+- Desktop users (Windows, macOS, Linux) who access the platform via web browsers with a sidebar navigation layout optimized for larger screens.
+
+3. Core Functional Requirements
+Authentication & Access Control
+- `AuthContext` persists tokens, user payload, and login state in `localStorage`. `ProtectedRoute` gates every page other than `/login`, `/signup`, and `/pc-not-supported`.
+- Logout clears auth state plus cached matching filters.
+
+Localization & Settings
+- `LanguageContext` auto-detects device locale, loads JSON translations from `src/locales`, and exposes a `t()` helper used across pages.
+- `/settings` and specialized settings pages (language, gender, university, teaching/learning languages) allow students to tune eligibility filters and are persisted via the API plus local storage.
+
+Profile Onboarding
+- `/profile` orchestrates a multi-step form with styled-components for demographics, university affiliation, and preferred languages. `languageUtils` normalizes nested arrays/JSON strings returned by the backend to keep the UI stable even when payloads vary.
+- Photo placeholders, interest chips, and animated sections reinforce that profile completeness affects matching quality.
+
+Matching Workflow
+- `/matching` surfaces the active partner, request queue, and contextual CTAs (e.g., “Request exchange”, “View partner”). Matching-specific values (selected gender, preferred universities, learning language) are cached locally to accelerate reopening the screen.
+- `API_ENDPOINTS` covers partner discovery (`/matching/partners`, `/matching/available-partners`), status checks, and administrative approval flows (`/matching/requests/*`). `AdminMatching.jsx` exposes bulk approval tools for program managers.
+
+Chat & Messaging
+- `/chatting` and `/chatting/:id` render chat room lists and detailed conversations styled with animated gradients. Each room card highlights unread counts pulled into the global `UnderBar` badge.
+- WebSocket hooks (`useWebSocket`, `useWebSocketSimple`) deliver resilient, heartbeat-protected sockets with exponential backoff, visibility resume, buffered sends, and ping/pong handling. REST fallbacks exist for message history, read receipts, heart reactions, flagging, and leaving rooms.
+- `ReportModal` enables in-chat incident reporting toward `/chat/rooms/:id/report/`.
+
+Notifications & Real-Time Signals
+- Global arrays (`window.globalNotifications`, `window.globalHasNewNotification`) hold match alerts the moment `window.addMatchingNotification` fires. `NotificationDropdown`, the header bell icons, and the UnderBar all observe these flags on timed intervals to stay in sync without extra renders.
+- `/notifications` fetches from `/notifications/` and can mark items read or show unread totals.
+
+Navigation & Layout
+- `UnderBar.jsx` implements the fixed mobile nav bar (visible on screens ≤768px) with icons (home, chat, profile, settings), unread badges, and language-aware labels.
+- `SideBar.jsx` provides a fixed left-side navigation panel (visible on screens ≥769px) with the same navigation options, user profile information, and unread message counts. The sidebar is 250px wide and includes the UniLingo logo, navigation menu, and user info footer.
+- All pages are responsive: mobile devices use bottom navigation while desktop browsers use the sidebar layout. Main content areas automatically adjust padding to accommodate the sidebar on larger screens.
+
+Safety & Compliance
+- `PCNotSupported.jsx` remains available as a legacy component but is no longer actively used since desktop support has been implemented.
+- Report flows and moderation endpoints (e.g., `/admin/reports/`) ensure abuse handling.
+
+4. Data Models and API Contracts
+- User/Auth: `{ id, email, full_name, avatar, gender, university, learning_languages[], teaching_languages[], token }` with login/signup/change-password/delete endpoints under `/auth/*` and `/users/*`.
+- MatchingPartner: `{ id, nickname, native_language, learning_language, interests[], availability, compatibilityScore }` fetched from `/matching/partners/` and `/matching/partner/`.
+- MatchingRequest: `{ id, requesterId, recipientId, status(pending|approved|rejected), created_at }` with approve/reject routes.
+- ChatRoom: `{ id, partner, lastMessage, unreadCount, isActive }` plus message threads at `/chat/rooms/:id/messages/`.
+- ChatMessage: `{ id, senderId, body, contentType, created_at, isRead, heartReactions[] }`.
+- Notification: `{ id, type(matching|system), message, time, isRead, partnerName }`.
+- Settings: `{ autoMatchEnabled, preferredUniversities[], preferredGenders[], languageCodes[], pushOptIn, vibrationOptIn }` stored via `/users/profile/` plus local caches (`localStorage.language`, `selectedGender`, etc.).
+
+5. State Management, Persistence, and Offline Behavior
+- Authentication, user profile, token, and language preference persist in `localStorage`. Matching filters and unread counts use the same storage to survive reloads.
+- WebSocket hooks automatically reconnect when the browser regains focus/online status. Buffered outbound messages flush post-connect to prevent loss during transient drops.
+- API base URL is centralized in `src/config/api.js` and defaults to `https://unilingo.duckdns.org/api`, reading `REACT_APP_API_URL` when provided.
+
+6. UX Layout and IA
+- Header zones combine logos, gradient typography, notification bells, and back buttons sized for thumb reach.
+- `Matching` and `Chatting` pages rely on animated backgrounds, cards with neon glows, and context-specific CTAs. Long, scrollable sections are broken into cards (profile summary, partner carousel, action grid).
+- Profile editing uses fixed headers plus a central form column, ensuring field labels remain visible while scrolling.
+- Footer-level keyboard shortcut hints are unnecessary for mobile, so the UnderBar doubles as both nav and status area.
+
+7. Technology Stack
+- React 19 with React Router v7 for navigation, styled-components v6 for theming, i18next/react-i18next for localization, and Capacitor scaffolding (android/iOS folders, `capacitor.config.json`) for wrapping the SPA in native shells.
+- Build tooling uses Create React App 5 (`react-scripts`) with Node 18+ and npm 8+. Icons come from `react-icons`. Notifications leverage the browser APIs today with future hooks for push/vibration.
+- Testing currently relies on CRA defaults; future work can adopt Vitest or Testing Library, but jest configs already exist via CRA.
+
+8. Operational Considerations and Edge Cases
+- Responsive Design: The application uses media queries to switch between mobile (UnderBar) and desktop (SideBar) navigation layouts at the 768px breakpoint. All pages include responsive padding adjustments to accommodate the sidebar on desktop.
+- Error Handling: Auth context resets corrupted local storage entries. Language loader falls back to Korean when translation JSON import fails.
+- Security: Tokens persist client-side; API must enforce HTTPS and short-lived JWTs. Logout scrubs sensitive keys plus matching caches.
+- Performance: Animated gradients and shadows are throttled; UnderBar and SideBar update unread counts via intervals to avoid re-render storms.
+- Deployment: CRA build artifacts are packaged into Capacitor projects for native stores while also deployable as a static bundle (Vercel script already mapped to `react-scripts build`). The responsive design ensures the same codebase works seamlessly across mobile and desktop browsers.
+
+9. Success Metrics and Next Steps
+- Track daily active matches, chat session length, report-to-resolution time, and localized UI adoption (based on `language` setting).
+- Monitor device type distribution (mobile vs desktop) and user engagement patterns across platforms.
+- Improve analytics around `window.globalHasNewNotification` to measure notification interactions.
+- Extend push/vibration toggles to real device APIs and introduce automated tests for `useWebSocket` lifecycle, matching filters, and profile validation.

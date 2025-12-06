@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import UnderBar from "../components/UnderBar";
-import Sidebar from "../components/Sidebar";
+import SideBar from "../components/SideBar";
 import { useLanguage } from "../contexts/LanguageContext";
 import { FiBell } from "react-icons/fi";
 import { API_ENDPOINTS } from "../config/api";
@@ -13,13 +13,14 @@ const NotificationsContainer = styled.div`
   padding-left: 0;
   transition: background-color 0.3s ease;
 
+  /* PC에서 사이드바 공간 확보 */
+  @media (min-width: 769px) {
+    padding-left: 250px;
+  }
+
   /* 모바일에서 언더바 공간 확보 */
   @media (max-width: 768px) {
     padding-bottom: 80px;
-  }
-
-  @media (min-width: 769px) {
-    padding-left: 250px;
   }
 
   .dark-mode & {
@@ -42,10 +43,6 @@ const NotificationsHeader = styled.div`
   padding: 0 1rem;
   z-index: 1000;
   transition: all 0.3s ease;
-
-  @media (min-width: 769px) {
-    left: 250px;
-  }
 
   .dark-mode & {
     background: rgba(45, 45, 45, 0.95);
@@ -303,6 +300,7 @@ const Notifications = () => {
 
   return (
     <NotificationsContainer>
+      <SideBar />
       <NotificationsHeader>
         <BackBtn onClick={handleBack}>←</BackBtn>
         <Logo>{t("notifications.title")}</Logo>
@@ -362,7 +360,6 @@ const Notifications = () => {
       </NotificationsMain>
 
       <UnderBar />
-      <Sidebar />
     </NotificationsContainer>
   );
 };

@@ -54,69 +54,13 @@ window.addMatchingNotification = (partnerName) => {
   window.globalHasNewNotification = true;
 };
 
-// 모바일 기기 감지 함수 (userAgent 기준)
-const isMobileDevice = () => {
-  if (typeof window === "undefined") return true;
-
-  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-  // 모바일 기기 패턴
-  const mobilePatterns = [
-    /Android/i,
-    /webOS/i,
-    /iPhone/i,
-    /iPad/i,
-    /iPod/i,
-    /BlackBerry/i,
-    /Windows Phone/i,
-    /Mobile/i,
-  ];
-
-  // 모바일 패턴이 있는지 확인
-  const isMobile = mobilePatterns.some((pattern) => pattern.test(userAgent));
-
-  return isMobile;
-};
-
-// PC 접속 차단 컴포넌트
-const MobileOnlyGuard = ({ children }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    // PC 미지원 페이지는 체크하지 않음
-    if (location.pathname === "/pc-not-supported") {
-      return;
-    }
-
-    // 모바일이 아니면 PC 미지원 페이지로 리다이렉트
-    if (!isMobileDevice()) {
-      navigate("/pc-not-supported", { replace: true });
-    }
-  }, [navigate, location.pathname]);
-
-  // PC 미지원 페이지이거나 모바일 기기인 경우에만 children 렌더링
-  if (location.pathname === "/pc-not-supported") {
-    return children;
-  }
-
-  if (!isMobileDevice()) {
-    return null; // 리다이렉트 중
-  }
-
-  return children;
-};
-
 function App() {
   return (
     <AuthProvider>
       <LanguageProvider>
         <Router>
           <ScrollToTop />
-          <MobileOnlyGuard>
-            <Routes>
-              {/* PC 미지원 페이지 */}
-              <Route path="/pc-not-supported" element={<PCNotSupported />} />
+          <Routes>
 
               {/* 공개 라우트 (로그인 불필요) */}
               <Route path="/login" element={<Login />} />
@@ -252,7 +196,6 @@ function App() {
                 }
               />
             </Routes>
-          </MobileOnlyGuard>
         </Router>
       </LanguageProvider>
     </AuthProvider>

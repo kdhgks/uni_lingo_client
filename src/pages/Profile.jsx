@@ -6,7 +6,7 @@ import {
   normalizeInterests,
 } from "../utils/languageUtils";
 import UnderBar from "../components/UnderBar";
-import Sidebar from "../components/Sidebar";
+import SideBar from "../components/SideBar";
 import { useLanguage } from "../contexts/LanguageContext";
 import { API_ENDPOINTS } from "../config/api";
 
@@ -61,17 +61,14 @@ const ProfileContainer = styled.div`
   padding-left: 0;
   transition: background-color 0.3s ease;
 
-  /* 모바일에서 언더바 공간 확보 */
-  @media (max-width: 768px) {
-    padding-bottom: 80px;
-  }
-
+  /* PC에서 사이드바 공간 확보 */
   @media (min-width: 769px) {
     padding-left: 250px;
   }
 
-  @media (min-width: 1200px) {
-    padding-left: 280px;
+  /* 모바일에서 언더바 공간 확보 */
+  @media (max-width: 768px) {
+    padding-bottom: 80px;
   }
 
   .dark-mode & {
@@ -1187,6 +1184,7 @@ const Profile = () => {
 
   return (
     <ProfileContainer>
+      <SideBar />
       <ProfileMain>
         <ProfileForm>
           <Title>
@@ -1454,9 +1452,8 @@ const Profile = () => {
               </SaveButton>
             )}
           </Form>
-        </ProfileForm>
-      </ProfileMain>
-      <Sidebar />
+      </ProfileForm>
+    </ProfileMain>
       <UnderBar />
     </ProfileContainer>
   );
