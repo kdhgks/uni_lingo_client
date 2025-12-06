@@ -4,7 +4,7 @@ import styled, { keyframes } from "styled-components";
 import UnderBar from "../components/UnderBar";
 import Sidebar from "../components/Sidebar";
 import { useLanguage } from "../contexts/LanguageContext";
-import { API_ENDPOINTS } from "../config/api";
+import { API_ENDPOINTS, getImageUrl } from "../config/api";
 import { FiBell } from "react-icons/fi";
 
 // Keyframes
@@ -969,8 +969,9 @@ const Chatting = () => {
                 <PartnerAvatar>
                   {chat.partner.avatar &&
                   (chat.partner.avatar.startsWith("http") ||
-                    chat.partner.avatar.startsWith("data:image/")) ? (
-                    <img src={chat.partner.avatar} alt={chat.partner.name} />
+                    chat.partner.avatar.startsWith("data:image/") ||
+                    chat.partner.avatar.startsWith("/media/")) ? (
+                    <img src={getImageUrl(chat.partner.avatar)} alt={chat.partner.name} />
                   ) : (
                     chat.partner.avatar || "👤"
                   )}

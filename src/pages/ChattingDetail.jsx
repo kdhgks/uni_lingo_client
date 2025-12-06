@@ -6,7 +6,7 @@ import {
   extractLanguageData,
   normalizeInterests,
 } from "../utils/languageUtils";
-import { API_ENDPOINTS } from "../config/api";
+import { API_ENDPOINTS, getImageUrl } from "../config/api";
 import { useWebSocketSimple as useWebSocket } from "../hooks/useWebSocketSimple";
 import ReportModal from "../components/ReportModal";
 import Sidebar from "../components/Sidebar";
@@ -2400,9 +2400,10 @@ const ChattingDetail = () => {
                     typeof partner.profile_image === "string" ? (
                       // 문자열인 경우 (이모지나 URL)
                       partner.profile_image.startsWith("http") ||
-                      partner.profile_image.startsWith("data:image/") ? (
+                      partner.profile_image.startsWith("data:image/") ||
+                      partner.profile_image.startsWith("/media/") ? (
                         <img
-                          src={partner.profile_image}
+                          src={getImageUrl(partner.profile_image)}
                           alt={`${partner.nickname} ${t(
                             "profile.partnerModal.profileImage"
                           )}`}

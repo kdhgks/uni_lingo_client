@@ -9,7 +9,7 @@ import UnderBar from "../components/UnderBar";
 import Sidebar from "../components/Sidebar";
 import { useLanguage } from "../contexts/LanguageContext";
 import { useAuth } from "../contexts/AuthContext";
-import { API_ENDPOINTS } from "../config/api";
+import { API_ENDPOINTS, getImageUrl } from "../config/api";
 import { FiBell } from "react-icons/fi";
 
 // Keyframes
@@ -2261,8 +2261,9 @@ const Matching = () => {
                     typeof userProfile.profileImage === "string" ? (
                       // 문자열인 경우 (이모지나 URL)
                       userProfile.profileImage.startsWith("http") ||
-                      userProfile.profileImage.startsWith("data:image/") ? (
-                        <img src={userProfile.profileImage} alt="프로필" />
+                      userProfile.profileImage.startsWith("data:image/") ||
+                      userProfile.profileImage.startsWith("/media/") ? (
+                        <img src={getImageUrl(userProfile.profileImage)} alt="프로필" />
                       ) : (
                         <div className="placeholder">
                           {userProfile.profileImage}

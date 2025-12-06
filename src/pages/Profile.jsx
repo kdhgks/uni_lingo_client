@@ -8,7 +8,7 @@ import {
 import UnderBar from "../components/UnderBar";
 import Sidebar from "../components/Sidebar";
 import { useLanguage } from "../contexts/LanguageContext";
-import { API_ENDPOINTS } from "../config/api";
+import { API_ENDPOINTS, getImageUrl } from "../config/api";
 
 const languages = [
   { code: "korean", name: "한국어" },
@@ -1204,9 +1204,11 @@ const Profile = () => {
                 {formData.profile_image ? (
                   typeof formData.profile_image === "string" ? (
                     // 이모지나 URL인 경우
-                    formData.profile_image.startsWith("http") ? (
+                    formData.profile_image.startsWith("http") ||
+                    formData.profile_image.startsWith("data:image/") ||
+                    formData.profile_image.startsWith("/media/") ? (
                       <img
-                        src={formData.profile_image}
+                        src={getImageUrl(formData.profile_image)}
                         alt={t("profile.profileImagePreview")}
                       />
                     ) : (

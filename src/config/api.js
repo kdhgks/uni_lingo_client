@@ -2,6 +2,53 @@
 const API_BASE_URL =
   process.env.REACT_APP_API_URL || "https://unilingo.duckdns.org/api";
 
+// Extract base domain from API_BASE_URL (e.g., "https://unilingo.duckdns.org/api" -> "https://unilingo.duckdns.org")
+const getBaseDomain = () => {
+  try {
+    const url = new URL(API_BASE_URL);
+    return `${url.protocol}//${url.host}`;
+  } catch (e) {
+    // Fallback if URL parsing fails
+    return API_BASE_URL.replace(/\/api\/?$/, "");
+  }
+};
+
+/**
+ * 이미지 URL을 처리하는 유틸리티 함수
+ * /media/로 시작하는 상대 경로를 완전한 URL로 변환
+ * @param {string} imagePath - 이미지 경로 (상대 경로 또는 완전한 URL)
+ * @returns {string} - 완전한 이미지 URL
+ */
+export const getImageUrl = (imagePath) => {
+  if (!imagePath || typeof imagePath !== "string") {
+    return imagePath;
+  }
+
+  // 이미 완전한 URL인 경우 (http://, https://, data:image/)
+  if (
+    imagePath.startsWith("http://") ||
+    imagePath.startsWith("https://") ||
+    imagePath.startsWith("data:image/")
+  ) {
+    return imagePath;
+  }
+
+  // /media/로 시작하는 상대 경로인 경우
+  if (imagePath.startsWith("/media/")) {
+    const baseDomain = getBaseDomain();
+    return `${baseDomain}${imagePath}`;
+  }
+
+  // 다른 상대 경로인 경우도 처리
+  if (imagePath.startsWith("/")) {
+    const baseDomain = getBaseDomain();
+    return `${baseDomain}${imagePath}`;
+  }
+
+  // 그 외의 경우 (이모지 등)는 그대로 반환
+  return imagePath;
+};
+
 export const API_ENDPOINTS = {
   // Authentication
   LOGIN: `${API_BASE_URL}/auth/login/`,

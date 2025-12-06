@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { useLanguage } from "../contexts/LanguageContext";
 import { FiHome, FiMessageCircle, FiUser, FiSettings } from "react-icons/fi";
+import { getImageUrl } from "../config/api";
 
 const SideBarContainer = styled.div`
   position: fixed;
@@ -319,11 +320,11 @@ const Sidebar = () => {
               user.profile_image ||
               user.profileImage ? (
                 <img
-                  src={
+                  src={getImageUrl(
                     user.profile_image_url ||
                     user.profile_image ||
                     user.profileImage
-                  }
+                  )}
                   alt={user.nickname || user.username}
                 />
               ) : (
