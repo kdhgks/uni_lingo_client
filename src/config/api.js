@@ -2,7 +2,6 @@
 const API_BASE_URL =
   process.env.REACT_APP_API_URL || "https://unilingo.duckdns.org/api";
 
-// Extract base domain from API_BASE_URL (e.g., "https://unilingo.duckdns.org/api" -> "https://unilingo.duckdns.org")
 const getBaseDomain = () => {
   try {
     const url = new URL(API_BASE_URL);

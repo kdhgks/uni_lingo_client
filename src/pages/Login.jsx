@@ -158,6 +158,81 @@ const ErrorMessage = styled.div`
   border: 1px solid #feb2b2;
 `;
 
+const TestAccountBox = styled.div`
+  background: #f0f9ff;
+  border: 2px solid #3498db;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  animation: ${fadeIn} 0.5s ease-out;
+  transition: all 0.3s ease;
+
+  .dark-mode & {
+    background: #1e3a5f;
+    border-color: #5dade2;
+  }
+`;
+
+const TestAccountTitle = styled.div`
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  .dark-mode & {
+    color: #ffffff;
+  }
+`;
+
+const TestAccountInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+`;
+
+const TestAccountRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #2c3e50;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background: rgba(52, 152, 219, 0.1);
+  }
+
+  .dark-mode & {
+    color: #e0e0e0;
+
+    &:hover {
+      background: rgba(93, 173, 226, 0.2);
+    }
+  }
+`;
+
+const TestAccountLabel = styled.span`
+  font-weight: 600;
+  min-width: 60px;
+  color: #3498db;
+
+  .dark-mode & {
+    color: #5dade2;
+  }
+`;
+
+const TestAccountValue = styled.span`
+  flex: 1;
+  font-family: monospace;
+  user-select: all;
+`;
+
 const Login = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
@@ -168,6 +243,14 @@ const Login = () => {
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const fillTestAccount = () => {
+    setFormData({
+      email: "test@sogang.ac.kr",
+      password: "testsogang123",
+    });
+    setError("");
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -251,6 +334,19 @@ const Login = () => {
       <LoginMain>
         <LoginForm>
           <Title>{t("auth.login")}</Title>
+          <TestAccountBox>
+            <TestAccountTitle>🧪 테스트 계정</TestAccountTitle>
+            <TestAccountInfo>
+              <TestAccountRow onClick={fillTestAccount}>
+                <TestAccountLabel>이메일:</TestAccountLabel>
+                <TestAccountValue>test@sogang.ac.kr</TestAccountValue>
+              </TestAccountRow>
+              <TestAccountRow onClick={fillTestAccount}>
+                <TestAccountLabel>비밀번호:</TestAccountLabel>
+                <TestAccountValue>testsogang123</TestAccountValue>
+              </TestAccountRow>
+            </TestAccountInfo>
+          </TestAccountBox>
           <Form onSubmit={handleSubmit}>
             {error && <ErrorMessage>{error}</ErrorMessage>}
             <FormGroup>
