@@ -1,6 +1,6 @@
 // API Configuration
 const API_BASE_URL =
-  process.env.REACT_APP_API_URL || "https://uni-lingo-backend.onrender.com";
+  process.env.REACT_APP_API_URL || "https://uni-lingo-backend.onrender.com/api";
 
 const getBaseDomain = () => {
   try {
